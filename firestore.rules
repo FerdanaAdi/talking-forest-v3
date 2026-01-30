@@ -1,0 +1,81 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 1. PUBLIC READ, ADMIN WRITE
+    match /content_trees/{doc} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    match /products/{doc} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    match /umkm/{doc} {
+      allow read: if true; // Needed for password check in Warung POS
+      allow write: if request.auth != null;
+    }
+    match /settings/{doc} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // 2. USER DATA (Public Read for Leaderboard, Owner Write)
+    match /users/{uid} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // 3. STAFF / ADMIN ONLY
+    match /ticket_transactions/{doc} {
+      allow read, write: if request.auth != null;
+    }
+    match /finance/{doc} {
+      allow read, write: if request.auth != null;
+    }
+    match /finance_budgets/{doc} {
+      allow read, write: if request.auth != null;
+    }
+    match /daily_ticket_recaps/{doc} {
+      allow read, write: if request.auth != null;
+    }
+    match /tree_updates/{doc} {
+      allow read, write: if request.auth != null;
+    }
+    match /assets/{doc} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // GAMIFICATION RULES
+    match /game_logs/{doc} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.user_id;
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.user_id;
+    }
+    match /quests/{doc} {
+      allow read: if true;
+      allow write: if request.auth != null; // Admin only in future
+    }
+    match /marketplace_items/{doc} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    match /clans/{doc} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    match /gov_assets/{doc} {
+      allow read, write: if request.auth != null;
+    }
+
+    // 4. LEGACY WARUNG POS (To be secured later)
+    // Currently Warung POS does not use Firebase Auth, so we must allow public write
+    match /umkm_transactions/{doc} {
+      allow read, write: if true;
+    }
+
+    // Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

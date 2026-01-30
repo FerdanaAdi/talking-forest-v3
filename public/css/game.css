@@ -1,0 +1,222 @@
+/* ============================================ */
+/* 📄 FILE: public/css/game.css                */
+/* 🎨 FUNGSI: Mengatur WARNA, FONT, dan ANIMASI */
+/* ============================================ */
+
+/* 
+   🔰 PANDUAN UNTUK TEMAN:
+   
+   File ini mengatur tampilan visual game.
+   Yang bisa kamu edit di sini:
+   - WARNA (cari kode yang mulai dengan #)
+   - UKURAN FONT (cari font-size)
+   - ANIMASI (bagian @keyframes)
+   
+   ⚠️ JANGAN edit nama class (yang ada titik di depan)
+   misal: .bg-parchment, .text-forest
+*/
+
+/* ============================================ */
+/* 🔤 BAGIAN 1: FONT (JENIS HURUF)              */
+/* ============================================ */
+
+/* 
+   Font "Bakso Sapi" = Huruf klasik/fancy untuk judul
+   Font "Nunito" = Huruf bulat ramah anak untuk teks biasa
+*/
+
+.font-bakso {
+    font-family: 'Bakso Sapi', cursive;
+    /* 💡 Ganti 'Bakso Sapi' kalau mau pakai font lain */
+}
+
+.font-nunito {
+    font-family: 'Nunito', sans-serif;
+    /* 💡 Ini font untuk teks biasa, cocok untuk anak-anak */
+}
+
+/* 
+   ⬇️ INI OVERRIDE: Semua judul dan tombol pakai Bakso Sapi 
+   Kalau mau ganti font di seluruh app, edit di sini
+*/
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+button,
+input,
+.font-cinzel {
+    font-family: 'Bakso Sapi', cursive !important;
+    /* 💡 !important = paksa pakai font ini */
+}
+
+
+/* ============================================ */
+/* 🎨 BAGIAN 2: WARNA-WARNA                     */
+/* ============================================ */
+
+/* 
+   FORMAT WARNA: #XXXXXX (6 karakter)
+   Contoh: #2d6a4f = Hijau Hutan
+   
+   🔧 CARA GANTI WARNA:
+   1. Buka htmlcolorcodes.com
+   2. Pilih warna yang kamu suka
+   3. Copy kode hex-nya (misal #FF5733)
+   4. Paste di sini menggantikan kode lama
+*/
+
+/* PARCHMENT = Warna kertas tua/krem (untuk background) */
+.bg-parchment {
+    background-color: #fdf6e3;
+    /* 💡 Ganti ke #ffffff kalau mau putih bersih */
+}
+
+/* FOREST = Warna hijau hutan (untuk teks header) */
+.text-forest {
+    color: #2d6a4f;
+    /* 💡 Ini warna utama tema hutan */
+}
+
+/* EARTH = Warna tanah/coklat (untuk teks sekunder) */
+.text-earth {
+    color: #603813;
+}
+
+/* Background hijau hutan (untuk tombol) */
+.bg-forest {
+    background-color: #2d6a4f;
+}
+
+/* GOLD = Warna emas (untuk aksen/highlight) */
+.bg-gold {
+    background-color: #ffd700;
+}
+
+.border-gold {
+    border-color: #ffd700;
+}
+
+
+/* ============================================ */
+/* ✨ BAGIAN 3: ANIMASI (EFEK BERGERAK)         */
+/* ============================================ */
+
+/* 
+   @keyframes = Resep gerakan animasi
+   animation = Cara pakai resep itu
+   
+   ⚠️ Bagian ini agak rumit, tanya dulu sebelum edit
+*/
+
+/* FADE IN = Muncul perlahan dari bawah */
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+    /* 0.5s = setengah detik */
+}
+
+/* BOUNCE SLOW = Goyang pelan terus-menerus */
+.animate-bounce-slow {
+    animation: bounce 3s infinite;
+    /* 3s = 3 detik per goyang, infinite = terus-menerus */
+}
+
+/* PULSE SLOW = Berdetak pelan (seperti jantung) */
+.animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* RESEP animasi Fade In */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        /* Awal: transparan */
+        transform: translateY(10px);
+        /* Awal: 10px di bawah */
+    }
+
+    to {
+        opacity: 1;
+        /* Akhir: terlihat penuh */
+        transform: translateY(0);
+        /* Akhir: posisi normal */
+    }
+}
+
+
+/* ============================================ */
+/* 🌀 BAGIAN 4: EFEK GLITCH (TRANSISI SCENE 2)  */
+/* ============================================ */
+
+/* 
+   Ini efek "rusak" seperti TV lama
+   Dipakai saat transisi ke hutan misterius
+   
+   ⚠️ Jangan edit kecuali paham animasi CSS
+*/
+
+.glitch-active {
+    animation: glitch-shake 0.2s cubic-bezier(.36, .07, .19, .97) both infinite,
+        glitch-flash 0.1s steps(2, start) infinite;
+    filter: contrast(200%) brightness(150%);
+}
+
+/* Efek goyang kiri-kanan cepat */
+@keyframes glitch-shake {
+
+    10%,
+    90% {
+        transform: translate3d(-2px, 0, 0);
+    }
+
+    20%,
+    80% {
+        transform: translate3d(4px, 0, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translate3d(-6px, 0, 0);
+    }
+
+    40%,
+    60% {
+        transform: translate3d(6px, 0, 0);
+    }
+}
+
+/* Efek kilat hijau (Matrix style) */
+@keyframes glitch-flash {
+    0% {
+        background-color: rgba(255, 255, 255, 0);
+    }
+
+    50% {
+        background-color: rgba(0, 255, 0, 0.2);
+    }
+
+    /* Hijau matrix */
+    100% {
+        background-color: rgba(255, 255, 255, 0.5);
+    }
+}
+
+
+/* ============================================ */
+/* 📝 CATATAN AKHIR                             */
+/* ============================================ */
+
+/* 
+   Setelah edit, SAVE file (Ctrl+S) lalu REFRESH browser (F5)
+   
+   Kalau ada error/tampilan rusak:
+   1. Cek tanda kurung { } sudah lengkap
+   2. Cek titik koma ; di akhir setiap baris
+   3. Batalkan edit (Ctrl+Z) dan coba lagi
+   
+   💬 Hubungi aku kalau bingung!
+*/

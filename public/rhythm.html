@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<!--
+============================================
+📄 FILE: rhythm.html
+🎵 FUNGSI: Mini-Game Rhythm (Ketuk Sesuai Irama)
+============================================
+
+🔰 PANDUAN UNTUK NAJU:
+
+Ini adalah halaman game "Musik Tanaman".
+Pemain harus menuk tombol saat "not balok" (kotak warna) jatuh pas di garis.
+
+💡 YANG BOLEH KAMU EDIT:
+1. Teks h1, h2, dan pesan-pesan
+2. Warna (cek file game.css atau class Tailwind)
+3. Emoji 🎵, ✨, dll
+
+⚠️ YANG JANGAN DIEDIT:
+- <div id="game-canvas"> (Area permainan)
+- <script> ... </script> (Kode program)
+- class="..." (Styling)
+
+============================================
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- ✅ EDIT: Judul di Tab Browser -->
+    <title>Talking Forest - Rhythm Game</title>
+
+    <!-- LIBRARY (Jangan Dihapus) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bakso+Sapi&family=Nunito:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/game.css">
+
+    <!-- KONFIGURASI WARNA -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { forest: '#2d6a4f', earth: '#603813', gold: '#ffd700', parchment: '#fdf6e3' },
+                    fontFamily: { 'bakso': ['"Bakso Sapi"', 'cursive'], 'nunito': ['"Nunito"', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body
+    class="bg-stone-900 h-screen w-screen flex items-center justify-center overflow-hidden font-nunito bg-[url('assets/images/bg/bg_jungle_blur.jpg')] bg-cover bg-center">
+
+    <!-- FRAME GAME -->
+    <div
+        class="w-full max-w-[480px] h-full bg-black/60 relative shadow-2xl overflow-hidden flex flex-col items-center backdrop-blur-md">
+
+        <!-- ================================================ -->
+        <!-- ✅ ZONA EDIT 1: HEADER (Judul & Score)            -->
+        <!-- Boleh ganti: Teks "Skor", Emoji                  -->
+        <!-- ================================================ -->
+        <header class="w-full p-4 flex justify-between items-center bg-forest/80 shadow-lg z-20">
+            <button onclick="window.history.back()" class="text-white hover:scale-110 transition">
+                <!-- ✅ EDIT: Tombol Kembali -->
+                🔙
+            </button>
+
+            <div class="text-center">
+                <h1 class="font-bakso text-2xl text-yellow-300 drop-shadow-md">
+                    <!-- ✅ EDIT: Judul Game -->
+                    Irama Hutan
+                </h1>
+            </div>
+
+            <div class="bg-black/40 px-3 py-1 rounded-full text-white font-bold font-mono">
+                <!-- ✅ EDIT: Label Skor -->
+                ⭐ <span id="score-display">0</span>
+            </div>
+        </header>
+
+        <!-- AREA PERMAINAN (JANGAN DIEDIT) -->
+        <div id="game-container"
+            class="relative flex-1 w-full bg-gradient-to-b from-transparent to-black/50 overflow-hidden">
+
+            <!-- Jalur Not (Lanes) -->
+            <div class="absolute inset-0 flex justify-center gap-4 pointer-events-none">
+                <div class="w-20 h-full border-x border-white/10 bg-white/5 relative" id="lane-1"></div>
+                <div class="w-20 h-full border-x border-white/10 bg-white/5 relative" id="lane-2"></div>
+                <div class="w-20 h-full border-x border-white/10 bg-white/5 relative" id="lane-3"></div>
+            </div>
+
+            <!-- Garis Target (Hit Line) -->
+            <div
+                class="absolute bottom-24 left-0 w-full h-2 bg-yellow-400/50 shadow-[0_0_15px_rgba(255,215,0,0.8)] z-10">
+            </div>
+            <div
+                class="absolute bottom-24 left-0 w-full text-center text-white/50 text-xs mt-2 uppercase tracking-widest">
+                <!-- ✅ EDIT: Teks penanda garis -->
+                Tap di sini!
+            </div>
+
+            <!-- Tempat Not Balok (Diisi Script) -->
+            <div id="notes-layer" class="absolute inset-0 z-10 pointer-events-none"></div>
+
+            <!-- Visual Bunga (Tumbuh kalau benar) -->
+            <div id="flower-container"
+                class="absolute bottom-40 left-1/2 -translate-x-1/2 z-0 opacity-50 transition-all duration-300">
+                <!-- Placeholder Bunga (Kotak) -->
+                <div id="flower-visual" class="w-32 h-32 bg-green-500 rounded-full blur-xl animate-pulse"></div>
+            </div>
+        </div>
+
+        <!-- ================================================ -->
+        <!-- ✅ ZONA EDIT 2: TOMBOL KONTROL (Tap Zone)         -->
+        <!-- Boleh ganti: Label tombol, warna (bg-red-500 dll) -->
+        <!-- ================================================ -->
+        <div
+            class="w-full h-24 bg-gray-900 border-t-4 border-forest flex items-center justify-center gap-4 p-2 z-30 pb-6">
+
+            <!-- Tombol KIRI -->
+            <button id="btn-1"
+                class="w-20 h-20 rounded-full bg-red-500 border-4 border-red-700 shadow-lg active:scale-90 active:bg-red-400 transition flex items-center justify-center">
+                <span class="text-2xl font-bold text-white mb-1">A</span>
+            </button>
+
+            <!-- Tombol TENGAH -->
+            <button id="btn-2"
+                class="w-20 h-20 rounded-full bg-green-500 border-4 border-green-700 shadow-lg active:scale-90 active:bg-green-400 transition flex items-center justify-center">
+                <span class="text-2xl font-bold text-white mb-1">S</span>
+            </button>
+
+            <!-- Tombol KANAN -->
+            <button id="btn-3"
+                class="w-20 h-20 rounded-full bg-blue-500 border-4 border-blue-700 shadow-lg active:scale-90 active:bg-blue-400 transition flex items-center justify-center">
+                <span class="text-2xl font-bold text-white mb-1">D</span>
+            </button>
+        </div>
+
+        <!-- OVERLAY MULAI GAME -->
+        <div id="start-overlay"
+            class="absolute inset-0 bg-black/80 z-50 flex flex-col items-center justify-center text-center p-6 backdrop-blur-sm">
+            <h2 class="font-bakso text-4xl text-yellow-400 mb-2 animate-bounce-short">Siap Main?</h2>
+            <p class="text-white mb-6">Tap tombol warna saat kotak jatuh pas di garis!</p>
+            <button onclick="startGame()"
+                class="bg-green-600 hover:bg-green-500 text-white font-bold px-8 py-3 rounded-xl shadow-lg hover:scale-105 transition">
+                MULAI! ▶
+            </button>
+        </div>
+
+    </div>
+
+    <!-- AUDIO (Placeholder) -->
+    <!-- Untuk rhythm game, kita pakai JS untuk buat beat sederhana dulu -->
+
+    <!-- LOAD SCRIPT -->
+    <script type="module">
+        import { RhythmGame } from './js/v3/mechanics/rhythm.js';
+
+        let game;
+
+        window.startGame = function () {
+            document.getElementById('start-overlay').style.display = 'none';
+            // Init Game
+            game = new RhythmGame('game-container');
+            game.start();
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,536 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700&display=swap');
+
+:root {
+    --bg-cream: #f7f4e9;
+    --card-bg: #fffcf5;
+    --primary-green: #4a6741;
+    --accent-green: #8fbc8f;
+    --text-dark: #3e3325;
+    --border-color: #e0dac3;
+}
+
+/* --- 1. RESET & GLOBAL --- */
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: #333;
+    /* Gelap di luar HP */
+    color: var(--text-dark);
+    font-family: 'Nunito', sans-serif;
+    margin: 0;
+    padding: 0;
+    font-size: 16px;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-family: 'Baloo 2', cursive;
+    color: var(--text-dark);
+    margin-top: 0;
+}
+
+/* UTILITY PENTING (Agar fitur Hidden jalan) */
+.hidden {
+    display: none !important;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+/* --- 2. HEADER --- */
+.main-header {
+    background: var(--bg-cream);
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.logo-area {
+    font-size: 1.5rem;
+    margin-right: 10px;
+}
+
+.rank-badge {
+    background: #556b2f;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 10px;
+    flex-grow: 1;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.progress-bar-bg {
+    background: rgba(0, 0, 0, 0.3);
+    height: 6px;
+    border-radius: 5px;
+    margin-top: 5px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    background: #9acd32;
+    height: 100%;
+    width: 0%;
+    transition: width 0.5s;
+}
+
+/* --- 3. NAVIGASI BAWAH --- */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: #fff;
+    border-top: 2px solid #e0dac3;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 900;
+    padding-bottom: 5px;
+    max-width: 480px;
+    margin: 0 auto;
+    /* Supaya pas di frame mobile */
+}
+
+.nav-item {
+    text-decoration: none;
+    color: #aaa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.7rem;
+    font-weight: bold;
+    width: 33%;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.nav-icon {
+    font-size: 1.5rem;
+    margin-bottom: 2px;
+}
+
+.nav-item.active {
+    color: var(--primary-green);
+    transform: translateY(-5px) scale(1.1);
+    text-shadow: 0 2px 4px rgba(74, 103, 65, 0.2);
+}
+
+/* --- 4. KOMPONEN GAME (CABIN) --- */
+.tab-content {
+    padding: 20px;
+    padding-bottom: 100px;
+    animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.section-heading {
+    font-size: 1.1rem;
+    margin: 20px 0 10px 0;
+    border-left: 5px solid var(--primary-green);
+    padding-left: 10px;
+}
+
+.scan-btn {
+    background: var(--primary-green);
+    color: white;
+    border: none;
+    width: 100%;
+    border-radius: 15px;
+    padding: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #3b4d1e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    transition: transform 0.1s;
+}
+
+.scan-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #3b4d1e;
+}
+
+/* KARTU POHON */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.card-item {
+    background: var(--card-bg);
+    border: 2px solid #ebe5d5;
+    border-radius: 15px;
+    padding: 10px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 8px 20px rgba(45, 106, 79, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(45, 106, 79, 0.15);
+}
+
+.card-img-box {
+    width: 100%;
+    aspect-ratio: 1/1;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #eee;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.status-pill-small {
+    background: #eee;
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    border-radius: 10px;
+    display: inline-block;
+    margin-top: 5px;
+    color: #666;
+    font-weight: bold;
+}
+
+/* --- 5. KOMPONEN TRACKING (ASUH) --- */
+.tracking-box,
+.chart-box {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.chart-box {
+    background: #f0fdf4;
+    border: 2px solid #27ae60;
+}
+
+.portal-btn {
+    background: #4a6741;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    font-family: 'Baloo 2';
+    letter-spacing: 1px;
+}
+
+/* Form Input */
+.form-input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 2px solid #e0dac3;
+    border-radius: 10px;
+    font-family: 'Nunito';
+    outline: none;
+    transition: 0.2s;
+}
+
+.form-input:focus {
+    border-color: var(--primary-green);
+}
+
+/* --- 6. MODAL POPUP --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 100000;
+    /* Z-Index sangat tinggi */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    backdrop-filter: blur(5px);
+
+    /* Default terlihat, kecuali ada class .hidden */
+    opacity: 1;
+    visibility: visible;
+    transition: 0.3s;
+}
+
+.modal-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.modal-content {
+    background: white;
+    width: 100%;
+    max-width: 350px;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popUp {
+    from {
+        transform: scale(0.8);
+    }
+
+    to {
+        transform: scale(1);
+    }
+}
+
+/* --- FITUR KATEGORI (FILTER) --- */
+.category-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 10px 5px;
+    margin-bottom: 15px;
+    scrollbar-width: none;
+    /* Hilangkan scrollbar di Firefox */
+}
+
+.category-scroll::-webkit-scrollbar {
+    display: none;
+    /* Hilangkan scrollbar di Chrome */
+}
+
+.cat-pill {
+    white-space: nowrap;
+    padding: 8px 16px;
+    background: #f1f8e9;
+    color: #4a6741;
+    border: 1px solid #c8e6c9;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cat-pill:hover {
+    background: #dcedc8;
+}
+
+.cat-pill.active {
+    background: #4a6741;
+    color: white;
+    border-color: #4a6741;
+    box-shadow: 0 4px 8px rgba(74, 103, 65, 0.3);
+    transform: scale(1.05);
+}
+
+/* =========================================
+   STYLE TAMBAHAN: POP-UP DETAIL (MODAL HIJAU)
+   ========================================= */
+
+/* Kartu Hijau (Mirip Screenshot) */
+.modal-green-card {
+    background: #5d7c46;
+    /* Warna Hijau Daun */
+    width: 85%;
+    max-width: 320px;
+    padding: 25px;
+    border-radius: 20px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    position: relative;
+    border: 2px solid #7a9c5f;
+    transform: scale(0.8);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-overlay:not(.hidden) .modal-green-card {
+    transform: scale(1);
+}
+
+/* Ikon & Judul di dalam Modal */
+.modal-icon-header {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.modal-title {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.4rem;
+    margin: 0 0 15px 0;
+    font-weight: 700;
+    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
+}
+
+/* Kotak Teks Transparan */
+.modal-body-box {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: left;
+}
+
+/* Tombol Mengerti */
+.btn-mengerti {
+    background: white;
+    color: #5d7c46;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.1s;
+}
+
+.btn-mengerti:active {
+    transform: scale(0.95);
+}
+
+/* Hiasan Daun Pojok */
+.deco-leaf {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    opacity: 0.2;
+    font-size: 4rem;
+    pointer-events: none;
+}
+
+/* SUCCESS MODAL SPECIAL STYLE */
+.modal-success {
+    background: linear-gradient(to bottom, #fff, #f9fbe7);
+    border: 3px solid #f1c40f;
+}
+
+.btn-share {
+    box-shadow: 0 4px 0 #2c3e50;
+    transition: transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-share:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #2c3e50;
+}
+
+/* =========================================
+   STYLE TAMBAHAN: PETA INTERAKTIF
+   ========================================= */
+.map-container {
+    position: relative;
+    width: 100%;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    border: 3px solid #d4c5a0;
+    background: #e0dac3;
+}
+
+.map-bg {
+    width: 100%;
+    display: block;
+    /* Aspect ratio preserved by image */
+}
+
+.map-pin {
+    position: absolute;
+    transform: translate(-50%, -100%);
+    /* Agar ujung bawah pin pas di titik */
+    width: 30px;
+    height: 30px;
+    background: #e74c3c;
+    /* Merah = terkunci */
+    border: 2px solid white;
+    border-radius: 50% 50% 50% 0;
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: transform 0.2s;
+    z-index: 10;
+    animation: bouncePin 2s infinite;
+}
+
+.map-pin.collected {
+    background: #27ae60;
+    /* Hijau = ditemukan */
+    z-index: 20;
+    /* Tampil di atas */
+    animation: none;
+}
+
+.map-pin:active {
+    transform: translate(-50%, -100%) scale(0.9);
+}
+
+@keyframes bouncePin {
+
+    0%,
+    100% {
+        transform: translate(-50%, -100%);
+    }
+
+    50% {
+        transform: translate(-50%, -120%);
+    }
+}

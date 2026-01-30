@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Detail Koleksi</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mobile.css">
+
+    <style>
+        .detail-hero-img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .detail-wrapper {
+            padding: 25px;
+            padding-bottom: 100px;
+            margin-top: -20px;
+            position: relative;
+            z-index: 10;
+            background: transparent;
+        }
+
+        .back-nav {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 20;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            backdrop-filter: blur(5px);
+        }
+
+        #score-display {
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .info-card-box {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .status-trigger {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px dashed #eee;
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+        }
+
+        .status-trigger:hover::after {
+            content: '👆';
+            position: absolute;
+            right: 0;
+            font-size: 0.9rem;
+        }
+
+        .info-key {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #2c3e50;
+            text-align: right;
+            max-width: 60%;
+        }
+
+        .tts-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #e0f2f1;
+            border: none;
+            color: #00897b;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        /* MODAL POPUP STYLE */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-green-card {
+            background: linear-gradient(135deg, #5d7c46 0%, #4a6741 100%);
+            width: 85%;
+            max-width: 320px;
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 2px solid #8ab868;
+            transform: scale(0.8);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.show .modal-green-card {
+            transform: scale(1);
+        }
+
+        .modal-icon-header {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .modal-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.5rem;
+            margin: 0 0 15px 0;
+        }
+
+        .modal-body-box {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: left;
+        }
+
+        .btn-mengerti {
+            background: white;
+            color: #4a6741;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: 800;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .quiz-option {
+            background: #fff;
+            border: 2px solid #eee;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            color: #555;
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+
+<body style="background-color: #fdfbf7;">
+
+    <div class="mobile-frame">
+        <div class="back-nav">
+            <a href="index.html" class="back-btn">⬅ Kembali</a>
+            <span id="score-display">Skor: ...</span>
+        </div>
+
+        <img id="detail-img" src="assets/loading.jpg" class="detail-hero-img" alt="Foto">
+
+        <main class="detail-wrapper">
+
+            <div style="margin-bottom: 20px; text-align: center;">
+                <h2 id="detail-name" style="margin:0; font-size:2rem; color:#2c3e50;">Memuat...</h2>
+                <p id="detail-latin" style="margin:0; font-style:italic; color:#7f8c8d;">...</p>
+            </div>
+
+            <div id="quiz-section" class="info-card-box hidden" style="border: 2px dashed #f39c12; background:#fffbf0;">
+                <h3 style="margin-top:0; color:#d35400;">📝 Kuis</h3>
+                <p id="quiz-question" style="margin-bottom:15px; color:#555;">...</p>
+                <div id="quiz-options"></div>
+            </div>
+
+            <div id="info-card" class="info-card-box">
+                <button class="tts-btn" onclick="bacaInfo()" title="Suara">🔊</button>
+                <h3 style="margin-top:0; margin-bottom:5px; font-size:1.1rem; color:#4a6741;">📖 Fakta Unik</h3>
+                <p style="font-size:0.75rem; color:#999; margin-top:0; margin-bottom:15px;">(Klik baris di bawah untuk
+                    detail 👇)</p>
+
+                <div class="status-trigger" onclick="bukaPopup('status')">
+                    <span class="info-key">📊 Status:</span>
+                    <span id="d-status" class="info-value">...</span>
+                </div>
+                <div class="status-trigger" onclick="bukaPopup('asal')">
+                    <span class="info-key">🏠 Asal:</span>
+                    <span id="d-asal" class="info-value">...</span>
+                </div>
+                <div class="status-trigger" onclick="bukaPopup('jenis')">
+                    <span class="info-key">🌱 Jenis:</span>
+                    <span id="d-jenis" class="info-value">...</span>
+                </div>
+                <div class="status-trigger" onclick="bukaPopup('manfaat')">
+                    <span class="info-key">⚡ Manfaat:</span>
+                    <span id="d-guna" class="info-value">...</span>
+                </div>
+
+                <hr style="border:0; border-top:1px dashed #eee; margin:20px 0;">
+                <p id="d-desc" style="font-size:0.95rem; line-height:1.7; color:#555; text-align:justify;">...</p>
+            </div>
+
+        </main>
+    </div>
+
+    <div id="green-modal" class="modal-overlay">
+        <div class="modal-green-card">
+            <span class="modal-icon-header" id="m-icon">📜</span>
+            <h3 class="modal-title" id="m-title">Info</h3>
+            <div class="modal-body-box">
+                <p id="m-body" style="margin:0;">...</p>
+            </div>
+            <button class="btn-mengerti" onclick="tutupPopup()">Mengerti</button>
+        </div>
+    </div>
+
+    <script type="module" src="js/detail-logic.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,145 @@
+# 🚀 FASE 2: THE PULSE OF THE FOREST (DETAIL CHECKLIST)
+> **Goal:** Mengubah scanning biasa menjadi "Ekspedisi Rimba" yang imersif.
+
+Status: **Preparation Phase**
+
+---
+
+## 🛒 1. SHOPPING LIST (ASSET YANG HARUS DICARI)
+Sebelum mulai koding, pastikan kamu punya bahan-bahan ini. Kalau belum ada, cari di internet atau generate AI (Midjourney/DALL-E).
+
+### 🎨 A. Visual Assets (Images)
+*   [x] **1. Background Hutan Seamless (Wajib)**
+    *   **Tech Specs:**
+        *   **Dimensi:** 2400x1080px (Landscape, seamless horizontal).
+        *   **Format:** WebP (Quality 80%) atau JPG.
+        *   **Max Size:** < 300KB.
+    *   **Keyword Cari:** "Seamless forest 2d game background parallax loop"
+    *   **🔗 Link Cari (Gratis):**
+        *   [Freepik - Forest Parallax](https://www.freepik.com/search?format=search&query=forest%20game%20background%20seamless&type=vector)
+        *   [Itch.io - Free Forest Assets](https://itch.io/game-assets/free/tag-forest/tag-parallax)
+    *   **Fungsi:** Biar bisa digerakkan tanpa putus saat Rimba lari.
+    *   *Path:* `assets/images/bg/forest_seamless.webp`
+
+*   [x] **2. Rimba Sprites (Update)**
+    *   **Tech Specs:**
+        *   **Dimensi:** 512x512px (Kotak).
+        *   **Format:** PNG Transparan.
+        *   **Max Size:** < 100KB per file.
+    *   **Run Cycle:** Gambar Rimba tampak samping (Lari).
+    *   **Sad Expression:** Gambar Rimba muka sedih/khawatir (Pas diagnosa).
+    *   **Shock Expression:** Gambar Rimba kaget/melotot (Pas Glitch muncul).
+    *   **Neutral Expression:** Gambar Rimba diam (Standby).
+    *   **Pointing Expression:** Gambar Rimba menunjuk ke sampaing/atas (Untuk tutorial).
+    *   **🔗 Link Cari (Referensi):**
+        *   [Opengameart - 2D Character Sprite](https://opengameart.org/art-search?keys=character+run+cycle) (Cari yang mirip beruang/maskot)
+    *   *Path:* `rimba_run.png`, `rimba_sad.png`, `rimba_shock.png`, `rimba_neutral.png`, `rimba_point.png`
+
+*   [x] **3. Kabut (Fog Overlay)**
+    *   **Tech Specs:**
+        *   **Dimensi:** 1080x1920px (Portrait Full Screen) atau Tileable 512px.
+        *   **Format:** PNG Transparan (Alpha channel penting!).
+        *   **Max Size:** < 500KB.
+    *   **Keyword Cari:** "White fog texture transparent png overlay"
+    *   **🔗 Link Cari:**
+        *   [Google Images - Transparent Fog](https://www.google.com/search?q=fog+overlay+transparent+png&tbm=isch)
+    *   *Path:* `assets/images/vfx/fog.png`
+
+### 🎵 B. Audio Assets (Sounds)
+*   [x] **1. Suara Langkah (Loop)**
+    *   **Tech Specs:**
+        *   **Durasi:** 5-10 detik (Continuous walking).
+        *   **Format:** MP3 atau OGG.
+        *   **Max Size:** < 200KB.
+    *   **Keyword:** "Walking on forest grass sound effect"
+    *   **🔗 Link Cari:**
+        *   [Pixabay - Footsteps Grass](https://pixabay.com/sound-effects/search/footsteps%20grass/)
+    *   *Path:* `assets/audio/sfx/footsteps.mp3`
+    *   *Note:* Boleh recording orang jalan biasa (tidak perlu potongan per langkah), nanti kita loop.
+
+*   [x] **2. Suara Glitch/Error**
+    *   **Tech Specs:**
+        *   **Durasi:** < 1 detik (Singkat & Tajam).
+        *   **Max Size:** < 50KB.
+    *   **Keyword:** "Digital glitch stutter sound effect"
+    *   **🔗 Link Cari:**
+        *   [Pixabay - Glitch SFX](https://pixabay.com/sound-effects/search/glitch/)
+    *   *Path:* `assets/audio/sfx/glitch.mp3`
+
+*   [x] **3. Suara Radar/Scan**
+    *   **Tech Specs:**
+        *   **Durasi:** 1 detik (Ping sound).
+        *   **Max Size:** < 30KB.
+    *   **Keyword:** "Sonar ping" atau "Sci-fi scan sound"
+    *   **🔗 Link Cari:**
+        *   [Pixabay - Sonar/Scan](https://pixabay.com/sound-effects/search/sonar/)
+    *   *Path:* `assets/audio/sfx/scan_pulse.mp3`
+
+*   [x] **4. Ambient Hutan (Angin & Burung) - Wajib!**
+    *   **Tech Specs:**
+        *   **Durasi:** 1-2 menit (Loopable).
+        *   **Format:** MP3 atau OGG.
+        *   **Max Size:** < 1MB.
+    *   **Keyword:** "Forest ambience wind nature loop" (Cari yang ada suara anginnya).
+    *   **🔗 Link Cari:**
+        *   [Pixabay - Forest Ambience](https://pixabay.com/sound-effects/search/forest%20ambience/)
+    *   *Path:* `assets/audio/bgm/forest_ambient.mp3`
+
+*   [x] **5. Suara Kabut (Wind/Whoosh)**
+    *   **Tech Specs:**
+        *   **Durasi:** 0.5 - 1 detik (Singkat).
+        *   **Format:** MP3 atau OGG.
+        *   **Max Size:** < 30KB.
+    *   **Keyword:** "Wind whoosh soft airy" atau "Fog clear sound"
+    *   **🔗 Link Cari:**
+        *   [Pixabay - Wind Whoosh](https://pixabay.com/sound-effects/search/whoosh%20wind/)
+    *   *Path:* `assets/audio/sfx/fog_clear.mp3`
+    *   *Note:* Dipakai saat user klik/tap untuk mengusir kabut.
+
+---
+
+## 🛠️ 2. PERSIAPAN TEKNIS (CODING PREP)
+*   [x] **Install GSAP (GreenSock)**: Library animasi super mulus untuk membuat parallax dan efek lari.
+    *   *Action:* Tambahkan CDN script di `scan.html`.
+*   [x] **Update Database**: Pastikan `species.json` punya field gambar asli (`image_real`) karena kita akan pre-load gambar ini.
+
+---
+
+## 📜 2.0 EKSEKUSI: THE HOOK (PRE-SCAN NARRATIVE)
+**Memberikan konteks/cerita sebelum user mulai mencari.**
+*   [x] **Intro Dialog**: Rimba muncul saat halaman dibuka.
+    *   *Dialog:* "Hutan terasa aneh hari ini... Diam sekali."
+    *   *Clue:* "Aku merasakan energi kehidupan yang lemah di arah Utara."
+*   [x] **Start Button**: Tombol "Mulai Pencarian" yang memicu fase *The Journey*.
+
+---
+
+## 🏃 3. EKSEKUSI: THE JOURNEY (PART 2.1)
+**Kita bikin Rimba lari-lari dulu.**
+*   [x] **HTML Layout**: Bikin div baru `.scene-journey` yang membungkus background & karakter.
+*   [x] **GSAP Animation**:
+    *   Gerakkan background ke kiri terus-menerus (Infinite Scroll).
+    *   Bikin karakter Rimba naik-turun (Bounce) biar kayak lari.
+*   [x] **Grayscale Logic**: Tambahkan script biar warna layar makin lama makin jadi hitam putih.
+
+---
+
+## 🌫️ 4. EKSEKUSI: THE ARRIVAL (PART 2.2)
+**Sampai di lokasi dan interaksi kabut.**
+*   [x] **Stop Animation**: Saat aset siap, hentikan lari Rimba.
+*   [x] **Fog Layer**: Tampilkan gambar kabut di atas layar.
+*   [x] **Tap to Clear**: Bikin logic JS -> Kalau user klik layar, opacity kabut berkurang (100% -> 66% -> 33% -> 0%).
+
+---
+
+## 🩺 5. EKSEKUSI: THE DIAGNOSIS (PART 2.3)
+**Momen emosional dan data reveal.**
+*   [x] **Glitch Reveal**: Saat kabut habis, munculkan siluet pohon dengan efek getar (CSS Glitch).
+*   [x] **Pulse UI**: Munculkan lingkaran radar yang membesar-kecil di tengah pohon.
+*   [x] **Status Text**: Teks ketik "Menganalisis... Status: AMNESIA AKUT".
+*   [x] **Neon Button**: Update tombol "PULIHKAN" jadi kelap-kelip panik.
+
+---
+
+## ✅ SIAP MULAI?
+Kalau semua aset di **Nomor 1** sudah ada (atau pakai placeholder kotak warna dulu), kita langsung gas ke **Nomor 2 (Setup GSAP)**.

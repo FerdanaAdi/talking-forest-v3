@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<!--
+============================================
+📄 FILE: index.html
+🏠 FUNGSI: Halaman Utama (Selamat Datang)
+============================================
+
+🔰 PANDUAN UNTUK TEMAN:
+
+Ini adalah halaman pertama yang dilihat pengunjung.
+Di sini ada:
+- Form input nama
+- Pilihan avatar (gambar profil)
+- Tombol mulai petualangan
+
+💡 YANG BISA KAMU EDIT DI FILE INI:
+1. JUDUL: Cari <title> di bawah (baris ~10)
+2. TEKS: Cari teks dalam tanda > ... <
+3. WARNA: Lihat di file css/game.css
+
+⚠️ YANG JANGAN DIEDIT:
+- Bagian <script> (kode program)
+- Kode yang ada x-data, x-if, @click (itu Alpine.js)
+- class="..." (itu styling Tailwind)
+
+📂 FILE TERKAIT:
+- css/game.css = Warna & font
+- js/v3/game-state.js = Logika game
+- assets/data/dialogs.json = Teks dialog
+
+============================================
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 🏷️ JUDUL TAB BROWSER (Bisa diedit!) -->
+    <title>Talking Forest - Mulai Petualangan</title>
+
+    <!-- 1. LIBRARY (Internet Wajib Jalan) -->
+    <!-- Tailwind CSS (Desain) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // KONFIGURASI TAILWIND (Warna Custom)
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        forest: '#2d6a4f',
+                        earth: '#603813',
+                        gold: '#ffd700',
+                        parchment: '#fdf6e3'
+                    },
+                    fontFamily: {
+                        'bakso': ['"Bakso Sapi"', 'cursive'],
+                        'nunito': ['"Nunito"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Alpine.js (Logika Interaktif) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Google Fonts (Huruf Keren) -->
+    <link href="https://fonts.googleapis.com/css2?family=Bakso+Sapi&family=Nunito:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/game.css">
+    <!-- 2. GAME LOGIC (Modular) -->
+    <script src="js/v3/dialog-engine.js"></script>
+    <script src="js/v3/player-api.js"></script>
+    <script src="js/v3/game-state.js"></script>
+</head>
+
+<body class="bg-stone-900 h-screen w-screen flex items-center justify-center overflow-hidden font-nunito">
+
+    <!-- PHONE FRAME WRAPPER -->
+    <div x-data="gameLogic" x-init="init()"
+        class="w-full max-w-[480px] h-full bg-parchment relative shadow-2xl overflow-hidden flex flex-col">
+
+        <!-- ========================================= -->
+        <!-- VIEW 0: LOADING (ROUTER STATE)            -->
+        <!-- ========================================= -->
+        <template x-if="gameState === -1 || gameState === 0">
+            <div class="absolute inset-0 bg-parchment flex flex-col items-center justify-center animate-pulse">
+                <div class="text-6xl mb-4">🌳</div>
+                <h2 class="font-bakso text-earth text-xl font-bold">Memeriksa Data Petualang...</h2>
+            </div>
+        </template>
+
+        <!-- ========================================= -->
+        <!-- VIEW 1: FORM REGISTRASI (INPUT NAMA)      -->
+        <!-- ========================================= -->
+        <template x-if="gameState === 1">
+            <main class="w-full h-full p-6 flex flex-col gap-6 text-center justify-center animate-fade-in bg-parchment">
+
+                <!-- ================================================ -->
+                <!-- ✅ ZONA EDIT 1: JUDUL APLIKASI                  -->
+                <!-- Boleh ganti: Nama aplikasi, tagline, ukuran     -->
+                <!-- ================================================ -->
+                <div class="animate-bounce-slow">
+                    <!-- ✅ EDIT: Ganti "Talking Forest" dengan nama lain -->
+                    <h1 class="font-bakso text-4xl text-forest font-bold mb-1 drop-shadow-sm">Talking Forest</h1>
+                    <!-- ✅ EDIT: Ganti tagline di bawah ini -->
+                    <p class="text-earth text-sm font-bold opacity-80">Petualangan Menjaga Hutan Borneo</p>
+                </div>
+
+                <!-- WIDGET PILIH AVATAR -->
+                <div
+                    class="bg-white/90 backdrop-blur-sm p-6 rounded-3xl shadow-xl border-4 border-forest/20 w-full max-w-sm mx-auto relative group-hover:scale-[1.01] transition-transform flex flex-col items-center gap-4">
+
+                    <!-- 1. CAROUSEL AREA -->
+                    <div class="flex items-center justify-between w-full px-4">
+                        <button @click="playSound('pop'); changeStage(-1)"
+                            class="text-forest hover:scale-125 transition-transform font-bold text-2xl p-2">◀</button>
+                        <div class="w-24 h-24 relative flex items-center justify-center">
+                            <div class="absolute inset-0 bg-yellow-100 rounded-full animate-pulse-slow opacity-50">
+                            </div>
+                            <img :src="getAvatarImage()"
+                                class="w-20 h-20 object-contain drop-shadow-md z-10 transition-all duration-300">
+                        </div>
+                        <button @click="playSound('pop'); changeStage(1)"
+                            class="text-forest hover:scale-125 transition-transform font-bold text-2xl p-2">▶</button>
+                    </div>
+
+                    <!-- LABEL STAGE -->
+                    <div class="text-center -mt-2">
+                        <h3 class="font-bakso font-bold text-forest text-lg tracking-widest uppercase"
+                            x-text="getStageName()"></h3>
+                    </div>
+
+                    <!-- 2. DOTS INDICATOR -->
+                    <div class="flex justify-center gap-3">
+                        <template x-for="stage in options.stages">
+                            <div class="w-3 h-3 rounded-full border-2 border-forest transition-colors duration-300"
+                                :class="player.stage === stage ? 'bg-forest' : 'bg-transparent opacity-40'">
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- 3. TOMBOL GENDER -->
+                    <div class="flex gap-4 mt-2 bg-stone-100 p-1 rounded-full border border-stone-200">
+                        <button @click="playSound('pop'); setGender('male')"
+                            class="px-6 py-2 rounded-full transition-all duration-300 flex items-center gap-2 text-xs"
+                            :class="player.gender === 'male' ? 'bg-blue-100 text-blue-700 font-bold border border-blue-200' : 'text-stone-500'">
+                            <span>♂️</span><span>Putra</span>
+                        </button>
+                        <button @click="playSound('pop'); setGender('female')"
+                            class="px-6 py-2 rounded-full transition-all duration-300 flex items-center gap-2 text-xs"
+                            :class="player.gender === 'female' ? 'bg-pink-100 text-pink-700 font-bold border border-pink-200' : 'text-stone-500'">
+                            <span>♀️</span><span>Putri</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ================================================ -->
+                <!-- ✅ ZONA EDIT 2: FORM INPUT & TOMBOL              -->
+                <!-- Boleh ganti: Placeholder, teks tombol            -->
+                <!-- ================================================ -->
+                <div class="space-y-4 mt-2">
+                    <!-- ✅ EDIT: Ganti "Ketik Namamu..." dengan placeholder lain -->
+                    <input type="text" x-model="player.name" placeholder="Ketik Namamu..."
+                        class="w-full text-center text-lg p-4 rounded-2xl border-2 border-stone-300 focus:border-forest outline-none transition-all placeholder-stone-500 text-earth font-bold bg-white font-bakso">
+                    <!-- ❌ JANGAN edit @click dan :disabled -->
+                    <button @click="playSound('pop'); startGame()" :disabled="!player.name"
+                        class="w-full bg-forest text-white py-4 rounded-2xl font-bakso font-bold text-xl shadow-lg active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 transition hover:brightness-110">
+                        <!-- ✅ EDIT: Ganti teks tombol di bawah ini -->
+                        <span>MULAI PETUALANGAN</span>
+                        <span>▶</span>
+                    </button>
+                </div>
+            </main>
+        </template>
+
+        <!-- ========================================= -->
+        <!-- VIEW 2: DASHBOARD (MARKAS RANGER)         -->
+        <!-- ========================================= -->
+        <template x-if="gameState === 2">
+            <main class="w-full h-full flex flex-col relative animate-fade-in bg-earth/10 overflow-hidden">
+
+                <!-- BACKGROUND -->
+                <div class="absolute inset-0 z-0">
+                    <div class="absolute inset-0 bg-cover bg-center"
+                        style="background-image: url('assets/images/bg/bg_forest_intro.jpg'); filter: brightness(0.7);">
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-forest via-forest/80 to-transparent"></div>
+                </div>
+
+                <!-- SCROLLABLE CONTENT AREA -->
+                <div class="relative z-10 flex-1 overflow-y-auto pb-24 no-scrollbar">
+
+                    <!-- HEADER: PROFILE CARD -->
+                    <div class="p-6 pt-8">
+                        <div
+                            class="bg-white/10 backdrop-blur-md rounded-3xl p-4 border border-white/20 shadow-lg relative overflow-hidden">
+                            <div class="flex items-center gap-4 relative z-10">
+                                <!-- Avatar -->
+                                <div class="relative">
+                                    <div
+                                        class="w-16 h-16 rounded-full border-4 border-gold shadow-md overflow-hidden bg-white">
+                                        <img :src="getAvatarImage()" class="w-full h-full object-cover">
+                                    </div>
+                                    <div
+                                        class="absolute -bottom-1 -right-1 bg-forest text-white text-[10px] font-bold px-2 py-0.5 rounded-full border border-white">
+                                        Lv. 1</div>
+                                </div>
+                                <!-- Info -->
+                                <div class="flex-1">
+                                    <h2 class="font-bakso font-bold text-white text-xl tracking-wide mb-1"
+                                        x-text="player.name"></h2>
+                                    <p class="text-gold text-[10px] font-bold tracking-wider uppercase mb-2 font-nunito"
+                                        x-text="'Ranger ' + getStageName()"></p>
+                                    <div class="w-full h-2 bg-black/40 rounded-full overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-gold to-yellow-500 w-[15%]"></div>
+                                    </div>
+                                    <p class="text-[8px] text-white/60 text-right mt-1 font-mono">150 / 1000 XP</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MISI HARIAN -->
+                    <div class="px-6 mb-6">
+                        <div class="flex justify-between items-end mb-3">
+                            <h3 class="text-white font-bakso font-bold text-lg">Misi Harian</h3>
+                            <span class="text-[10px] text-white/60 bg-white/10 px-2 py-1 rounded-lg">Reset: 12j</span>
+                        </div>
+                        <div class="space-y-3">
+                            <div
+                                class="bg-parchment/90 backdrop-blur rounded-xl p-3 flex items-center gap-3 shadow-md border-b-4 border-earth/20 transform active:scale-95 transition">
+                                <span class="text-2xl">📸</span>
+                                <div class="flex-1 text-left">
+                                    <h4 class="text-earth font-bold text-xs uppercase tracking-tighter">Scan Pertama
+                                    </h4>
+                                    <p class="text-[10px] text-earth/70">Temukan 1 tanaman di hutan.</p>
+                                </div>
+                                <button @click="startJourney()"
+                                    class="bg-forest text-white text-[10px] px-3 py-1 rounded-full font-bold shadow-sm">GO</button>
+                            </div>
+                            <div
+                                class="bg-parchment/70 backdrop-blur rounded-xl p-3 flex items-center gap-3 shadow-md border-b-4 border-earth/20 opacity-80">
+                                <span class="text-2xl">🧠</span>
+                                <div class="flex-1 text-left">
+                                    <h4 class="text-earth font-bold text-xs uppercase tracking-tighter">Si Pintar</h4>
+                                    <p class="text-[10px] text-earth/70">Jawab 1 kuis dengan benar.</p>
+                                </div>
+                                <span class="text-[10px] text-earth/50">0/1</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STATS GRID -->
+                    <div class="px-6 grid grid-cols-2 gap-4 mb-24">
+                        <div class="bg-forest/80 backdrop-blur p-4 rounded-2xl border border-white/10 text-center">
+                            <span class="text-2xl block mb-1">🌿</span>
+                            <span class="text-2xl font-bold text-white font-bakso">0</span>
+                            <span class="text-[9px] text-white/50 block uppercase">Koleksi</span>
+                        </div>
+                        <div class="bg-earth/80 backdrop-blur p-4 rounded-2xl border border-white/10 text-center">
+                            <span class="text-2xl block mb-1">🏅</span>
+                            <span class="text-2xl font-bold text-white font-bakso">0</span>
+                            <span class="text-[9px] text-white/50 block uppercase">Badge</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOTTOM NAVIGATION (Fixed Bottom - Hijau Forest) -->
+                <!-- Matches the new scan.html design -->
+                <div
+                    class="absolute bottom-0 left-0 right-0 h-16 bg-forest flex items-center justify-around px-2 z-50 pointer-events-auto border-t border-white/10 shadow-[0_-4px_10px_rgba(0,0,0,0.3)]">
+
+                    <!-- Nav Item: Markas (Active) -->
+                    <div class="flex flex-col items-center gap-1 w-1/5">
+                        <div class="bg-white/10 p-2 rounded-xl -mt-4 border-2 border-gold shadow-lg backdrop-blur-sm">
+                            <span class="text-2xl">🏠</span>
+                        </div>
+                        <span class="text-[9px] text-gold font-bold">Markas</span>
+                    </div>
+
+                    <!-- Nav Item: Jelajah -->
+                    <a href="scan.html"
+                        class="flex flex-col items-center gap-1 w-1/5 opacity-70 hover:opacity-100 transition"
+                        @click="playSound('pop')">
+                        <span class="text-xl text-white">📸</span>
+                        <span class="text-[9px] text-white font-bold">Jelajah</span>
+                    </a>
+
+                    <!-- Nav Item: Kebun -->
+                    <button class="flex flex-col items-center gap-1 w-1/5 opacity-70 hover:opacity-100 transition"
+                        @click="alert('Segera Hadir!')">
+                        <span class="text-xl text-white">🌿</span>
+                        <span class="text-[9px] text-white font-bold">Kebun</span>
+                    </button>
+
+                    <!-- Nav Item: Donasi -->
+                    <button class="flex flex-col items-center gap-1 w-1/5 opacity-70 hover:opacity-100 transition"
+                        @click="alert('Segera Hadir!')">
+                        <span class="text-xl text-white">💚</span>
+                        <span class="text-[9px] text-white font-bold">Donasi</span>
+                    </button>
+
+                    <!-- Nav Item: Profil -->
+                    <button class="flex flex-col items-center gap-1 w-1/5 opacity-70 hover:opacity-100 transition"
+                        @click="alert('Segera Hadir!')">
+                        <span class="text-xl text-white">👤</span>
+                        <span class="text-[9px] text-white font-bold">Profil</span>
+                    </button>
+                </div>
+
+            </main>
+        </template>
+    </div>
+</body>
+
+</html>

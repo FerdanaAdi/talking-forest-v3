@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loket Tiket - Talking Forest</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #f0f2f5;
+            font-family: 'Nunito', sans-serif;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        .pos-container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .left-panel {
+            flex: 2;
+            padding: 30px;
+            border-right: 2px solid #eee;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .right-panel {
+            flex: 1;
+            padding: 30px;
+            background: #fafafa;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2,
+        h3 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+
+        /* LOGIN MODAL STYLE */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(44, 62, 80, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-family: inherit;
+        }
+
+        .login-btn {
+            width: 100%;
+            background: #27ae60;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .ticket-card {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ticket-info h4 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .ticket-price {
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .counter-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-minus {
+            background: #fee;
+            color: #c0392b;
+        }
+
+        .btn-plus {
+            background: #e8f5e9;
+            color: #27ae60;
+        }
+
+        .count-display {
+            font-size: 1.5rem;
+            font-weight: bold;
+            width: 40px;
+            text-align: center;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .pay-btn {
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .pay-btn.selected {
+            border-color: #27ae60;
+            background: #e8f5e9;
+            color: #27ae60;
+        }
+
+        .summary-box {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: auto;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .btn-process {
+            width: 100%;
+            background: #f1c40f;
+            color: #2c3e50;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .btn-process:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+
+        .history-table th {
+            text-align: left;
+            border-bottom: 2px solid #ddd;
+            padding: 5px;
+        }
+
+        .history-table td {
+            padding: 8px 5px;
+            border-bottom: 1px solid #eee;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            #ticket-print-area,
+            #ticket-print-area * {
+                visibility: visible;
+            }
+
+            #ticket-print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+        }
+
+        #ticket-print-area {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- LOGIN MODAL (New Request) -->
+    <div id="login-modal" class="login-overlay">
+        <div class="login-box">
+            <h2 style="margin-bottom:20px;">🔒 Login Staff Loket</h2>
+            <input type="email" id="login-email" class="login-input" placeholder="Email Staff">
+            <input type="password" id="login-pass" class="login-input" placeholder="Password">
+            <button id="btn-login" class="login-btn">MASUK SHIFT</button>
+            <p id="login-msg" style="color:red; margin-top:10px; font-size:0.9rem;"></p>
+        </div>
+    </div>
+
+    <div class="pos-container">
+        <!-- Panel Kiri: Input Tiket -->
+        <div class="left-panel">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h2>🎫 Loket Tiket</h2>
+                <div style="text-align:right;">
+                    <span id="staff-name" style="font-weight:bold; color:#2c3e50;">Staff: -</span><br>
+                    <button id="btn-logout"
+                        style="background:none; border:none; color:red; cursor:pointer; text-decoration:underline;">Logout</button>
+                </div>
+            </div>
+
+            <div
+                style="background:#e8f4fd; padding:15px; border-radius:10px; margin-bottom:20px; border:1px solid #bbdefb;">
+                <label style="font-weight:bold; display:block; margin-bottom:5px; color:#0d47a1;">👤 Data Pengunjung
+                    (Wajib)</label>
+                <input type="text" id="visitor-name" placeholder="Nama Perwakilan (Cth: Budi Santoso)"
+                    style="width:96%; padding:10px; border:1px solid #a6d4fa; border-radius:5px; font-family:'Nunito';">
+            </div>
+
+            <p>Pilih jenis tiket penjunjung:</p>
+
+            <div class="ticket-card">
+                <div class="ticket-info">
+                    <h4>Tiket Dewasa</h4>
+                    <span id="price-display-adult" class="ticket-price">Rp 15.000</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <button class="counter-btn btn-minus" id="btn-minus-adult">-</button>
+                    <span id="qty-adult" class="count-display">0</span>
+                    <button class="counter-btn btn-plus" id="btn-plus-adult">+</button>
+                </div>
+            </div>
+
+            <div class="ticket-card">
+                <div class="ticket-info">
+                    <h4>Tiket Anak</h4>
+                    <span id="price-display-child" class="ticket-price">Rp 5.000</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <button class="counter-btn btn-minus" id="btn-minus-child">-</button>
+                    <span id="qty-child" class="count-display">0</span>
+                    <button class="counter-btn btn-plus" id="btn-plus-child">+</button>
+                </div>
+            </div>
+
+            <h3>Metode Pembayaran</h3>
+            <div class="payment-methods">
+                <button class="pay-btn selected" id="pay-cash">💵 Tunai</button>
+                <button class="pay-btn" id="pay-qris">📱 QRIS</button>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <h3>Ringkasan</h3>
+            <div id="tx-details" style="flex:1;">
+                <p style="color:#888;">Belum ada item dipilih.</p>
+            </div>
+
+            <div class="summary-box">
+                <div class="total-row"><span>Total</span><span id="total-price">Rp 0</span></div>
+                <div style="display:flex; gap:10px;">
+                    <button id="btn-process" class="btn-process">PROSES BAYAR</button>
+                    <button id="btn-print" class="btn-process"
+                        style="background:#34495e; color:white; display:none;">🖨️ CETAK</button>
+                </div>
+            </div>
+
+            <hr>
+            <h4>Riwayat Hari Ini</h4>
+            <div style="overflow-y:auto; height: 200px;">
+                <table class="history-table">
+                    <thead>
+                        <tr style="text-align:left; color:#888;">
+                            <th>ID</th>
+                            <th>Jml</th>
+                            <th>Total</th>
+                            <th>Cetak</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-list"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Printable Area -->
+    <div id="ticket-print-area">
+        <div style="width:300px; border:2px dashed #000; padding:20px; text-align:center; font-family:monospace;">
+            <h2 style="margin:0;">🌲 Talking Forest</h2>
+            <p>Tiket Masuk Wisata</p>
+            <hr>
+            <p style="text-align:left;">
+                <strong>ID Tiket:</strong> <span id="p-ticket-id">-</span><br>
+                <strong>Tanggal:</strong> <span id="p-date">-</span><br>
+                <strong>Pengunjung:</strong> <span id="p-name">-</span><br>
+                <strong>Petugas:</strong> <span id="p-staff">-</span>
+            </p>
+            <hr>
+            <table style="width:100%; text-align:left;">
+                <tbody id="p-items"></tbody>
+            </table>
+            <hr>
+            <h3 style="margin:10px 0;">TOTAL: <span id="p-total">Rp 0</span></h3>
+            <p>(LUNAS)</p>
+            <hr>
+            <p style="font-size:0.8rem;">Terima kasih! 🌳</p>
+        </div>
+    </div>
+
+    <style>
+        /* CSS Fix for Printing */
+        @media print {
+            body>* {
+                display: none !important;
+            }
+
+            /* Hide all direct children */
+            #ticket-print-area {
+                display: block !important;
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+
+            #ticket-print-area * {
+                visibility: visible;
+            }
+        }
+    </style>
+
+    <script>
+        window.addEventListener('error', function (e) {
+            alert("System Error: " + e.message);
+        });
+    </script>
+    <script type="module" src="js/loket-logic.js?v=3"></script>
+</body>
+
+</html>

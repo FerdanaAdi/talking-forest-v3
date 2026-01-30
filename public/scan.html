@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<!--
+============================================
+📄 FILE: scan.html
+📷 FUNGSI: Halaman Scan QR Code & Jelajah Hutan
+============================================
+
+🔰 PANDUAN UNTUK NAJU:
+
+Ini adalah halaman untuk MENCARI pohon di hutan.
+Di sini ada:
+- Animasi Rimba berlari
+- Tombol scan QR Code
+- Input manual kode pohon
+- Efek kabut misterius
+
+💡 YANG BOLEH KAMU EDIT:
+1. TEKS tombol "SCAN QR CODE" dan "CARI SPESIES"
+2. GAMBAR background (cari assets/images/bg/...)
+3. WARNA (cek file game.css)
+
+⚠️ YANG JANGAN DIEDIT:
+- Bagian <script> dan Alpine.js logic
+- Animasi GSAP (gsap.to, gsap.from)
+- State machine (status 0-6)
+
+📂 FILE TERKAIT:
+- js/v3/scan-logic.js = Logika scan
+- assets/images/ = Gambar background & Rimba
+- css/game.css = Styling
+
+============================================
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 🏷️ JUDUL TAB BROWSER -->
+    <title>Talking Forest - Jelajah</title>
+
+    <!-- LIBRARY -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { forest: '#2d6a4f', earth: '#603813', gold: '#ffd700', parchment: '#fdf6e3' },
+                    fontFamily: { 'bakso': ['"Bakso Sapi"', 'cursive'], 'nunito': ['"Nunito"', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bakso+Sapi&family=Nunito:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/game.css">
+    <style>
+        .bg-parallax {
+            width: 200%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: flex;
+        }
+
+        .bg-parallax img {
+            width: 50%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .fog-overlay {
+            transition: opacity 0.5s ease-out;
+            cursor: pointer;
+        }
+
+        .glitch-active {
+            filter: url(#glitch-filter);
+        }
+    </style>
+</head>
+
+<!-- BACKGROUND BODY: HIJAU HUTAN (Sesuai Homepage) -->
+
+<body
+    class="bg-forest h-screen w-screen flex items-center justify-center overflow-hidden font-nunito bg-[url('assets/images/bg/forest_seamless.jpg')] bg-cover bg-center">
+
+    <!-- PHONE FRAME WRAPPER -->
+    <div x-data="scanLogic()" x-init="init()"
+        class="w-full max-w-[480px] h-full relative shadow-2xl overflow-hidden flex flex-col bg-forest transition-all border-x-4 border-forest/50">
+
+        <!-- LAYER 0: BACKGROUNDS (Updated to Match Homepage) -->
+        <div class="absolute inset-0 z-0 bg-forest">
+            <!-- HOMEPAGE STYLE BACKGROUND -->
+            <div class="absolute inset-0 bg-cover bg-center"
+                style="background-image: url('assets/images/bg/bg_forest_intro.jpg'); filter: brightness(0.7);">
+            </div>
+            <div class="absolute inset-0 bg-gradient-to-t from-forest via-forest/80 to-transparent"></div>
+
+            <!-- 2.1 JOURNEY: Parallax Background (x-show="status === 2") -->
+            <div x-show="status === 2" class="bg-parallax z-10">
+                <img src="assets/images/bg/forest_seamless.jpg" alt="Forest">
+                <img src="assets/images/bg/forest_seamless.jpg" alt="Forest">
+            </div>
+
+            <!-- Static Habitat (x-show="status >= 3") -->
+            <div x-show="status >= 3" class="absolute inset-0 z-20">
+                <img src="assets/images/bg/forest_seamless.jpg"
+                    class="h-full w-full object-cover grayscale transition-all duration-1000"
+                    :class="status >= 5 ? 'grayscale-0' : 'grayscale'">
+                <div class="absolute inset-0 bg-black/40"></div>
+            </div>
+        </div>
+
+        <!-- LAYER 1: CHARACTERS / VFX -->
+        <div class="absolute inset-0 z-10 flex items-center justify-center">
+
+            <!-- RUNNING RIMBA (JOURNEY) -->
+            <div x-show="status === 2" class="relative">
+                <img src="assets/images/mascot/rimba_run.png" class="w-72 h-72 object-contain animate-bounce-slow">
+                <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 w-48 h-6 bg-black/20 rounded-full blur-md">
+                </div>
+            </div>
+
+            <!-- KABUT -->
+            <div x-show="status === 3"
+                class="absolute inset-0 z-20 bg-white/60 backdrop-blur-md fog-overlay flex flex-col items-center justify-center p-8 text-center"
+                :style="'opacity: ' + fogOpacity" @click="clearFog()">
+                <div class="text-8xl animate-pulse mb-6">🌫️</div>
+                <h3 class="text-forest font-bakso text-4xl drop-shadow-lg">AWAS KABUT!</h3>
+                <p class="text-forest/80 text-lg font-bold font-nunito mt-2">(Ketuk terus untuk mengusir kabut)</p>
+            </div>
+
+            <!-- SILHOUETTE (REVEAL / DIAGNOSIS) -->
+            <div x-show="status >= 4 && status !== 6 && speciesData" class="relative flex flex-col items-center">
+                <div class="relative w-64 h-64 flex items-center justify-center">
+                    <!-- Scan Pulse Radar (Diagnosis Only) -->
+                    <div x-show="status === 5"
+                        class="absolute inset-0 border-4 border-gold/50 rounded-full animate-ping"></div>
+                    <div x-show="status === 5"
+                        class="absolute inset-8 border-2 border-gold/30 rounded-full animate-ping delay-150"></div>
+
+                    <!-- The Image -->
+                    <img :src="'assets/images/species/' + speciesData.assets.siluet"
+                        class="w-56 h-56 object-contain transition-all duration-500"
+                        :class="[showGlitch ? 'brightness-150 scale-110' : 'brightness-0', status >= 5 ? 'opacity-80' : 'opacity-40']">
+                </div>
+            </div>
+        </div>
+
+        <!-- layer 2: UI OVERLAYS -->
+        <div class="relative z-30 flex-1 flex flex-col h-full pointer-events-none">
+
+            <!-- HEADER SEDERHANA (Kembali ke Layout Awal tapi Background Hijau) -->
+            <div
+                class="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-forest to-forest/0 flex items-center justify-between px-4 z-40">
+                <a href="index.html"
+                    class="p-2 text-white bg-black/20 hover:bg-black/30 rounded-full transition backdrop-blur-sm pointer-events-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                </a>
+                <!-- ✅ EDIT: Judul Halaman -->
+                <h1 class="text-xl font-bakso text-gold drop-shadow-md tracking-wider">JELAJAH HUTAN</h1>
+                <div class="w-10"></div> <!-- Spacer -->
+            </div>
+
+            <!-- IDLE VIEW (Methods) -->
+            <div x-show="status === 0"
+                class="flex-1 flex flex-col items-center justify-center p-6 gap-6 pt-20 pb-24 pointer-events-auto overflow-y-auto">
+
+                <!-- 1. TOMBOL SCAN UTAMA -->
+                <div
+                    class="w-full max-w-xs aspect-square bg-white/10 p-4 rounded-[2rem] border-2 border-dashed border-white/30 flex items-center justify-center relative">
+                    <!-- Hiasan Sudut -->
+                    <div class="absolute -top-2 -left-2 w-8 h-8 border-t-4 border-l-4 border-gold rounded-tl-xl"></div>
+                    <div class="absolute -top-2 -right-2 w-8 h-8 border-t-4 border-r-4 border-gold rounded-tr-xl"></div>
+                    <div class="absolute -bottom-2 -left-2 w-8 h-8 border-b-4 border-l-4 border-gold rounded-bl-xl">
+                    </div>
+                    <div class="absolute -bottom-2 -right-2 w-8 h-8 border-b-4 border-r-4 border-gold rounded-br-xl">
+                    </div>
+
+                    <button @click="playSound('pop'); alert('Kamera sedang dimuat... (Gunakan Input Manual)')"
+                        class="w-full h-full bg-forest rounded-2xl shadow-2xl flex flex-col items-center justify-center gap-3 transform active:scale-95 transition hover:brightness-110 border-4 border-white/10 group">
+                        <!-- ✅ EDIT: Emoji Kamera -->
+                        <span class="text-7xl group-hover:scale-110 transition">📷</span>
+                        <!-- ✅ EDIT: Teks Tombol Scan -->
+                        <span class="text-white font-bakso tracking-wider text-xl">SCAN QR CODE</span>
+                    </button>
+                </div>
+
+                <div class="relative w-full max-w-xs flex items-center justify-center my-2">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-white/30"></div>
+                    </div>
+                    <!-- ✅ EDIT: Teks Pembatas -->
+                    <span class="relative bg-forest px-4 text-sm text-gold italic font-bold">ATAU</span>
+                </div>
+
+                <!-- 2. INPUT MANUAL (Green Theme) -->
+                <div
+                    class="w-full max-w-xs bg-black/20 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/10">
+                    <!-- ✅ EDIT: Label Input -->
+                    <label
+                        class="block text-center text-white/80 text-sm font-bold mb-2 uppercase tracking-widest">Masukkan
+                        Kode Pohon:</label>
+                    <div class="flex flex-col gap-3">
+                        <input type="text" x-model="manualCode" placeholder="______-______"
+                            class="w-full bg-white/90 border-4 border-transparent focus:border-gold rounded-xl px-4 py-3 text-center text-lg text-forest placeholder-forest/30 outline-none font-mono uppercase tracking-widest transition shadow-inner">
+
+                        <button @click="processCode(manualCode)"
+                            class="w-full bg-gold text-forest font-bakso text-lg py-3 rounded-xl shadow-[0_4px_0_#b8860b] hover:brightness-110 active:shadow-none active:translate-y-1 transition">
+                            <!-- ✅ EDIT: Teks Tombol Cari -->
+                            CARI SPESIES 🔍
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. TIP BOX (Green Translucent) -->
+                <div
+                    class="w-full max-w-xs bg-white/10 border border-white/20 p-3 rounded-xl flex items-start gap-3 mt-2 backdrop-blur-sm">
+                    <span class="text-xl">💡</span>
+                    <!-- ✅ EDIT: Teks Tips -->
+                    <p class="text-white/90 text-xs leading-relaxed font-nunito">
+                        <span class="font-bold text-gold">Tip:</span> Cari QR Code di papan informasi pohon atau di
+                        batang pohon.
+                    </p>
+                </div>
+
+                <div x-show="errorMessage"
+                    class="text-white text-xs font-bold bg-red-500 px-4 py-2 rounded-full mx-auto shadow-lg animate-bounce"
+                    x-text="errorMessage"></div>
+            </div>
+
+            <!-- VALIDATING VIEW -->
+            <div x-show="status === 1" class="flex-1 flex flex-col items-center justify-center p-6 gap-4">
+                <div class="w-20 h-20 border-8 border-white/20 border-t-gold rounded-full animate-spin"></div>
+                <p class="text-gold font-bakso text-xl tracking-widest animate-pulse">MEMERIKSA KODE...</p>
+            </div>
+
+            <!-- DIAGNOSIS VIEW (Rimba Dialog) -->
+            <div x-show="status === 5" class="mt-auto p-4 pb-24 pointer-events-auto">
+                <div
+                    class="bg-forest/95 border-2 border-gold p-6 rounded-t-3xl shadow-[0_-5px_30px_rgba(0,0,0,0.5)] relative">
+                    <!-- Status Badge -->
+                    <div
+                        class="absolute -top-3 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[10px] font-mono px-4 py-1 rounded-full border border-white shadow-lg">
+                        STATUS: AMNESIA AKUT
+                    </div>
+
+                    <div class="flex items-end gap-3 mb-4">
+                        <img :src="'assets/images/mascot/rimba_' + (currentMood || 'sad') + '.png'"
+                            class="w-28 h-28 object-contain drop-shadow-md -mb-2">
+                        <div class="bg-parchment rounded-xl p-3 flex-1 border border-earth/20 shadow-inner">
+                            <h4 class="text-forest font-bold text-xs uppercase mb-1">RIMBA</h4>
+                            <p class="text-earth text-sm leading-relaxed font-nunito"
+                                x-text="dialogEngine.text || '...'"></p>
+                        </div>
+                    </div>
+
+                    <button x-show="!isLastDialog" @click="playSound('pop'); nextDialog()"
+                        class="w-full text-white/50 text-xs text-center pb-2 animate-pulse">(Ketuk untuk
+                        lanjut)</button>
+                    <button x-show="isLastDialog" @click="playSound('pop'); startRecovery()"
+                        class="w-full bg-gradient-to-r from-red-600 to-red-500 py-3 rounded-xl text-white font-bold shadow-lg active:scale-95 transition border-b-4 border-red-800">
+                        PULIHKAN WAKTU ⚡
+                    </button>
+                </div>
+
+                <!-- ALREADY FOUND VIEW (Status 6) -->
+                <div x-show="status === 6 && speciesData"
+                    class="mt-auto p-4 pb-24 pointer-events-auto flex flex-col items-center justify-center h-full">
+                    <div
+                        class="bg-white/95 p-6 rounded-3xl shadow-xl flex flex-col items-center gap-1 text-center max-w-xs border-4 border-gold/50 relative overflow-hidden">
+
+                        <!-- Top Ribbon Badge -->
+                        <div
+                            class="absolute top-4 right-[-35px] rotate-45 bg-green-500 text-white text-[9px] font-bold px-10 py-1 shadow-md">
+                            COLLECTED
+                        </div>
+
+                        <div
+                            class="w-32 h-32 bg-forest/10 rounded-full flex items-center justify-center mb-2 overflow-hidden border-4 border-forest shadow-inner">
+                            <img :src="'assets/images/species/' + speciesData.assets.siluet"
+                                class="w-24 h-24 object-contain brightness-0 opacity-50">
+                        </div>
+
+                        <div>
+                            <h2 class="font-bakso text-2xl text-forest uppercase tracking-wide"
+                                x-text="speciesData.name"></h2>
+                            <p class="font-nunito text-xs text-earth italic -mt-1"
+                                x-text="speciesData.latin || 'Plantae Incognita'"></p>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="w-full flex flex-col gap-2 mt-4">
+                            <!-- ✅ EDIT: Tombol Baca Cerita -->
+                            <button @click="window.location.href='story.html?scene=reveal&code=' + speciesData.id"
+                                class="w-full bg-gold text-earth font-bold py-3 rounded-xl shadow-md hover:brightness-110 transition text-xs border-b-4 border-yellow-600 flex items-center justify-center gap-2">
+                                <span>📖</span> BACA CERITA LAGI
+                            </button>
+
+                            <!-- ✅ EDIT: Tombol Kembali Scan -->
+                            <button @click="status = 0; manualCode = ''"
+                                class="w-full bg-forest text-white font-bold py-3 rounded-xl shadow-md hover:bg-[#1a4031] transition text-xs border-b-4 border-[#1a4031] flex items-center justify-center gap-2">
+                                <span>⬅️</span> KEMBALI KE JELAJAH
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- BOTTOM NAVIGATION (Shared Component - Hijau) -->
+            <div
+                class="absolute bottom-0 left-0 right-0 h-16 bg-forest flex items-center justify-around px-2 z-50 pointer-events-auto border-t border-white/10 shadow-[0_-4px_10px_rgba(0,0,0,0.3)]">
+
+                <!-- Nav Item: Markas -->
+                <a href="index.html"
+                    class="flex flex-col items-center gap-1 w-1/5 opacity-70 hover:opacity-100 transition">
+                    <span class="text-xl text-white">🏠</span>
+                    <span class="text-[9px] text-white font-bold">Markas</span>
+                </a>
+
+                <!-- Nav Item: Jelajah (Active & Glowing) -->
+                <div class="flex flex-col items-center gap-1 w-1/5">
+                    <div class="bg-white/10 p-2 rounded-xl -mt-4 border-2 border-gold shadow-lg backdrop-blur-sm">
+                        <span class="text-2xl">📸</span>
+                    </div>
+                    <span class="text-[9px] text-gold font-bold">Jelajah</span>
+                </div>
+
+                <!-- Nav Item: Kebun -->
+                <button class="flex flex-col items-center gap-1 w-1/5 opacity-70 hover:opacity-100 transition"
+                    @click="alert('Segera Hadir!')">
+                    <span class="text-xl text-white">🌿</span>
+                    <span class="text-[9px] text-white font-bold">Kebun</span>
+                </button>
+
+                <!-- Nav Item: Donasi -->
+                <button class="flex flex-col items-center gap-1 w-1/5 opacity-70 hover:opacity-100 transition"
+                    @click="alert('Segera Hadir!')">
+                    <span class="text-xl text-white">💚</span>
+                    <span class="text-[9px] text-white font-bold">Donasi</span>
+                </button>
+
+                <!-- Nav Item: Profil -->
+                <button class="flex flex-col items-center gap-1 w-1/5 opacity-70 hover:opacity-100 transition"
+                    @click="alert('Segera Hadir!')">
+                    <span class="text-xl text-white">👤</span>
+                    <span class="text-[9px] text-white font-bold">Profil</span>
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="js/v3/dialog-engine.js"></script>
+    <script src="js/v3/scan-logic.js"></script>
+</body>
+
+</html>

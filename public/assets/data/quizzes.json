@@ -1,0 +1,57 @@
+[
+    {
+        "id": "q1",
+        "q": "Bagian pohon apa yang bertugas mencari air?",
+        "a": [
+            "Daun",
+            "Akar",
+            "Batang",
+            "Bunga"
+        ],
+        "correct": 1
+    },
+    {
+        "id": "q2",
+        "q": "Hewan apa yang memiliki paruh besar dari gading?",
+        "a": [
+            "Enggang",
+            "Elang",
+            "Pipit",
+            "Merpati"
+        ],
+        "correct": 0
+    },
+    {
+        "id": "q3",
+        "q": "Tanaman apa yang memakan serangga?",
+        "a": [
+            "Mawar",
+            "Melati",
+            "Kantong Semar",
+            "Anggrek"
+        ],
+        "correct": 2
+    },
+    {
+        "id": "q4",
+        "q": "Apa fungsi batang pohon?",
+        "a": [
+            "Memasak makanan",
+            "Menyerap air tanah",
+            "Menopang daun & dahan",
+            "Menangkap serangga"
+        ],
+        "correct": 2
+    },
+    {
+        "id": "q5",
+        "q": "Siapakah maskot Talking Forest?",
+        "a": [
+            "Rimba",
+            "Budi",
+            "Siti",
+            "Anto"
+        ],
+        "correct": 0
+    }
+]

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<!--
+============================================
+📄 FILE: puzzle.html
+🧩 FUNGSI: Halaman Puzzle (Placeholder)
+============================================
+
+🔰 PANDUAN UNTUK TEMAN:
+
+Ini adalah halaman PLACEHOLDER untuk puzzle.
+Nanti akan diisi dengan:
+- Drag & Drop puzzle parts
+- Timer
+- Score system
+
+💡 YANG BISA KAMU EDIT DI FILE INI:
+1. Teks judul dan deskripsi
+2. Emoji
+3. Warna tombol
+
+⚠️ YANG JANGAN DIEDIT:
+- Bagian <script> di bawah (auto-save logic)
+
+============================================
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 🏷️ JUDUL TAB BROWSER -->
+    <title>Puzzle - Talking Forest</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- GSAP untuk Animasi Smooth (Buat Naju: Ini biar animasinya mulus kayak di film!) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        .font-bakso {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-gray-900 text-white flex flex-col items-center justify-center h-screen overflow-hidden relative selection:bg-yellow-500 selection:text-black">
+
+    <!-- BACKGROUND ANIMATION -->
+    <div class="absolute inset-0 z-0 pointer-events-none opacity-30">
+        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-green-900 via-black to-blue-900"></div>
+    </div>
+
+    <!-- UI LAYER -->
+    <div class="z-10 w-full max-w-[480px] flex flex-col items-center p-4">
+
+        <!-- ================================================ -->
+        <!-- ✅ ZONA EDIT 2: HEADER (Tombol Kembali & Timer)  -->
+        <!-- Boleh ganti: Emoji, teks "Kembali"               -->
+        <!-- ================================================ -->
+        <header class="flex justify-between items-center w-full mb-8">
+            <button onclick="window.location.href='index.html'"
+                class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg backdrop-blur-sm transition flex items-center gap-2">
+                <!-- ✅ EDIT: Ganti emoji & teks tombol kembali -->
+                <span>🔙</span> <span class="hidden sm:inline">Kembali</span>
+            </button>
+
+            <!-- ❌ JANGAN edit id="puzzle-title" (diisi otomatis) -->
+            <h1 id="puzzle-title" class="text-3xl font-bold font-bakso text-yellow-500 drop-shadow-md">
+                Loading...
+            </h1>
+
+            <div class="bg-white/10 px-4 py-2 rounded-lg font-mono text-yellow-300">
+                <!-- ✅ EDIT: Ganti label "Timer:" jika mau -->
+                Timer: <span id="timer">00:00</span>
+            </div>
+        </header>
+
+        <!-- ❌ JANGAN edit id="puzzle-container" (diisi oleh puzzle.js) -->
+        <div id="puzzle-container" class="w-full flex items-center justify-center min-h-[500px]">
+            <div class="animate-pulse text-white/50">Memuat puzzle...</div>
+        </div>
+
+        <!-- ================================================ -->
+        <!-- ✅ ZONA EDIT 3: HINT / PESAN BANTUAN             -->
+        <!-- Boleh ganti: Teks petunjuk                       -->
+        <!-- ================================================ -->
+        <div id="message-box"
+            class="mt-8 p-4 bg-black/50 backdrop-blur-md rounded-xl border border-white/10 max-w-lg text-center hidden">
+            <!-- ✅ EDIT: Ganti teks petunjuk di bawah ini -->
+            <p id="message-text" class="text-gray-300">Drag bagian tubuh ke kotak yang sesuai!</p>
+        </div>
+
+    </div>
+
+    <!-- ================================================ -->
+    <!-- ✅ ZONA EDIT 1: MODAL SUKSES (Popup Menang)       -->
+    <!-- Boleh ganti: Emoji, judul, pesan, teks tombol     -->
+    <!-- ================================================ -->
+    <div id="success-modal"
+        class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center opacity-0 pointer-events-none transition duration-500">
+        <div class="bg-gray-800 p-8 rounded-2xl max-w-md text-center border-4 border-yellow-500 shadow-2xl transform scale-90 transition duration-300"
+            id="success-content">
+            <!-- ✅ EDIT: Ganti emoji di bawah ini -->
+            <div class="text-6xl mb-4 animate-bounce">✨</div>
+            <!-- ✅ EDIT: Ganti judul sukses -->
+            <h2 class="text-3xl font-bold text-yellow-400 mb-2">Puzzle Selesai!</h2>
+            <!-- ✅ EDIT: Ganti pesan sukses -->
+            <p class="text-gray-300 mb-6">Hebat! Kamu berhasil menyusun kembali ingatan alam ini.</p>
+            <div id="reward-info" class="mb-6 p-4 bg-white/5 rounded-lg">
+                <!-- ✅ EDIT: Ganti jumlah XP -->
+                <p class="text-yellow-300 font-bold">+50 XP</p>
+                <!-- ✅ EDIT: Ganti keterangan reward -->
+                <p class="text-sm text-gray-400">Bagian Tubuh Terkumpul</p>
+            </div>
+            <!-- ❌ JANGAN edit id="btn-continue" -->
+            <button id="btn-continue"
+                class="bg-green-600 hover:bg-green-500 text-white font-bold px-8 py-3 rounded-xl shadow-lg hover:scale-105 transition w-full">
+                <!-- ✅ EDIT: Ganti teks tombol -->
+                LANJUTKAN PETUALANGAN ➜
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { PuzzleDragDrop } from './js/v3/mechanics/puzzle.js';
+
+        // --- GAME LOGIC ---
+
+        async function loadSpeciesData(id) {
+            try {
+                const response = await fetch('assets/data/species.json');
+                const speciesList = await response.json();
+                return speciesList.find(s => s.id === id);
+            } catch (error) {
+                console.error("Failed to load species:", error);
+                return null;
+            }
+        }
+
+        async function initGame() {
+            // 1. Get Params
+            const urlParams = new URLSearchParams(window.location.search);
+            const speciesId = urlParams.get('id') || 'mangga_kakek'; // Default for testing
+            const mode = urlParams.get('mode') || 'puzzle';
+
+            // 2. Load Data
+            const species = await loadSpeciesData(speciesId);
+
+            if (!species) {
+                alert("Species data not found!");
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // 3. Update UI
+            document.getElementById('puzzle-title').innerText = species.name; // Use generic title or generic mechanic name? Stick to species name for immersion.
+
+            // 4. Init Puzzle based on Type
+            if (species.mechanic === 'drag_drop' || !species.mechanic) { // Default fallback
+                new PuzzleDragDrop('puzzle-container', species, handlePuzzleComplete);
+            } else if (species.mechanic === 'rhythm') {
+                document.getElementById('puzzle-container').innerText = "Rhythm Mode coming soon!";
+            } else if (species.mechanic === 'summon') {
+                document.getElementById('puzzle-container').innerText = "Summon Mode coming soon!";
+            }
+
+            // 5. Timer Start
+            startTimer();
+        }
+
+        let seconds = 0;
+        let timerInterval;
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                seconds++;
+                const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+                const secs = (seconds % 60).toString().padStart(2, '0');
+                document.getElementById('timer').innerText = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        function handlePuzzleComplete() {
+            stopTimer();
+            // Show Success Modal
+            const modal = document.getElementById('success-modal');
+            const content = document.getElementById('success-content');
+
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            content.classList.remove('scale-90');
+            content.classList.add('scale-100');
+
+            // Save Progress (Simple LocalStorage MVP)
+            saveProgress();
+
+            document.getElementById('btn-continue').onclick = () => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const speciesId = urlParams.get('id') || 'mangga_kakek';
+                // Redirect back to story or index?
+                // Flow: Scan -> Puzzle -> Story Dialogue (Success) -> Index
+                // For now, go back to story.html logic or index
+                // Let's go to index for MVP
+                window.location.href = 'index.html';
+            };
+        }
+
+        function saveProgress() {
+            // Logic similar to previous auto-save but cleaner
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const speciesId = urlParams.get('id') || 'mangga_kakek';
+
+                let player = JSON.parse(localStorage.getItem('tf_player_v3')) || { xp: 0, inventory: [] };
+
+                if (!player.inventory) player.inventory = [];
+
+                if (!player.inventory.includes(speciesId)) {
+                    player.inventory.push(speciesId);
+                    player.xp += 50;
+                    localStorage.setItem('tf_player_v3', JSON.stringify(player));
+                }
+            } catch (e) {
+                console.error("Save error:", e);
+            }
+        }
+
+        initGame();
+
+    </script>
+</body>
+
+</html>

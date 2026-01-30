@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrasi Staff - Talking Forest</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .reg-box {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            width: 400px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        .msg {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="reg-box">
+        <h2>📝 Daftarkan Staff Baru</h2>
+        <input type="email" id="reg-email" placeholder="Email Staff (cth: loket1@talkingforest.com)">
+        <input type="password" id="reg-pass" placeholder="Password (Min. 6 karakter)">
+        <select id="reg-role">
+            <option value="staff">Staff Loket</option>
+            <option value="admin">Admin</option>
+        </select>
+        <button id="btn-reg">BUAT AKUN</button>
+        <p id="reg-msg" class="msg"></p>
+        <p style="text-align:center; margin-top:20px; font-size:0.8rem; color:#888;">
+            *Note: Setelah buat akun, Anda akan otomatis login sebagai akun baru tsb.
+        </p>
+    </div>
+
+    <script>
+        window.addEventListener('error', function (e) {
+            alert("System Error: " + e.message);
+        });
+    </script>
+    <script type="module">
+        // Added ?v=2 to force reload of the config file (bypass cache)
+        import { auth, db, createUserWithEmailAndPassword, doc, setDoc } from "./js/firebase-config.js?v=2";
+
+        document.getElementById("btn-reg").addEventListener("click", async () => {
+            const email = document.getElementById("reg-email").value;
+            const pass = document.getElementById("reg-pass").value;
+            const role = document.getElementById("reg-role").value;
+            const msg = document.getElementById("reg-msg");
+            const btn = document.getElementById("btn-reg");
+
+            console.log("Button clicked");
+
+            if (!email || !pass) return alert("Email & Password wajib diisi!");
+            if (pass.length < 6) return alert("Password minimal 6 karakter!");
+
+            btn.disabled = true;
+            btn.textContent = "Memproses...";
+            msg.textContent = "";
+
+            try {
+                // 1. Create Auth User
+                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                const user = userCredential.user;
+
+                // 2. Save Role to Firestore
+                await setDoc(doc(db, "users", user.uid), {
+                    email: email,
+                    role: role,
+                    createdAt: new Date()
+                });
+
+                msg.style.color = "green";
+                msg.textContent = `✅ Sukses! Akun ${email} berhasil dibuat sebagai ${role.toUpperCase()}.`;
+
+                // Optional: Redirect or Clear
+                setTimeout(() => {
+                    if (role === 'staff') window.location.href = "loket.html";
+                    else window.location.href = "admin.html";
+                }, 2000);
+
+            } catch (e) {
+                console.error(e);
+                msg.style.color = "red";
+                msg.textContent = "Gagal: " + e.message;
+                btn.disabled = false;
+                btn.textContent = "BUAT AKUN";
+            }
+        });
+    </script>
+</body>
+
+</html>

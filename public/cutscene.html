@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<!--
+============================================
+📄 FILE: cutscene.html
+🎬 FUNGSI: Animasi Pertumbuhan Pohon (Cinematic)
+============================================
+
+🔰 PANDUAN UNTUK NAJU:
+
+Ini adalah halaman "FILM" animasi pohon tumbuh.
+Di sini ada:
+- Animasi pohon dari benih → pohon besar
+- Teks narasi yang muncul bertahap
+- Tombol Skip dan Lanjutkan
+
+💡 YANG BOLEH KAMU EDIT:
+1. NARASI: Cari "narratives" di bagian <script> (baris ~491)
+2. JUDUL CHAPTER: Cari "chapter-title" (baris ~467)
+3. TEKS TOMBOL: Cari "LANJUTKAN" dan "Lewati"
+
+⚠️ YANG JANGAN DIEDIT:
+- Animasi GSAP (gsap.to, gsap.timeline)
+- SVG gambar pohon (grafik vektor)
+- Logika timeline
+
+📂 FILE TERKAIT:
+- Tidak ada file eksternal, semua inline
+
+============================================
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- ✅ EDIT: Ganti judul tab browser -->
+    <title>Cutscene - Kebangkitan Pohon</title>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lora:ital,wght@0,400;1,400&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            min-height: 100vh;
+            overflow: hidden;
+            font-family: 'Lora', serif;
+        }
+
+        .cutscene-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        /* === ANIMATED BACKGROUND === */
+        .bg-gradient {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg,
+                    #0a0a1a 0%,
+                    #1a2a3a 30%,
+                    #2d4a3d 60%,
+                    #1a3a2a 100%);
+            z-index: 1;
+        }
+
+        /* Stars */
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* === GROUND === */
+        .ground-container {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 200px;
+            z-index: 10;
+        }
+
+        .ground-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* === TREE SVG === */
+        .tree-stage {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            opacity: 0;
+        }
+
+        /* === GLOW & EFFECTS === */
+        .magic-glow {
+            position: absolute;
+            bottom: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle,
+                    rgba(144, 238, 144, 0.3) 0%,
+                    rgba(34, 139, 34, 0.1) 50%,
+                    transparent 70%);
+            border-radius: 50%;
+            z-index: 15;
+            opacity: 0;
+            filter: blur(30px);
+        }
+
+        /* Fireflies */
+        .fireflies {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 25;
+            pointer-events: none;
+        }
+
+        .firefly {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, #ffffaa 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0;
+            filter: blur(1px);
+        }
+
+        /* === NARRATIVE === */
+        .narrative-box {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 700px;
+            background: linear-gradient(180deg,
+                    rgba(0, 0, 0, 0.8) 0%,
+                    rgba(0, 0, 0, 0.9) 100%);
+            border: 1px solid rgba(144, 238, 144, 0.3);
+            border-radius: 15px;
+            padding: 25px 30px;
+            z-index: 100;
+            opacity: 0;
+        }
+
+        .narrative-text {
+            font-family: 'Lora', serif;
+            font-size: 1.3rem;
+            color: #e0e0e0;
+            line-height: 1.8;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .narrative-text em {
+            color: #90EE90;
+            font-style: italic;
+        }
+
+        /* === CHAPTER TITLE === */
+        .chapter-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .chapter-badge {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        .chapter-title {
+            font-family: 'Cinzel', serif;
+            font-size: 3.5rem;
+            color: #90EE90;
+            text-shadow: 0 0 30px rgba(144, 238, 144, 0.5);
+            margin-bottom: 15px;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .chapter-subtitle {
+            font-family: 'Lora', serif;
+            font-size: 1.5rem;
+            color: #a0a0a0;
+            font-style: italic;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        /* === BUTTONS === */
+        .skip-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            z-index: 300;
+            transition: all 0.3s ease;
+        }
+
+        .skip-btn:hover {
+            color: white;
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .continue-btn {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 18px 50px;
+            background: linear-gradient(135deg, #228B22 0%, #32CD32 50%, #228B22 100%);
+            background-size: 200% 200%;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            z-index: 250;
+            opacity: 0;
+            box-shadow: 0 5px 30px rgba(34, 139, 34, 0.5);
+            transition: all 0.3s ease;
+            animation: shimmer 2s infinite linear;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 200% 50%;
+            }
+        }
+
+        .continue-btn:hover {
+            transform: translateX(-50%) scale(1.05);
+            box-shadow: 0 8px 40px rgba(34, 139, 34, 0.7);
+        }
+
+        /* === PROGRESS === */
+        .progress-dots {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.active {
+            background: #90EE90;
+            box-shadow: 0 0 10px rgba(144, 238, 144, 0.5);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cutscene-container">
+        <!-- Background -->
+        <div class="bg-gradient"></div>
+        <div class="stars" id="stars"></div>
+
+        <!-- Skip Button -->
+        <button class="skip-btn" onclick="skipCutscene()">Lewati ▶▶</button>
+
+        <!-- Magic Glow -->
+        <div class="magic-glow" id="magicGlow"></div>
+
+        <!-- Fireflies -->
+        <div class="fireflies" id="fireflies"></div>
+
+        <!-- Tree Stages -->
+        <!-- Stage 1: Seed -->
+        <div class="tree-stage" id="seedStage">
+            <svg width="60" height="40" viewBox="0 0 60 40">
+                <ellipse cx="30" cy="25" rx="20" ry="12" fill="url(#seedGradient)" />
+                <defs>
+                    <radialGradient id="seedGradient" cx="40%" cy="30%">
+                        <stop offset="0%" stop-color="#8B6914" />
+                        <stop offset="100%" stop-color="#5D4E37" />
+                    </radialGradient>
+                </defs>
+            </svg>
+        </div>
+
+        <!-- Stage 2: Sprout -->
+        <div class="tree-stage" id="sproutStage">
+            <svg width="100" height="120" viewBox="0 0 100 120">
+                <!-- Stem -->
+                <path id="sproutStem" d="M50 120 Q50 80 50 60" stroke="url(#stemGradient)" stroke-width="6" fill="none"
+                    stroke-linecap="round" />
+                <!-- Leaves -->
+                <path id="sproutLeafL" d="M50 60 Q30 45 25 55 Q35 70 50 60" fill="#4CAF50" opacity="0" />
+                <path id="sproutLeafR" d="M50 60 Q70 45 75 55 Q65 70 50 60" fill="#66BB6A" opacity="0" />
+                <path id="sproutLeafTop" d="M50 60 Q40 35 50 25 Q60 35 50 60" fill="#81C784" opacity="0" />
+                <defs>
+                    <linearGradient id="stemGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+                        <stop offset="0%" stop-color="#2E7D32" />
+                        <stop offset="100%" stop-color="#4CAF50" />
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
+
+        <!-- Stage 3: Young Tree -->
+        <div class="tree-stage" id="youngTreeStage">
+            <svg width="200" height="250" viewBox="0 0 200 250">
+                <!-- Trunk -->
+                <path id="youngTrunk" d="M100 250 Q100 180 100 150" stroke="url(#trunkGradient)" stroke-width="20"
+                    fill="none" stroke-linecap="round" />
+                <!-- Branches -->
+                <path id="youngBranchL" d="M100 180 Q70 160 50 170" stroke="#5D4037" stroke-width="8" fill="none"
+                    opacity="0" />
+                <path id="youngBranchR" d="M100 160 Q130 140 150 150" stroke="#5D4037" stroke-width="8" fill="none"
+                    opacity="0" />
+                <!-- Foliage -->
+                <ellipse id="youngFoliage" cx="100" cy="100" rx="70" ry="60" fill="url(#foliageGradient)" opacity="0" />
+                <defs>
+                    <linearGradient id="trunkGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+                        <stop offset="0%" stop-color="#3E2723" />
+                        <stop offset="100%" stop-color="#5D4037" />
+                    </linearGradient>
+                    <radialGradient id="foliageGradient" cx="50%" cy="30%">
+                        <stop offset="0%" stop-color="#81C784" />
+                        <stop offset="50%" stop-color="#4CAF50" />
+                        <stop offset="100%" stop-color="#2E7D32" />
+                    </radialGradient>
+                </defs>
+            </svg>
+        </div>
+
+        <!-- Stage 4: Majestic Tree -->
+        <div class="tree-stage" id="majesticTreeStage">
+            <svg width="400" height="450" viewBox="0 0 400 450">
+                <!-- Main Trunk -->
+                <path id="mainTrunk" d="M200 450 Q200 350 200 280" stroke="url(#mainTrunkGrad)" stroke-width="40"
+                    fill="none" stroke-linecap="round" />
+                <!-- Trunk Details -->
+                <path d="M185 400 Q175 380 180 360" stroke="#4E342E" stroke-width="3" fill="none" opacity="0.5" />
+                <path d="M215 380 Q220 360 210 340" stroke="#4E342E" stroke-width="3" fill="none" opacity="0.5" />
+
+                <!-- Major Branches -->
+                <path id="branchL1" d="M200 320 Q140 280 80 300" stroke="#5D4037" stroke-width="15" fill="none"
+                    opacity="0" />
+                <path id="branchR1" d="M200 300 Q260 260 320 280" stroke="#5D4037" stroke-width="15" fill="none"
+                    opacity="0" />
+                <path id="branchL2" d="M200 280 Q150 230 100 250" stroke="#5D4037" stroke-width="10" fill="none"
+                    opacity="0" />
+                <path id="branchR2" d="M200 260 Q250 210 300 230" stroke="#5D4037" stroke-width="10" fill="none"
+                    opacity="0" />
+
+                <!-- Main Canopy -->
+                <ellipse id="canopy1" cx="200" cy="180" rx="150" ry="120" fill="url(#canopyGrad1)" opacity="0" />
+                <ellipse id="canopy2" cx="120" cy="200" rx="80" ry="70" fill="url(#canopyGrad2)" opacity="0" />
+                <ellipse id="canopy3" cx="280" cy="190" rx="80" ry="70" fill="url(#canopyGrad2)" opacity="0" />
+                <ellipse id="canopy4" cx="200" cy="120" rx="100" ry="80" fill="url(#canopyGrad3)" opacity="0" />
+
+                <!-- Leaf Details -->
+                <circle id="leafDetail1" cx="150" cy="150" r="20" fill="#81C784" opacity="0" />
+                <circle id="leafDetail2" cx="250" cy="140" r="25" fill="#A5D6A7" opacity="0" />
+                <circle id="leafDetail3" cx="200" cy="90" r="15" fill="#C8E6C9" opacity="0" />
+
+                <defs>
+                    <linearGradient id="mainTrunkGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+                        <stop offset="0%" stop-color="#3E2723" />
+                        <stop offset="50%" stop-color="#5D4037" />
+                        <stop offset="100%" stop-color="#795548" />
+                    </linearGradient>
+                    <radialGradient id="canopyGrad1" cx="50%" cy="30%">
+                        <stop offset="0%" stop-color="#66BB6A" />
+                        <stop offset="60%" stop-color="#43A047" />
+                        <stop offset="100%" stop-color="#2E7D32" />
+                    </radialGradient>
+                    <radialGradient id="canopyGrad2" cx="50%" cy="30%">
+                        <stop offset="0%" stop-color="#81C784" />
+                        <stop offset="100%" stop-color="#4CAF50" />
+                    </radialGradient>
+                    <radialGradient id="canopyGrad3" cx="50%" cy="40%">
+                        <stop offset="0%" stop-color="#A5D6A7" />
+                        <stop offset="100%" stop-color="#66BB6A" />
+                    </radialGradient>
+                </defs>
+            </svg>
+        </div>
+
+        <!-- Ground -->
+        <div class="ground-container">
+            <svg class="ground-svg" viewBox="0 0 100 20" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="groundGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#2E7D32" />
+                        <stop offset="30%" stop-color="#1B5E20" />
+                        <stop offset="100%" stop-color="#0D3010" />
+                    </linearGradient>
+                </defs>
+                <!-- Grass Layer -->
+                <path
+                    d="M0 5 Q5 2 10 5 Q15 3 20 5 Q25 2 30 5 Q35 3 40 5 Q45 2 50 5 Q55 3 60 5 Q65 2 70 5 Q75 3 80 5 Q85 2 90 5 Q95 3 100 5 L100 20 L0 20 Z"
+                    fill="url(#groundGrad)" />
+            </svg>
+        </div>
+
+        <!-- Narrative Box -->
+        <div class="narrative-box" id="narrativeBox">
+            <p class="narrative-text" id="narrativeText"></p>
+        </div>
+
+        <!-- ================================================ -->
+        <!-- ✅ ZONA EDIT 1: CHAPTER COMPLETE OVERLAY          -->
+        <!-- Boleh ganti: Emoji, judul chapter, subtitle       -->
+        <!-- ================================================ -->
+        <div class="chapter-overlay" id="chapterOverlay">
+            <svg class="chapter-badge" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="#90EE90" stroke-width="3" />
+                <circle cx="50" cy="50" r="38" fill="rgba(144,238,144,0.1)" />
+                <!-- ✅ EDIT: Ganti emoji badge di bawah -->
+                <text x="50" y="60" text-anchor="middle" font-size="40" fill="#90EE90">🌳</text>
+            </svg>
+            <!-- ✅ EDIT: Ganti judul chapter -->
+            <h1 class="chapter-title">AKAR KOKOH</h1>
+            <!-- ✅ EDIT: Ganti subtitle -->
+            <p class="chapter-subtitle">Chapter 1 Selesai</p>
+        </div>
+
+        <!-- ================================================ -->
+        <!-- ✅ ZONA EDIT 2: TOMBOL LANJUTKAN                  -->
+        <!-- Boleh ganti: Teks tombol                          -->
+        <!-- ================================================ -->
+        <button class="continue-btn" id="continueBtn" onclick="continueToNext()">
+            <!-- ✅ EDIT: Ganti teks tombol -->
+            LANJUTKAN
+        </button>
+
+        <!-- Progress Dots -->
+        <div class="progress-dots" id="progressDots">
+            <div class="progress-dot" id="dot1"></div>
+            <div class="progress-dot" id="dot2"></div>
+            <div class="progress-dot" id="dot3"></div>
+            <div class="progress-dot" id="dot4"></div>
+            <div class="progress-dot" id="dot5"></div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // PREMIUM CUTSCENE CONTROLLER
+        // ========================================
+
+        const narratives = [
+            "Dari <em>sebutir benih</em> yang tertanam dalam keheningan tanah...",
+            "Tumbuh <em>kecambah mungil</em> yang berani menembus kegelapan...",
+            "Menjadi <em>pohon muda</em> yang belajar menghadapi badai...",
+            "Hingga berdiri <em>megah dan kokoh</em> sebagai penjaga hutan...",
+            "Kamu telah memahami <em>rahasia kehidupan</em> yang tersimpan dalam setiap pohon."
+        ];
+
+        let mainTimeline;
+
+        // Create stars
+        function createStars() {
+            const container = document.getElementById('stars');
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                container.appendChild(star);
+            }
+        }
+
+        // Create fireflies
+        function createFireflies() {
+            const container = document.getElementById('fireflies');
+            for (let i = 0; i < 15; i++) {
+                const firefly = document.createElement('div');
+                firefly.className = 'firefly';
+                firefly.id = `firefly${i}`;
+                firefly.style.left = (20 + Math.random() * 60) + '%';
+                firefly.style.bottom = (20 + Math.random() * 40) + '%';
+                container.appendChild(firefly);
+            }
+        }
+
+        // Show narrative
+        function showNarrative(index) {
+            const box = document.getElementById('narrativeBox');
+            const text = document.getElementById('narrativeText');
+
+            // Update progress dots
+            document.querySelectorAll('.progress-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i <= index);
+            });
+
+            gsap.to(box, {
+                opacity: 0,
+                y: 10,
+                duration: 0.3,
+                onComplete: () => {
+                    text.innerHTML = narratives[index];
+                    gsap.to(box, { opacity: 1, y: 0, duration: 0.5 });
+                }
+            });
+        }
+
+        // Create main timeline
+        function createMainTimeline() {
+            const tl = gsap.timeline();
+
+            // === INTRO ===
+            tl.to('#narrativeBox', { opacity: 1, duration: 0.5, delay: 0.5 })
+
+                // === STAGE 1: SEED ===
+                .call(() => showNarrative(0))
+                .to('#seedStage', { opacity: 1, duration: 0.5 })
+                .to('#seedStage', {
+                    y: -5,
+                    duration: 0.4,
+                    repeat: 3,
+                    yoyo: true,
+                    ease: 'power1.inOut'
+                })
+                .to('#seedStage', {
+                    opacity: 0,
+                    scale: 0.5,
+                    duration: 0.5,
+                    ease: 'power2.in'
+                })
+
+                // === STAGE 2: SPROUT ===
+                .call(() => showNarrative(1))
+                .to('#sproutStage', { opacity: 1, duration: 0.3 })
+                .to('#sproutStem', {
+                    attr: { d: 'M50 120 Q50 80 50 30' },
+                    duration: 1.5,
+                    ease: 'power2.out'
+                })
+                .to('#sproutLeafL', { opacity: 1, duration: 0.4, ease: 'back.out(1.7)' }, '-=0.5')
+                .to('#sproutLeafR', { opacity: 1, duration: 0.4, ease: 'back.out(1.7)' }, '-=0.3')
+                .to('#sproutLeafTop', { opacity: 1, duration: 0.4, ease: 'back.out(1.7)' }, '-=0.2')
+                .to('#magicGlow', { opacity: 0.3, duration: 0.5 })
+                .to('#sproutStage', { opacity: 0, y: -30, duration: 0.5 }, '+=0.5')
+
+                // === STAGE 3: YOUNG TREE ===
+                .call(() => showNarrative(2))
+                .to('#youngTreeStage', { opacity: 1, duration: 0.3 })
+                .to('#youngTrunk', {
+                    attr: { d: 'M100 250 Q100 180 100 100' },
+                    duration: 1,
+                    ease: 'power2.out'
+                })
+                .to('#youngBranchL', { opacity: 1, duration: 0.4 }, '-=0.3')
+                .to('#youngBranchR', { opacity: 1, duration: 0.4 }, '-=0.2')
+                .to('#youngFoliage', {
+                    opacity: 1,
+                    duration: 0.6,
+                    ease: 'back.out(1.5)'
+                })
+                .to('#magicGlow', { opacity: 0.5, scale: 1.2, duration: 0.5 })
+                .to('#youngTreeStage', { opacity: 0, y: -50, duration: 0.5 }, '+=0.5')
+
+                // === STAGE 4: MAJESTIC TREE ===
+                .call(() => showNarrative(3))
+                .to('#majesticTreeStage', { opacity: 1, duration: 0.3 })
+                .to('#mainTrunk', {
+                    attr: { d: 'M200 450 Q200 300 200 200' },
+                    duration: 1.2,
+                    ease: 'power2.out'
+                })
+                .to(['#branchL1', '#branchR1'], { opacity: 1, duration: 0.4 }, '-=0.5')
+                .to(['#branchL2', '#branchR2'], { opacity: 1, duration: 0.4 }, '-=0.2')
+                .to('#canopy1', { opacity: 1, duration: 0.5, ease: 'back.out(1.3)' })
+                .to(['#canopy2', '#canopy3'], { opacity: 1, duration: 0.4, stagger: 0.1 }, '-=0.3')
+                .to('#canopy4', { opacity: 1, duration: 0.4 }, '-=0.2')
+                .to(['#leafDetail1', '#leafDetail2', '#leafDetail3'], {
+                    opacity: 0.7,
+                    duration: 0.3,
+                    stagger: 0.1
+                })
+
+                // === GLOW & FIREFLIES ===
+                .to('#magicGlow', {
+                    opacity: 0.8,
+                    scale: 1.5,
+                    duration: 1,
+                    ease: 'power2.out'
+                })
+                .to('.firefly', {
+                    opacity: 1,
+                    duration: 0.5,
+                    stagger: 0.1
+                }, '-=0.5')
+
+            // Animate fireflies floating
+            for (let i = 0; i < 15; i++) {
+                gsap.to(`#firefly${i}`, {
+                    x: `random(-50, 50)`,
+                    y: `random(-30, 30)`,
+                    duration: `random(2, 4)`,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: 'sine.inOut',
+                    delay: i * 0.1
+                });
+            }
+
+            // === FINALE ===
+            tl.call(() => showNarrative(4))
+                .to('#narrativeBox', { opacity: 0, duration: 0.5 }, '+=1.5')
+                .to('#chapterOverlay', { opacity: 1, duration: 1 })
+                .to('.chapter-badge', {
+                    opacity: 1,
+                    scale: 1,
+                    duration: 0.6,
+                    ease: 'back.out(1.7)'
+                })
+                .to('.chapter-title', {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.5
+                }, '-=0.3')
+                .to('.chapter-subtitle', {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.5
+                }, '-=0.2')
+                .to('#continueBtn', {
+                    opacity: 1,
+                    duration: 0.5
+                });
+
+            return tl;
+        }
+
+        // Skip cutscene
+        function skipCutscene() {
+            if (mainTimeline) {
+                mainTimeline.progress(1);
+            }
+        }
+
+        // Continue to next
+        function continueToNext() {
+            gsap.to('.cutscene-container', {
+                opacity: 0,
+                duration: 0.5,
+                onComplete: () => {
+                    // Save progress
+                    const progress = JSON.parse(localStorage.getItem('tf_progress') || '{}');
+                    progress.chapter1_complete = true;
+                    progress.badges = progress.badges || [];
+                    if (!progress.badges.includes('penjaga_pohon')) {
+                        progress.badges.push('penjaga_pohon');
+                    }
+                    localStorage.setItem('tf_progress', JSON.stringify(progress));
+
+                    window.location.href = 'garden.html';
+                }
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            createStars();
+            createFireflies();
+            mainTimeline = createMainTimeline();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,121 @@
+# 🚀 FASE 2: SCAN & DISCOVERY
+> **Target:** Player bisa scan QR (atau input kode manual), melihat siluet pohon misterius, dan sistem mengecek database.
+
+## 📋 PREPARATION CHECKLIST
+Status: **Planning**
+
+---
+
+### 🎓 KONSEP & LOGIKA DASAR (BACA DULU)
+
+**Tujuan Fase Ini:**
+Membuat HP user bisa "mengobrol" dengan pohon hanya lewat link QR Code.
+
+**Rahasia Dapur (The Secret Sauce):**
+Kita tidak menggunakan teknologi scan kamera yang berat (seperti TensorFlow/AI). Kita menggunakan trik **Smart URL**.
+1.  **QR Code** di pohon hanyalah sebuah Link: `talkingforest.com/scan.html?code=MNG01`
+2.  **Browser** membaca kode di ujung link (`?code=MNG01`).
+3.  **Sistem** langsung tahu: "Oh, user sedang berdiri di depan Mangga!"
+
+Ini teknik yang dipakai developer pro: **Keep It Simple & Fast.**
+
+---
+
+### 1. 🔍 UI SCAN PAGE (SCAN.HTML)
+**📚 Apa yang kita pelajari disini?**
+*   **Mobile First Design**: Kita desain layout khusus untuk layar HP memanjang.
+*   **User Feedback**: Tombol harus berubah warna saat ditekan supaya user tahu sistem merespons.
+
+**Checklist Pengerjaan:**
+*   [x] **Layout**: Header dengan judul "Pindai Pohon".
+*   [x] **Tombol Scan QR**: UI Button besar di tengah (Trigger kamera nanti).
+*   [x] **Form Input Manual**: 
+    *   *Kenapa butuh ini?* Jaga-jaga kalau kamera user rusak atau gelap.
+    *   Validasi: Hanya boleh 6 huruf/angka.
+*   [x] **Area Siluet**: Tempat gambar misterius muncul.
+
+---
+
+### 2. 🧠 LOGIKA DETEKTIF (SCAN-LOGIC.JS)
+**📚 Apa yang kita pelajari disini?**
+*   **URLSearchParams**: Fitur bawaan browser untuk "mengintip" alamat web.
+*   **Asynchronous Fetch**: Cara mengambil data JSON tanpa reload halaman.
+
+**Alur Logika (Step-by-Step):**
+*   [x] **Langkah 1: Baca URL**
+    *   Gunakan `new URLSearchParams(window.location.search)`.
+    *   Ambil nilai `code`.
+*   [x] **Langkah 2: Buka Kamus (Fetch Data)**
+    *   Panggil file `species.json`.
+    *   Cari apakah ada spesies dengan ID tersebut?
+*   [x] **Langkah 3: Cek Tas User (Inventory)**
+    *   Panggil fungsi `player-api.js`.
+    *   *Pertanyaan:* "Apakah user ini sudah punya stiker Mangga?"
+*   [x] **Langkah 4: Tentukan Nasib (Redirect)**
+    *   **JIKA SUDAH PUNYA:** Lempar ke halaman **Detail Kebun** (Halaman pamer koleksi).
+    *   **JIKA BELUM:** Tampilkan **Siluet Misterius** & Tombol "Mulai Puzzle".
+
+---
+
+### 3. 📦 DATABASE & ASSETS
+**📚 Apa yang kita pelajari disini?**
+*   **Static Data vs Dynamic Data**: 
+    *   Data Pohon (Nama, Foto) itu **Static** (jarang berubah), jadi simpan di JSON saja biar cepat.
+    *   Data User (Level, XP) itu **Dynamic**, simpan di Database/LocalStorage.
+
+**Checklist:**
+*   [x] **Species Data**: Pastikan "Mangga Kakek", "Ulin Raksasa", dan "Enggang Gading" siap di `species.json`.
+*   [x] **Images**: Placeholder siluet di `assets/images/species/` (Max 200KB/file, format WebP).
+
+---
+
+### 4. 🎨 PREMIUM DESIGN (MCP PENCIL)
+**Target:** Menambah kualitas visual menggunakan teknologi MCP.
+*   [ ] **Mockup Design**: Menggunakan `pencil` untuk desain UI Scan yang "WOW".
+*   [ ] **Review Design**: Persetujuan user sebelum di-coding ke HTML.
+
+---
+
+### 📂 DAFTAR ASET (WAJIB ADA)
+
+#### 📸 1. Gambar (Format: WebP / PNG)
+*Simpan di: `public/assets/images/species/`*
+
+| Nama Aset                             | Keterangan                                  | Format Ideal | Dimensi (PX)         |
+| :------------------------------------ | :------------------------------------------ | :----------- | :------------------- |
+| `sil_tree_mangga.webp` (atau `.png`)  | Bayangan hitam / Siluet **(Bg Transparan)** | WebP / PNG   | **512x512** (Square) |
+| `sil_tree_ulin.webp` (atau `.png`)    | Bayangan hitam / Siluet **(Bg Transparan)** | WebP / PNG   | **512x512** (Square) |
+| `sil_bird_enggang.webp` (atau `.png`) | Bayangan hitam / Siluet **(Bg Transparan)** | WebP / PNG   | **512x512** (Square) |
+
+#### 🔊 2. Audio (Format: MP3)
+*Simpan di: `public/assets/audio/sfx/`*
+
+| Nama File   | Keterangan                                       | Durasi Ideal |
+| :---------- | :----------------------------------------------- | :----------- |
+| `pop.mp3`   | Bunyi "Pop" atau "Klik" ringan saat tekan tombol | < 0.5 detik  |
+| `chime.mp3` | Bunyi "Ting!" magis saat kode berhasil ditemukan | 2-3 detik    |
+| `error.mp3` | Bunyi "Buzz" atau "Tetot" saat kode salah        | < 1 detik    |
+
+---
+
+### 5. 🛡️ TECHNICAL CONSTRAINTS (NON-NEGOTIABLE)
+**Wajib dipatuhi sesuai BAB III & V Implementation Plan:**
+*   [x] **Tech Stack**: Wajib pakai **Alpine.js** (State) & **Tailwind CDN** (Styling). Dilarang Vanilla JS selagi bisa pakai Alpine.
+*   [x] **Naming Convention**: `camelCase` untuk JS variable/function. `kebab-case` untuk CSS class.
+*   [x] **Performance**: Gambar siluet WAJIB < 200KB (!important) & Format `WebP`.
+*   [x] **Documentation**: Setiap fungsi di `scan-logic.js` wajib ada komentar JSDoc.
+*   [x] **Modular**: Logic scan tidak boleh dicampur di `game-state.js`, wajib file terpisah.
+
+---
+
+### 6. 🔊 AUDIO FEEDBACK (UX POLISH)
+**Target:** Memberikan respon suara saat scan berhasil/gagal.
+*   [x] **Sound Effect**: Siapkan file `pop.mp3` (tombol) dan `chime.mp3` (sukses).
+*   [x] **Logic**: Mainkan suara saat:
+    *   Scan Berhasil -> `chime.mp3`
+    *   Kode Salah -> `error.mp3`
+    *   Klik Tombol -> `pop.mp3`
+
+---
+
+## 🏃 EXECUTED TASKS (DO NOT EDIT BELOW)

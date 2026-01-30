@@ -1,0 +1,105 @@
+{
+    "scene_1_intro": [
+        {
+            "id": 1,
+            "text": "Hmmm? Siapa disana?!",
+            "mood": "shock"
+        },
+        {
+            "id": 2,
+            "text": "Aku mencium aroma manusia asing di hutanku...",
+            "mood": "neutral"
+        },
+        {
+            "id": 3,
+            "text": "Tunggu dulu... Kamu sepertinya bukan penebang liar.",
+            "mood": "neutral"
+        },
+        {
+            "id": 4,
+            "text": "Wajahmu terlihat bingung. Apa kamu tersesat?",
+            "mood": "happy"
+        },
+        {
+            "id": 5,
+            "text": "Perkenalkan, namaku RIMBA! Aku adalah penjaga hutan Borneo ini.",
+            "mood": "happy"
+        },
+        {
+            "id": 6,
+            "text": "Siapa namamu, Petualang Muda?",
+            "mood": "happy"
+        }
+    ],
+    "scene_1_2_mission": [
+        {
+            "id": 1,
+            "text": "Nama yang bagus! Senang bertemu denganmu.",
+            "mood": "happy"
+        },
+        {
+            "id": 2,
+            "text": "Tapi maaf... Aku tidak bisa menyambutmu dengan meriah.",
+            "mood": "sad"
+        },
+        {
+            "id": 3,
+            "text": "Hutan ini sedang sakit. Pohon-pohon kehilangan suaranya karena sihir jahat.",
+            "mood": "sad"
+        },
+        {
+            "id": 4,
+            "text": "Aku butuh bantuanmu untuk memulihkan mereka.",
+            "mood": "neutral"
+        },
+        {
+            "id": 5,
+            "text": "Maukah kamu membantuku mengumpulkan 'Pecahan Suara'?",
+            "mood": "happy"
+        },
+        {
+            "id": 6,
+            "text": "Ayo, ikuti aku! Kita mulai dengan pohon di depan sana.",
+            "mood": "happy"
+        }
+    ],
+    "scene_2_hook": [
+        {
+            "id": 1,
+            "text": "Sesuai petunjuk di peta, harusnya target kita ada di sekitar sini...",
+            "mood": "neutral"
+        },
+        {
+            "id": 2,
+            "text": "Tunggu! Hutannya berubah... Jalan setapaknya hilang tertutup ilusi!",
+            "mood": "shock"
+        },
+        {
+            "id": 3,
+            "text": "Jangan khawatir! Aku tahu jalan pintas untuk menembusnya.",
+            "mood": "happy"
+        },
+        {
+            "id": 4,
+            "text": "Kita harus berlari cepat sebelum jalannya tertutup selamanya. Siap?",
+            "mood": "happy"
+        }
+    ],
+    "scene_2_diagnosis": [
+        {
+            "id": 1,
+            "text": "{player_name}, jantungku sakit melihatnya. Ini adalah {species}...",
+            "mood": "sad"
+        },
+        {
+            "id": 2,
+            "text": "Dulu dia sangat megah, sekarang dia hanyalah bayangan yang tersesat...",
+            "mood": "sad"
+        },
+        {
+            "id": 3,
+            "text": "Hanya ingatanmu yang bisa mengembalikannya. Mari kita susun kembali kepingan waktunya!",
+            "mood": "happy"
+        }
+    ]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "talking-forest-v2---uji-coba",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@monogatari/core": "^2.6.0"
+  }
+}

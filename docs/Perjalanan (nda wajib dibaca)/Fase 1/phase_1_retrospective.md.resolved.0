@@ -1,0 +1,61 @@
+# 📜 RANGKUMAN PERJALANAN FASE 1
+**Topik:** Membuat Hutan Menjadi "Hidup" (Onboarding)
+**Status:** ✅ SELESAI (100%)
+
+---
+
+## 🌟 Apa yang Kita Bangun?
+Bayangkan kita sedang membangun "Pintu Gerbang" masuk ke Talking Forest. Di Fase 1 ini, kita fokus membuat pengalaman pertama user terasa magis, bukan sekadar isi formulir biasa.
+
+**Fitur yang Berhasil Dibuat:**
+1.  **Si Penjaga Rimba (Rimba)**:
+    *   Beruang lucu yang menyapa user.
+    *   Dia bisa berekspresi (Senang, Kaget, Sedih) sesuai cerita.
+    *   Bicaranya tidak langsung muncul *blek*, tapi diketik satu-satu (Typewriter Effect) biar terasa seperti ngobrol beneran.
+2.  **Mesin Pembuat Avatar**:
+    *   User bisa pilih jadi Laki-laki/Perempuan.
+    *   Bisa pilih usia: Bibit (Kecil), Tunas (Remaja), atau Pohon (Dewasa).
+    *   Tampilannya berubah-ubah secara langsung (Live Preview).
+3.  **Otak yang Cerdas (Modular System)**:
+    *   Kita membagi "otak" game menjadi 3 bagian terpisah (tidak menumpuk):
+        *   [player-api.js](file:///c:/Users/Pongo/OneDrive%20-%20umkt.ac.id/Dokumen/Project/talking-forest-v2%20-%20Uji%20Coba/public/js/v3/player-api.js): Khusus mengurus data player & simpan ke cloud.
+        *   [dialog-engine.js](file:///c:/Users/Pongo/OneDrive%20-%20umkt.ac.id/Dokumen/Project/talking-forest-v2%20-%20Uji%20Coba/public/js/v3/dialog-engine.js): Khusus mengurus animasi teks & Rimba.
+        *   [game-state.js](file:///c:/Users/Pongo/OneDrive%20-%20umkt.ac.id/Dokumen/Project/talking-forest-v2%20-%20Uji%20Coba/public/js/v3/game-state.js): Komandan yang menyuruh-nyuruh dua bagian di atas.
+
+---
+
+## 🐛 Drama & Error (Yang Kita Pelajari)
+Tidak ada pembangunan yang mulus. Berikut adalah "lubang" yang sempat kita injak dan sudah kita tambal:
+
+### 1. Misteri Wajah Datar Rimba 😐
+*   **Masalah:** Apapun yang dibilang Rimba (marah/sedih), wajahnya tetap *Neutral* (datar).
+*   **Penyebab:** Si "Komandan" ([game-state.js](file:///c:/Users/Pongo/OneDrive%20-%20umkt.ac.id/Dokumen/Project/talking-forest-v2%20-%20Uji%20Coba/public/js/v3/game-state.js)) lupa memberitahu layar kalau dialognya sudah ganti. Dia sibuk mengetik teks, tapi lupa update ekspresi.
+*   **Solusi:** Kita tambahkan perintah *"Hei, setiap ganti kalimat, ganti juga ekspresinya!"* (`this.currentDialog = d`).
+
+### 2. File Baju yang Tertinggal 👕
+*   **Masalah:** Tampilan form-nya berantakan, warnanya tidak sesuai rencana.
+*   **Penyebab:** Di Rencana Awal (Plan), kita janji buat file baju khusus ([game.css](file:///c:/Users/Pongo/OneDrive%20-%20umkt.ac.id/Dokumen/Project/talking-forest-v2%20-%20Uji%20Coba/public/css/game.css)), tapi di lapangan kita malah jahit bajunya langsung di badan (`inline style`).
+*   **Solusi:** Kita tertibkan. Kita buat file [game.css](file:///c:/Users/Pongo/OneDrive%20-%20umkt.ac.id/Dokumen/Project/talking-forest-v2%20-%20Uji%20Coba/public/css/game.css) terpisah agar rapi dan sesuai standar.
+
+### 3. Masalah "Mie Ruwet" (Spaghetti Code) 🍝
+*   **Masalah:** Awalnya semua kode (data, animasi, logika) dicampur aduk di satu file. Pusing bacanya!
+*   **Solusi:** Kita lakukan "REFRACTOR" (Bongkar Ulang). Kita pecah jadi 3 file terpisah. Hasilnya: Kode bersih, mudah dibaca, dan kalau ada error gampang ketemunya.
+
+---
+
+## 🎓 Pelajaran untuk Fase Berikutnya
+Dari Fase 1 ini, ada bekal penting buat kita bawa ke Fase 2 (Scan Pohon):
+
+1.  **Rencana itu Penting**: Kalau di Plan bilang "Buat File A", ya harus buat "File A". Jangan jalan pintas, nanti bingung sendiri saat pengecekan.
+2.  **Jangan Numpuk Kode**: Lebih baik bikin banyak file kecil yang tugasnya jelas, daripada satu file raksasa yang serba bisa.
+3.  **Detail itu Kunci**: Hal kecil seperti *"Teks muncul per huruf"* ternyata efeknya besar banget buat rasa "hidup" di game.
+
+---
+
+## 🚀 Apa Selanjutnya? (Fase 2)
+Sekarang "Pintu Gerbang" sudah jadi. User sudah punya Nama dan Avatar.
+Selanjutnya kita akan masuk ke **Fase 2: SCAN & DISCOVERY**.
+
+Kita akan membuat fitur agar HP user bisa dipakai untuk memotret kode QR di pohon, dan "Hap!", pohonnya muncul di layar!
+
+Siap lanjut? 🔥

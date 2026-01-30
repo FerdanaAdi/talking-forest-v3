@@ -1,0 +1,88 @@
+# 🛠️ FASE 0: PANDUAN SETUP DETAIL
+> **Target:** Membangun "Rumah" (Folder & File) sebelum kita mulai "Mengisi Perabot" (Coding).
+
+## 1. 🏗️ SETUP STRUKTUR FOLDER (V3)
+**Kenapa harus bikin folder baru?**
+Agar kode **V3 (Game Edukasi)** tidak mencampuri kode **V2 (Web Desa)** yang sudah ada. Kita ingin file rapi dan terpisah.
+
+- [x] **Buat Folder Logic Baru: `public/js/v3/`**
+  - *Penjelasan:* Ini adalah "otak" game V3. Semua kode game akan masuk sini.
+- [x] **Buat Folder Gambar: `public/assets/images/`**
+  - `avatars/` → Untuk gambar karakter pemain (Bibit, Tunas, Pohon).
+  - `mascot/` → Untuk gambar si Rimba (beruang/maskot) dengan berbagai ekspresi.
+  - `species/` → Untuk foto pohon/hewan yang akan di-scan.
+- [x] **Buat Folder Audio: `public/assets/audio/`**
+  - `sfx/` → Suara efek pendek (klik, ting!, buzz).
+  - `bgm/` → Musik latar belakang hutan.
+  - `narration/` → Suara robot (TTS) yang membacakan cerita.
+- [x] **Buat Folder Data: `public/assets/data/`**
+  - *Penjelasan:* Di sini kita menyimpan "Naskah" cerita dan soal kuis dalam format teks (JSON).
+
+---
+
+## 2. 📝 SETUP FILE HALAMAN (HTML)
+**Kenapa harus bikin file ini?**
+Ini adalah "kanvas" kosong yang akan kita isi nanti. Cukup buat filenya dulu (klik kanan > New File), isinya boleh kosong atau template dasar.
+
+- [x] **`public/index.html`**
+  - *Fungsi:* Halaman depan. Tempat user pertama kali mendarat, daftar nama, dan pilih avatar.
+- [x] **`public/scan.html`**
+  - *Fungsi:* Halaman utama game! Di sinilah kamera nyala, puzzle dimainkan, dan cerita muncul.
+- [x] **`public/garden.html`**
+  - *Fungsi:* Halaman koleksi. Tempat melihat badge dan pohon-pohon yang sudah diselamatkan.
+- [x] **`public/profile.html`**
+  - *Fungsi:* Halaman profil. Untuk melihat Level, XP, dan ganti nickname.
+- [x] **`public/css/game.css`**
+  - *Fungsi:* File makeup. Untuk menyimpan warna-warna khusus (Hijau Hutan, Coklat Kayu) agar tampilan cantik.
+
+---
+
+## 3. 🎨 SETUP "ALAT TUKANG" (LIBRARY)
+**Apa barang-barang ini?**
+Kita tidak coding dari nol. Kita pakai "alat bantu" (Library) agar kerjaan cepat selesai.
+
+- [x] **Tailwind CSS**
+  - *Penjelasan:* Alat untuk mendesain tampilan (warna, posisi, ukuran) dengan cepat tanpa nulis kode CSS panjang.
+  - *Cara Pasang:* Nanti kita copy 1 baris kode script ke HTML.
+- [x] **Alpine.js**
+  - *Penjelasan:* Alat untuk membuat tombol bisa diklik dan halaman berubah-ubah interaktif (ganti halaman tanpa reload).
+  - *Cara Pasang:* Copy link script CDN.
+- [x] **GSAP (GreenSock)**
+  - *Penjelasan:* Alat animasi profesional. Membuat efek "Mantra Waktu" (pohon tumbuh) jadi mulus seperti film kartun.
+- [x] **Google Fonts (Cinzel & Nunito)**
+  - *Penjelasan:* Font cantik.
+    - **Cinzel:** Font gaya fantasi/kerajaan untuk Judul.
+    - **Nunito:** Font bulat lucu untuk teks bacaan anak-anak.
+
+---
+
+## 4. 📂 PERSIAPAN DATA DUMMY (JSON)
+**Apa itu JSON?**
+JSON itu seperti "Daftar Menu Restoran". Isinya cuma teks data, bukan kode program.
+
+- [x] **`species.json`**
+  - *Isinya:* Daftar Pohon (Mangga, Ulin, Enggang).
+  - *Gunanya:* Game baca file ini untuk tahu: "Oh, kalau scan kode QR-01, tampilkan gambar Mangga".
+- [x] **`dialogs.json`**
+  - *Isinya:* Naskah percakapan Rimba.
+  - *Gunanya:* Agar teks dialog tidak bercampur di dalam kode program. Kalau mau ganti kata-kata, cukup edit file ini.
+- [x] **`quizzes.json`**
+  - *Isinya:* Bank soal kuis.
+  - *Gunanya:* Menyimpan pertanyaan, pilihan jawaban A/B/C, dan kunci jawaban.
+
+---
+
+## 5. 🖼️ PLACEHOLDER (GAMBAR SEMENTARA)
+**Kenapa pakai placeholder?**
+Mungkin gambar aslinya belum jadi/belum difoto. Kita pakai "gambar kotak warna-warni" dulu atau gambar sembarang dari Google, supaya kita bisa ngetes game-nya jalan atau tidak.
+
+- [x] **Cari 1 Gambar Avatar Sembarang**
+  - Simpan sebagai `public/assets/images/avatars/char_seed_male.png`
+- [x] **Cari 1 Gambar Maskot (Beruang/Orang Hutan)**
+  - Simpan sebagai `public/assets/images/mascot/npc_rimba_neutral.png`
+- [x] **Cari 1 Gambar Pohon**
+  - Simpan sebagai `public/assets/images/species/mangga_full.png`
+
+---
+
+**Siap?** Kalau sudah paham fungsinya masing-masing, bilang "Gass" dan kita mulai dari poin nomor 1! 🚀

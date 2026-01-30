@@ -1,0 +1,18 @@
+/* --- mobile.css --- */
+
+/* Frame Utama (Pembungkus) */
+.mobile-frame {
+    width: 100%;
+    max-width: 480px; /* Lebar maksimal seperti HP */
+    background-color: var(--bg-cream); /* Warna dasar aplikasi */
+    min-height: 100vh;
+    margin: 0 auto; /* Posisi tengah */
+    position: relative;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5); /* Bayangan di kiri kanan */
+    overflow-x: hidden;
+}
+
+/* Scrollbar cantik */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }

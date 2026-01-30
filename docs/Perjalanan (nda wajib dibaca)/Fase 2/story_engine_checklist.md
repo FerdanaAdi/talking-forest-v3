@@ -1,0 +1,37 @@
+# 🏗️ CEKLIST FASE 2.5: RENOVASI SISTEM CERITA (STORY ENGINE)
+
+## 1. FONDASI (BANGUN RUANG BARU)
+*   [x] **Bikin Halaman `story.html` (Ruang Bioskop)**:
+    *   Kita buat halaman khusus yang isinya cuma gambar full-screen, teks dialog, dan musik.
+    *   Halaman ini "bersih" dari tombol-tombol game (gak ada tombol scan/lari).
+*   [x] **Bikin Mesin Cerita (`story-engine.js`)**:
+    *   Ini "otak"-nya bioskop. Tugasnya mengatur: Kapan muncul teks? Lagu apa yang diputar? Gambar background-nya apa?
+*   [ ] **Update Memori Game (`game-state.js`)**:
+    *   Biar game-nya ingat: "User ini terakhir nonton scene apa ya?"
+
+## 2. PINDAHAN BARANG (MIGRATION)
+*   [x] **Pindahkan Intro (Scene 1)**:
+    *   Cerita awal "Halo, namaku Rimba" yang ada di Lobby, kita pindahkan ke Ruang Bioskop.
+*   [x] **Pindahkan Hook (Scene 2 Awal)**:
+    *   Cerita "Hutan ini aneh..." yang ada di Lapangan, kita pindahkan juga ke Ruang Bioskop.
+*   [x] **Pindahkan Reveal (Scene 2 Akhir)**:
+    *   Bagian "Selamat kamu nemu Pohon Mangga" juga dipindah ke Bioskop.
+
+## 3. BERSIH-BERSIH LAPANGAN (GAMEPLAY CLEANUP)
+*   [x] **Bersihkan `scan.html` (Total Clean-up)**:
+    *   **HAPUS**: Animasi Rimba lari-lari (The Journey dihapus).
+    *   **HAPUS**: Kode dialog/intro.
+    *   **FOKUS**: Halaman ini murni cuma **Kamera Scan QR** & **Logic Puzzle**.
+    *   Tampilan jadi minimalis, elegan, dan fokus ke fungsi.
+    *   Flow: Start Scan -> Dapat Code -> Redirect ke Bioskop (`story.html?scene=scene2_reveal`).
+
+## 4. PENGATUR LALU LINTAS (INTEGRATION)
+*   [x] **Update Satpam Lobby (`index.html`)**:
+    *   Kalau user baru datang -> Arahkan ke Bioskop (Intro).
+    *   Kalau user lama -> Boleh masuk Lobby.
+*   [x] **Tombol Jelajah**:
+    *   Pas diklik, jangan langsung main. Mampir dulu ke Bioskop sebentar (Intro Misi), baru main.
+
+## 5. UJI COBA (VERIFICATION)
+*   [ ] **Tes Satu Putaran Penuh**:
+    *   Daftar Nama -> Nonton Intro -> Masuk Lobby -> Klik Jelajah -> Nonton Misi -> Main Lari/Scan -> Menang -> Nonton Ending.
