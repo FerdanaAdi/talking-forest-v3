@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<!--
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║   📄 NAMA FILE: admin.html                                                   ║
+║   ⚙️ FUNGSI: Panel Admin & CMS (Content Management System)                  ║
+║   🔐 POSISI: Halaman khusus admin untuk kelola semua data                   ║
+║                                                                              ║
+║   ⚠️ AKSES: Hanya admin yang punya akun bisa masuk!                         ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+════════════════════════════════════════════════════════════════════════════════
+🔰 PANDUAN LENGKAP UNTUK NAJU
+════════════════════════════════════════════════════════════════════════════════
+
+Halo Naju! 👋
+
+Ini adalah PANEL ADMIN utama.
+Ini adalah "ruang kontrol" untuk mengelola semua data Talking Forest!
+
+MENU-MENU YANG ADA:
+📊 Dashboard  → Ringkasan statistik (pengunjung, pendapatan)
+💰 Keuangan   → Buku kas, catat pemasukan/pengeluaran
+🎫 Tiket      → Atur harga tiket dewasa/anak
+🏪 Mitra UMKM → Kelola data warung/gerai
+🗺️ Aset (GIS) → Catat inventaris/aset di lokasi
+🌿 Katalog    → Kelola data pohon/tanaman/hewan
+🩺 Update     → Update kondisi pohon
+
+════════════════════════════════════════════════════════════════════════════════
+📚 PENJELASAN SIMBOL-SIMBOL
+════════════════════════════════════════════════════════════════════════════════
+
+🟢 = BOLEH KAMU EDIT (aman, tidak merusak program)
+🔴 = JANGAN DIEDIT (bisa error/rusak)
+🟡 = HATI-HATI (boleh edit tapi tanya dulu)
+💡 = TIPS (penjelasan tambahan)
+⚠️ = PERINGATAN (hal penting)
+
+════════════════════════════════════════════════════════════════════════════════
+🎯 DAFTAR YANG BOLEH DIEDIT
+════════════════════════════════════════════════════════════════════════════════
+
+✅ BOLEH EDIT:
+1. Judul tab browser "Admin - Talking Forest"
+2. Judul-judul section (Dashboard, Keuangan, dll)
+3. Placeholder teks input
+4. Label form (Nama, Email, Kategori, dll)
+5. Teks tombol (+ Tambah, Simpan, Export, dll)
+6. Emoji menu sidebar (📊, 💰, 🎫, dll)
+7. Warna CSS (jika ada di file admin-cms.css)
+
+❌ JANGAN EDIT:
+1. Semua id="..." (login-section, dashboard-section, dll)
+2. Semua onclick="..." dan fungsi
+3. Script src untuk Chart.js dan Firebase
+4. Struktur layout sidebar dan tabs
+5. Script module type"module" src="..."
+
+════════════════════════════════════════════════════════════════════════════════
+📂 FILE YANG BERHUBUNGAN
+════════════════════════════════════════════════════════════════════════════════
+
+LOGIKA HALAMAN:
+• js/admin-logic.js → Kode utama admin (🔴 JANGAN EDIT!)
+• js/modules/admin-*.js → Modul-modul terpisah (🔴 JANGAN EDIT!)
+
+STYLING:
+• css/admin-cms.css → Style panel admin (🟢 BOLEH EDIT WARNA)
+
+DATABASE:
+• Firebase Firestore → Semua data tersimpan di cloud
+
+LIBRARY YANG DIPAKAI:
+• Chart.js → Grafik statistik (🔴 JANGAN EDIT)
+• SweetAlert2 → Popup konfirmasi (🔴 JANGAN EDIT)
+
+════════════════════════════════════════════════════════════════════════════════
+💡 CATATAN PENTING
+════════════════════════════════════════════════════════════════════════════════
+
+File ini SANGAT BESAR (~961 baris).
+Sebagian besar adalah struktur HTML untuk form dan tabel.
+Logika utama ada di js/admin-logic.js.
+
+Jika mau edit teks/label, cari dengan Ctrl+F (Find).
+
+════════════════════════════════════════════════════════════════════════════════
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Talking Forest</title>
+    <link rel="stylesheet" href="css/admin-cms.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <!-- LOGIN -->
+    <div id="login-section"
+        style="position:fixed; top:0; left:0; width:100%; height:100vh; background:var(--primary-color); z-index:9999; display:flex; align-items:center; justify-content:center;">
+        <div class="card"
+            style="width:100%; max-width:400px; text-align:center; padding:40px; border-radius:20px; background:white; box-shadow:0 20px 50px rgba(0,0,0,0.3);">
+            <div style="font-size:4rem; margin-bottom:10px;">🌲</div>
+            <h2 style="margin-bottom:10px;">Talking Forest</h2>
+            <p style="color:#666; margin-bottom:30px;">Silakan login untuk mengakses panel admin.</p>
+            <div class="form-group"><input type="email" id="login-email" class="form-input" placeholder="Email Admin">
+            </div>
+            <div class="form-group"><input type="password" id="login-pass" class="form-input" placeholder="Password">
+            </div>
+            <button onclick="prosesLogin()" class="btn btn-primary"
+                style="width:100%; justify-content:center; padding:12px;">MASUK DASHBOARD</button>
+            <p id="login-msg" style="color:var(--danger); margin-top:15px; font-size:0.9rem;"></p>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD -->
+    <div id="dashboard-section" class="hidden" style="width:100%; display:flex;">
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div style="font-size:1.8rem;">🌲</div><span>Talking Forest</span>
+            </div>
+            <ul class="sidebar-menu">
+                <div class="menu-category">Main Menu</div>
+                <li class="menu-item active" onclick="switchTab('dashboard', this)"><span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </li>
+                <li class="menu-item" onclick="switchTab('finance', this)"><span class="icon">💰</span>
+                    <span>Keuangan</span>
+                </li>
+                <li class="menu-item" onclick="switchTab('ticket', this)"><span class="icon">🎫</span> <span>Tiket &
+                        Harga</span></li>
+                <div class="menu-category">Management</div>
+                <li class="menu-item" onclick="switchTab('umkm', this)"><span class="icon">🏪</span> <span>Mitra
+                        UMKM</span></li>
+                <li class="menu-item" onclick="switchTab('aset', this)"><span class="icon">🗺️</span> <span>Aset
+                        (GIS)</span></li>
+                <li class="menu-item" onclick="switchTab('content', this)"><span class="icon">🌿</span>
+                    <span>Katalog</span>
+                </li>
+                <li class="menu-item" onclick="switchTab('tree', this)"><span class="icon">🩺</span> <span>Update
+                        Pohon</span></li>
+            </ul>
+            <div style="padding:20px; border-top:1px solid rgba(255,255,255,0.1);">
+                <button onclick="prosesLogout()" class="btn btn-danger" style="width:100%; justify-content:center;">🚪
+                    <span>Keluar</span></button>
+            </div>
+        </nav>
+
+        <!-- WRAPPER -->
+        <div class="main-wrapper">
+            <!-- TOPBAR -->
+            <header class="top-bar">
+                <div style="display:flex; align-items:center;">
+                    <div class="hamburger" onclick="toggleSidebar()"
+                        style="margin-right:20px; font-size:1.5rem; cursor:pointer; color:var(--primary-color);">☰</div>
+
+
+                </div>
+
+                <!-- User Profile -->
+                <div class="user-profile">
+                    <div style="position:relative;">
+                        <span style="font-size:1.2rem; margin-right:20px; color:#64748B; cursor:pointer;">🔔</span>
+                        <span style="font-size:1.2rem; margin-right:10px; color:#64748B; cursor:pointer;">🌙</span>
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name">Admin Utama</span>
+                        <span class="user-role">Super User</span>
+                    </div>
+                    <div class="user-avatar" style="background:var(--primary-color);">A</div>
+                </div>
+            </header>
+
+            <!-- CONTENT -->
+            <div class="content-area">
+                <!-- TAB: DASHBOARD -->
+                <div id="tab-dashboard">
+                    <div class="page-header" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <h2 class="page-title">Ringkasan Hari Ini</h2><span class="page-subtitle">Update terakhir:
+                                <span id="dash-date">-</span></span>
+                        </div>
+                        <button onclick="downloadReport()" class="btn btn-outline" style="background:white;">📥 Export
+                            Laporan</button>
+                    </div>
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-icon-box icon-blue">👥</div>
+                            <div class="stat-details">
+                                <h4>Total Pengunjung</h4>
+                                <h2 id="stat-visitor">0</h2>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon-box icon-green">💸</div>
+                            <div class="stat-details">
+                                <h4>Pendapatan</h4>
+                                <h2 id="total-revenue" style="font-size:1.5rem;">Rp 0</h2>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon-box icon-orange">🏪</div>
+                            <div class="stat-details">
+                                <h4>UMKM Aktif</h4>
+                                <h2 id="stat-umkm">0</h2>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon-box icon-purple">🏛️</div>
+                            <div class="stat-details">
+                                <h4>Total Aset</h4>
+                                <h2 id="stat-asset">0</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <h3>Tren Pengunjung</h3><canvas id="chart-visitor" height="150"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Sumber Pendapatan</h3><canvas id="chart-income" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PLACEHOLDERS FOR OTHER TABS -->
+                <div id="tab-finance" class="hidden">
+                    <div
+                        style="display:flex; gap:10px; margin-bottom:20px; border-bottom:1px solid #eee; padding-bottom:10px;">
+                        <button class="btn form-tab-btn active" onclick="window.switchFinSubTab('book', this)"
+                            style="border-radius:0; border-bottom:2px solid var(--primary-color);">📖 Buku Kas</button>
+                        <button class="btn form-tab-btn" onclick="window.switchFinSubTab('budget', this)"
+                            style="border-radius:0;">📝 Perencanaan Anggaran</button>
+                    </div>
+
+                    <!-- SUB TAB: BUKU KAS -->
+                    <div id="fsub-book">
+                        <div id="view-finance-list">
+                            <!-- Summary Cards -->
+                            <div class="summary-cards">
+                                <div class="finance-card">
+                                    <div class="card-icon income">💰</div>
+                                    <div class="card-info">
+                                        <h3>Total Saldo</h3>
+                                        <p class="amount" id="total-balance">Rp 0</p>
+                                    </div>
+                                </div>
+                                <div class="finance-card">
+                                    <div class="card-icon trend-up">📈</div>
+                                    <div class="card-info">
+                                        <h3>Pemasukan Bulan Ini</h3>
+                                        <p class="amount" id="monthly-income">Rp 0</p>
+                                    </div>
+                                </div>
+                                <div class="finance-card">
+                                    <div class="card-icon trend-down">📉</div>
+                                    <div class="card-info">
+                                        <h3>Pengeluaran Bulan Ini</h3>
+                                        <p class="amount" id="monthly-expense">Rp 0</p>
+                                    </div>
+                                </div>
+                                <div class="finance-card">
+                                    <div class="card-icon pending">⏳</div>
+                                    <div class="card-info">
+                                        <h3>Menunggu Verifikasi</h3>
+                                        <p class="amount" id="pending-count">0</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="page-header finance-header" style="margin-top: 24px; margin-bottom: 16px;">
+                                <h2 class="page-title">Riwayat Transaksi</h2>
+                                <button onclick="openFinanceForm()" class="btn btn-primary">+ Catat Transaksi</button>
+                            </div>
+
+                            <!-- Advanced Filters -->
+                            <div class="finance-filters"
+                                style="display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; align-items: center;">
+                                <div class="search-box-finance"
+                                    style="flex: 1; min-width: 250px; background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 12px; display: flex; align-items: center;">
+                                    <span class="icon" style="margin-right: 8px; color: #64748b;">🔍</span>
+                                    <input type="text" id="finance-search" placeholder="Cari transaksi..."
+                                        style="border: none; outline: none; width: 100%; color: #334155;">
+                                </div>
+                                <div class="filter-group-finance" style="display: flex; gap: 10px;">
+                                    <select id="filter-month" class="form-select" style="min-width: 140px;">
+                                        <option value="">Semua Bulan</option>
+                                    </select>
+                                    <select id="filter-year" class="form-select" style="min-width: 120px;">
+                                        <option value="">Semua Tahun</option>
+                                    </select>
+                                    <select id="filter-status" class="form-select" style="min-width: 140px;">
+                                        <option value="all">Semua Status</option>
+                                        <option value="completed">Selesai</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="rejected">Ditolak</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="table-card finance-table-card">
+                                <div class="table-responsive">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Tanggal</th>
+                                                <th>Kategori</th>
+                                                <th>Keterangan</th>
+                                                <th>Status</th>
+                                                <th class="text-right" style="text-align: right;">Nominal</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="finance-list-body"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="view-finance-form" class="hidden">
+                            <div class="page-header">
+                                <button onclick="showFinanceList()" class="btn btn-outline"
+                                    style="margin-bottom:10px;">←
+                                    Kembali</button>
+                                <h2 class="page-title">Form Transaksi</h2>
+                            </div>
+                            <div class="form-card">
+                                <input type="hidden" id="fin-id">
+                                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                                    <div class="form-group"><label class="form-label">Jenis Transaksi</label><select
+                                            id="fin-type" class="form-select" onchange="toggleCategories()">
+                                            <option value="in">📥 Pemasukan</option>
+                                            <option value="out">📤 Pengeluaran</option>
+                                        </select></div>
+                                    <div class="form-group"><label class="form-label">Nominal (Rp)</label><input
+                                            type="number" id="fin-amount" class="form-input" placeholder="0"></div>
+                                </div>
+                                <div class="form-group"><label class="form-label">Kategori</label><select
+                                        id="fin-category" class="form-select"></select></div>
+                                <div class="form-group"><label class="form-label">Keterangan Transaksi</label><textarea
+                                        id="fin-desc" class="form-textarea" rows="3"
+                                        placeholder="Deskripsi singkat..."></textarea></div>
+                                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                                    <div class="form-group"><label class="form-label">ID Donatur
+                                            (Opsional)</label><input type="text" id="fin-donor" class="form-input"
+                                            placeholder="001"></div>
+                                    <div class="form-group"><label class="form-label">URL Bukti / Struk</label><input
+                                            type="text" id="fin-proof" class="form-input" placeholder="https://...">
+                                    </div>
+                                </div>
+                                <div style="margin-top:30px; text-align:right;"><button onclick="simpanKeuangan()"
+                                        class="btn btn-primary" style="padding:12px 30px;">💾 SIMPAN TRANSAKSI</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!-- End fsub-book -->
+
+                    <!-- SUB TAB: BUDGETING -->
+                    <div id="fsub-budget" class="hidden">
+                        <div id="view-budget-list">
+                            <div class="page-header"
+                                style="display:flex; justify-content:space-between; align-items:center;">
+                                <h2 class="page-title">Daftar Anggaran (RAB)</h2>
+                                <button onclick="window.openBudgetForm()" class="btn btn-primary">+ Buat
+                                    Anggaran</button>
+                            </div>
+                            <div class="table-card">
+                                <div class="table-responsive">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Tanggal</th>
+                                                <th>Judul Proyek</th>
+                                                <th>Status</th>
+                                                <th>Total Estimasi</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="budget-list-body"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FORM BUDGET -->
+                        <div id="view-budget-form" class="hidden">
+                            <div class="page-header">
+                                <button onclick="window.showBudgetList()" class="btn btn-outline"
+                                    style="margin-bottom:10px;">← Kembali</button>
+                                <h2 class="page-title">Form Anggaran Biaya</h2>
+                            </div>
+                            <div class="form-card">
+                                <input type="hidden" id="budget-id">
+                                <div class="form-group">
+                                    <label class="form-label">Judul Kegiatan / Proyek</label>
+                                    <input type="text" id="budget-title" class="form-input"
+                                        placeholder="Contoh: Perbaikan Gazebo Utama">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Deskripsi & Tujuan Proyek</label>
+                                    <textarea id="budget-desc" class="form-textarea" rows="2"
+                                        placeholder="Jelaskan detail kebutuhan dan tujuan pengajuan anggaran ini..."></textarea>
+                                </div>
+
+                                <h4>Rincian Item</h4>
+                                <div class="table-responsive"
+                                    style="margin-bottom:20px; border:1px solid #eee; border-radius:8px;">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Nama Barang / Jasa</th>
+                                                <th width="80">Qty</th>
+                                                <th>Harga Satuan (Rp)</th>
+                                                <th>Total</th>
+                                                <th width="50"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="budget-items-body">
+                                            <!-- Dynamic Items -->
+                                        </tbody>
+                                    </table>
+                                    <button onclick="window.addBudgetRow()" id="btn-add-item-row"
+                                        class="btn btn-outline"
+                                        style="width:100%; justify-content:center; border-top:none; border-radius:0 0 8px 8px;">+
+                                        Tambah Item</button>
+                                </div>
+
+                                <div
+                                    style="display:flex; justify-content:flex-end; gap:20px; align-items:center; margin-bottom:20px;">
+                                    <h3>Total Estimasi:</h3>
+                                    <h2 id="budget-total-display" style="color:var(--primary-color);">Rp 0</h2>
+                                </div>
+
+                                <div
+                                    style="display:flex; justify-content:space-between; margin-top:30px; border-top:1px solid #eee; padding-top:20px;">
+                                    <button onclick="window.deleteBudget()" id="btn-delete-budget"
+                                        class="btn btn-danger hidden">Hapus Anggaran</button>
+                                    <div style="margin-left:auto; display:flex; gap:10px;">
+                                        <button onclick="window.printBudget()" id="btn-print-budget"
+                                            class="btn btn-outline hidden">🖨️ CETAK RAB</button>
+                                        <button onclick="window.simpanBudget()" id="btn-save-budget"
+                                            class="btn btn-primary">💾 SIMPAN
+                                            DRAF</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- REALIZATION MODAL (Form Realisasi) -->
+                        <div id="view-budget-realization" class="hidden">
+                            <div class="page-header">
+                                <button onclick="window.showBudgetList()" class="btn btn-outline"
+                                    style="margin-bottom:10px;">← Batal</button>
+                                <h2 class="page-title">Realisasi Anggaran</h2>
+                            </div>
+                            <div class="form-card">
+                                <div class="alert alert-info"
+                                    style="background:#e0f2fe; color:#0369a1; padding:10px; border-radius:8px; margin-bottom:20px;">
+                                    Proyek: <strong id="real-project-name">-</strong><br>
+                                    Estimasi: <strong id="real-project-est">-</strong>
+                                </div>
+                                <input type="hidden" id="real-budget-id">
+
+                                <div class="form-group">
+                                    <label class="form-label">Total Realisasi (Sesuai Nota Asli)</label>
+                                    <input type="number" id="real-amount" class="form-input" placeholder="Rp 0">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">URL Foto Bukti / Nota</label>
+                                    <input type="text" id="real-proof" class="form-input" placeholder="https://...">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Catatan Tambahan (Opsional)</label>
+                                    <textarea id="real-note" class="form-textarea" rows="2"></textarea>
+                                </div>
+
+                                <div style="text-align:right; margin-top:20px;">
+                                    <button onclick="window.submitRealization()" class="btn btn-success"
+                                        style="padding:12px 30px;">✅ KONFIRMASI REALISASI</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab-ticket" class="hidden">
+                    <div class="page-header">
+                        <h2 class="page-title">Tiket & Harga</h2>
+                    </div>
+                    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:24px;">
+                        <div class="chart-card">
+                            <div class="table-header-action">
+                                <h3>🔴 Live Monitor (Hari Ini)</h3><button onclick="monitorTickets()"
+                                    class="btn btn-outline" style="padding:5px 10px; font-size:0.8rem;">Refresh</button>
+                            </div>
+                            <div id="monitor-card-list"
+                                style="display:flex; flex-direction:column; gap:15px; max-height:600px; overflow-y:auto; padding-right:5px;">
+                                <!-- Dynamic Cards -->
+                            </div>
+                        </div>
+                        <div class="form-card" style="height:fit-content;">
+                            <h3>⚙️ Pengaturan Harga</h3>
+                            <hr style="margin:15px 0; border:0; border-top:1px solid #eee;">
+                            <div class="form-group">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                                    <label class="form-label">Harga Dewasa</label>
+                                    <span id="lbl-adult-price" style="font-weight:bold; color:var(--text-main);">Rp
+                                        0</span>
+                                </div>
+                                <input type="range" id="slider-adult" class="form-range" min="0" max="50000" step="1000"
+                                    oninput="window.syncPrice('adult', this.value)">
+                                <input type="number" id="pset-adult" class="form-input"
+                                    style="margin-top:5px; display:none;"> <!-- Hidden value holder -->
+                                <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#888;">
+                                    <span>0</span><span>25.000</span><span>50.000</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="margin-top:20px;">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                                    <label class="form-label">Harga Anak-anak</label>
+                                    <span id="lbl-child-price" style="font-weight:bold; color:var(--text-main);">Rp
+                                        0</span>
+                                </div>
+                                <input type="range" id="slider-child" class="form-range" min="0" max="50000" step="1000"
+                                    oninput="window.syncPrice('child', this.value)">
+                                <input type="number" id="pset-child" class="form-input"
+                                    style="margin-top:5px; display:none;"> <!-- Hidden value holder -->
+                                <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#888;">
+                                    <span>0</span><span>25.000</span><span>50.000</span>
+                                </div>
+                            </div>
+                            <button onclick="simpanHarga()" class="btn btn-primary" style="width:100%;">Update
+                                Database</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab-umkm" class="hidden">
+                    <div id="view-umkm-list">
+                        <!-- Header & Title -->
+                        <div class="page-header">
+                            <h2 class="page-title">Daftar Mitra UMKM</h2>
+                            <p style="color:var(--text-muted);">Kelola data mitra, kategori usaha, dan informasi kontak.
+                            </p>
+                        </div>
+
+                        <!-- Search & Action Bar -->
+                        <div
+                            style="display:flex; justify-content:space-between; margin-bottom:20px; gap:10px; flex-wrap:wrap;">
+                            <div style="flex:1; min-width:300px; display:flex; gap:10px;">
+                                <input type="text" id="umkm-search" class="form-input"
+                                    placeholder="Cari nama mitra atau kategori..." onkeyup="window.searchUMKM()">
+                                <select id="umkm-filter-cat" class="form-select" style="width:150px;"
+                                    onchange="window.searchUMKM()">
+                                    <option value="">Semua Kategori</option>
+                                    <option value="Kuliner">Kuliner</option>
+                                    <option value="Souvenir">Souvenir</option>
+                                    <option value="Jasa">Jasa</option>
+                                    <option value="Fashion">Fashion</option>
+                                </select>
+                            </div>
+                            <button onclick="openUMKMForm()" class="btn btn-primary" style="padding:10px 20px;">+ Tambah
+                                Mitra</button>
+                        </div>
+
+                        <!-- Table -->
+                        <div class="table-card">
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>NAMA MITRA</th>
+                                            <th>KATEGORI</th>
+                                            <th>KONTAK</th>
+                                            <th>STATUS</th>
+                                            <th style="text-align:right;">AKSI</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="umkm-list-body">
+                                        <!-- Dynamic Rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="umkm-pagination"
+                                style="padding:20px; text-align:right; font-size:0.9rem; color:#666;">
+                                Menampilkan semua mitra
+                            </div>
+                        </div>
+                    </div>
+                    <div id="view-umkm-form" class="hidden">
+                        <div class="page-header"><button onclick="showUMKMList()" class="btn btn-outline"
+                                style="margin-bottom:10px;">← Kembali</button>
+                            <h2 class="page-title">Editor Mitra UMKM</h2>
+                        </div>
+                        <div class="form-card">
+                            <input type="hidden" id="umkm-id">
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                                <div class="form-group"><label class="form-label">Nama Warung</label><input type="text"
+                                        id="umkm-name" class="form-input"></div>
+                                <div class="form-group"><label class="form-label">Pemilik</label><input type="text"
+                                        id="umkm-owner" class="form-input"></div>
+                            </div>
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                                <div class="form-group"><label class="form-label">Kategori</label><select
+                                        id="umkm-category" class="form-select">
+                                        <option value="Kuliner">Kuliner</option>
+                                        <option value="Souvenir">Souvenir</option>
+                                        <option value="Jasa">Jasa</option>
+                                        <option value="Fashion">Fashion</option>
+                                    </select></div>
+                                <div class="form-group"><label class="form-label">Nomor HP</label>
+                                    <div style="display:flex; gap:10px; align-items:center;">
+                                        <span>📞</span>
+                                        <input type="text" id="umkm-phone" class="form-input"
+                                            placeholder="08xx-xxxx-xxxx">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group"><label class="form-label">Email Pemilik (Untuk Login/Notif)</label>
+                                <div style="display:flex; gap:10px; align-items:center;">
+                                    <span>✉️</span>
+                                    <input type="email" id="umkm-email" class="form-input"
+                                        placeholder="email@contoh.com">
+                                </div>
+                            </div>
+                            <div class="form-group"><label class="form-label">Status Mitra</label>
+                                <select id="umkm-status" class="form-select">
+                                    <option value="active">Aktif</option>
+                                    <option value="inactive">Non-Aktif</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label class="form-label">Password Kasir (Isi untuk
+                                    reset)</label><input type="text" id="umkm-pass" class="form-input"></div>
+                            <div style="text-align:right; margin-top:20px;"><button onclick="simpanUMKM()"
+                                    class="btn btn-primary">💾 SIMPAN DATA</button></div>
+                            <div id="product-section" class="hidden"
+                                style="margin-top:30px; border-top:2px solid #eee; padding-top:20px;">
+                                <h3>📦 Kelola Produk: <span id="active-umkm-name"></span></h3><input type="hidden"
+                                    id="active-umkm-id">
+                                <div id="product-list" style="margin-top:15px; display:grid; gap:10px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab-aset" class="hidden">
+                    <div id="view-asset-list">
+                        <div class="page-header"
+                            style="display:flex; justify-content:space-between; align-items:center;">
+                            <h2 class="page-title">Manajemen Aset (GIS)</h2><button onclick="openAssetForm()"
+                                class="btn btn-primary">+ Catat Aset</button>
+                        </div>
+                        <div class="card"
+                            style="margin-bottom:24px; padding:0; border-radius:var(--radius-lg); overflow:hidden; position:relative; height:300px;">
+                            <img src="assets/map-base.jpg" style="width:100%; height:100%; object-fit:cover;">
+                            <div id="asset-pin-container"></div>
+                            <div
+                                style="position:absolute; bottom:10px; left:10px; background:white; padding:5px 10px; border-radius:5px; font-weight:bold;">
+                                📍 Peta Sebaran Aset</div>
+                        </div>
+                        <div class="table-card">
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>NAMA ASET</th>
+                                            <th>KODE KIB</th>
+                                            <th>KONDISI</th>
+                                            <th>NILAI</th>
+                                            <th style="text-align:right;">AKSI</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="asset-list-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="view-asset-form" class="hidden">
+                        <div class="page-header"><button onclick="showAssetList()" class="btn btn-outline"
+                                style="margin-bottom:10px;">← Kembali</button>
+                            <h2 class="page-title">Form Data Aset</h2>
+                        </div>
+                        <div class="form-card">
+                            <div style="display:flex; gap:10px; margin-bottom:20px; border-bottom:1px solid #eee;">
+                                <button class="btn form-tab-btn active" onclick="switchAssetTab('data', this)"
+                                    style="border-radius:0; border-bottom:2px solid var(--primary-color);">1. Data
+                                    Barang</button>
+                                <button class="btn form-tab-btn" onclick="switchAssetTab('loc', this)"
+                                    style="border-radius:0;">2. Lokasi</button>
+                            </div>
+                            <input type="hidden" id="asset-id">
+                            <div id="atab-data">
+                                <div class="form-group"><label class="form-label">Nama Barang</label><input type="text"
+                                        id="asset-name" class="form-input"></div>
+                                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                                    <div class="form-group"><label class="form-label">Kode KIB</label>
+                                        <div style="display:flex; gap:10px;"><input type="text" id="asset-kib"
+                                                class="form-input"><button onclick="generateKIB()"
+                                                class="btn btn-outline">Gen</button></div>
+                                    </div>
+                                    <div class="form-group"><label class="form-label">Kondisi</label><select
+                                            id="asset-cond" class="form-select">
+                                            <option value="good">🟢 Baik</option>
+                                            <option value="repair">🟡 Perbaikan</option>
+                                            <option value="broken">🔴 Rusak Berat</option>
+                                        </select></div>
+                                </div>
+                                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                                    <div class="form-group"><label class="form-label">Nilai (Rp)</label><input
+                                            type="number" id="asset-price" class="form-input"></div>
+                                    <div class="form-group"><label class="form-label">Tahun</label><input type="number"
+                                            id="asset-year" class="form-input" value="2026"></div>
+                                </div>
+                                <div class="form-group"><label class="form-label">Sumber Dana</label><input type="text"
+                                        id="asset-source" class="form-input"></div>
+                            </div>
+                            <div id="atab-loc" class="hidden">
+                                <div class="form-group"><label class="form-label">Klik lokasi pada peta:</label>
+                                    <div style="display:flex; gap:10px; margin-bottom:10px;"><input type="number"
+                                            id="asset-x" class="form-input" placeholder="X" readonly><input
+                                            type="number" id="asset-y" class="form-input" placeholder="Y" readonly>
+                                    </div>
+                                    <div id="admin-asset-picker" onclick="pickLocation(event)"
+                                        style="position:relative; height:300px; background:#ddd; cursor:crosshair; border-radius:10px; overflow:hidden;">
+                                        <img src="assets/map-base.jpg"
+                                            style="width:100%; height:100%; object-fit:cover;">
+                                        <div id="picker-pin"
+                                            style="position:absolute; width:15px; height:15px; background:var(--primary-color); border:2px solid white; border-radius:50%; display:none;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin-top:20px; text-align:right;"><button onclick="simpanAset()"
+                                    class="btn btn-primary">💾 SIMPAN DATABASE</button></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab-content" class="hidden">
+                    <div id="view-content-list">
+                        <div class="page-header"
+                            style="display:flex; justify-content:space-between; align-items:start; margin-bottom:20px;">
+                            <div>
+                                <h2 class="page-title">Katalog</h2>
+                                <p class="page-subtitle">Kelola data ensiklopedia dan informasi pohon.</p>
+                            </div>
+                            <!-- Actions (Top Right) -->
+                            <div style="display:flex; gap:12px;">
+                                <div class="search-box"
+                                    style="width:300px; background:white; border:1px solid #E2E8F0; padding:8px 16px;">
+                                    <span style="color:#94A3B8;">🔍</span>
+                                    <input type="text" id="flora-search" class="search-input"
+                                        placeholder="Cari nama pohon, ID..." oninput="handleSearchFlora()"
+                                        style="margin:0;">
+                                </div>
+                                <button onclick="openContentForm()" class="btn btn-primary" style="padding:10px 24px;">
+                                    + Tambah Data
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Filters (Row Below) -->
+                        <div style="margin-bottom:24px;">
+                            <div class="filter-pills" style="display:flex; gap:10px;">
+                                <button class="filter-pill active" onclick="filterFlora('all', this)">Semua</button>
+                                <button class="filter-pill" onclick="filterFlora('Pohon', this)">Pohon</button>
+                                <button class="filter-pill" onclick="filterFlora('Tanaman', this)">Tanaman</button>
+                                <button class="filter-pill" onclick="filterFlora('Hewan', this)">Hewan</button>
+                            </div>
+                        </div>
+                        <div class="table-card">
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th width="100">VISUAL</th>
+                                            <th>INFORMASI SPESIES</th>
+                                            <th>KATEGORI & STATUS</th>
+                                            <th>LOKASI</th>
+                                            <th style="text-align:right;">AKSI</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="content-list-body"></tbody>
+                                </table>
+                            </div>
+                            <div class="pagination-footer">
+                                <span style="color:#666; font-size:0.9rem;">Menampilkan <strong
+                                        id="flora-showing">0</strong> dari <strong id="flora-total">0</strong>
+                                    hasil</span>
+                                <div style="display:flex; gap:5px;"><button class="btn-page"
+                                        onclick="prevPageFlora()">&#8249;</button>
+                                    <div id="flora-page-numbers" style="display:flex; gap:5px;"></div><button
+                                        class="btn-page" onclick="nextPageFlora()">&#8250;</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="view-content-form" class="hidden">
+                        <div class="page-header"><button onclick="showContentList()" class="btn btn-outline"
+                                style="margin-bottom:10px;">← Kembali</button>
+                            <h2 class="page-title">Editor Ensiklopedia</h2>
+                        </div>
+                        <div class="form-card">
+                            <div class="form-tab-container">
+                                <button class="form-tab-btn active" onclick="switchFormTab('info', this)">1. Info
+                                    Dasar</button>
+                                <button class="form-tab-btn" onclick="switchFormTab('map', this)">2. Peta</button>
+                                <button class="form-tab-btn" onclick="switchFormTab('detail', this)">3. Detail</button>
+                            </div>
+                            <input type="hidden" id="p-mode">
+                            <div id="ftab-info">
+                                <div style="display:flex; gap:20px; align-items:flex-start;">
+                                    <div style="width:120px; text-align:center;"><img id="preview-img"
+                                            src="assets/icon-tree.png"
+                                            style="width:100px; height:100px; border-radius:10px; object-fit:cover; background:#eee;"><small>Preview</small>
+                                    </div>
+                                    <div style="flex:1;">
+                                        <div class="form-group"><label class="form-label">URL Foto</label><input
+                                                type="text" id="p-foto" class="form-input" oninput="updatePreviewImg()">
+                                        </div>
+                                        <div class="form-group"><label class="form-label">ID Unik</label><input
+                                                type="text" id="p-id" class="form-input"></div>
+                                    </div>
+                                </div>
+                                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-top:20px;">
+                                    <div class="form-group"><label class="form-label">Nama Umum</label><input
+                                            type="text" id="p-nama" class="form-input"></div>
+                                    <div class="form-group"><label class="form-label">Nama Latin</label><input
+                                            type="text" id="p-latin" class="form-input"></div>
+                                </div>
+                                <div class="form-group"><label class="form-label">Kategori</label><select id="p-jenis"
+                                        class="form-select">
+                                        <option value="Pohon">🌲 Pohon</option>
+                                        <option value="Tanaman">🌿 Tanaman</option>
+                                        <option value="Hewan">🐿️ Hewan</option>
+                                    </select></div>
+                            </div>
+                            <div id="ftab-map" class="hidden">
+                                <form onsubmit="return false">
+                                    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:20px;">
+                                        <div id="p-map-picker" onclick="pickPlantLoc(event)"
+                                            style="height:300px; background:#ddd; position:relative; overflow:hidden; border-radius:10px; cursor:crosshair;">
+                                            <img src="assets/map-base.jpg"
+                                                style="width:100%; height:100%; object-fit:cover;">
+                                            <div id="p-pin"
+                                                style="position:absolute; width:15px; height:15px; background:red; border:2px solid white; border-radius:50%; display:none;">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="form-group"><label class="form-label">Posisi X</label><input
+                                                    type="number" id="p-x" class="form-input" readonly></div>
+                                            <div class="form-group"><label class="form-label">Posisi Y</label><input
+                                                    type="number" id="p-y" class="form-input" readonly></div>
+                                            <button onclick="resetPlantLoc()" class="btn btn-outline"
+                                                style="width:100%;">Reset</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div id="ftab-detail" class="hidden">
+                                <div class="form-group"><label class="form-label">Deskripsi</label><textarea id="p-desc"
+                                        class="form-textarea" rows="3"></textarea></div>
+                                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
+                                    <div class="form-group"><label class="form-label">Status</label><input type="text"
+                                            id="p-status" class="form-input"></div>
+                                    <div class="form-group"><label class="form-label">Asal</label><input type="text"
+                                            id="p-asal" class="form-input"></div>
+                                    <div class="form-group"><label class="form-label">Manfaat</label><input type="text"
+                                            id="p-guna" class="form-input"></div>
+                                </div>
+                                <hr>
+                                <h4>Detail Pop-up</h4>
+                                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><textarea
+                                        id="pop-status" class="form-textarea" rows="2"
+                                        placeholder="Detail Status"></textarea><textarea id="pop-asal"
+                                        class="form-textarea" rows="2" placeholder="Detail Asal"></textarea><textarea
+                                        id="pop-jenis" class="form-textarea" rows="2"
+                                        placeholder="Detail Jenis"></textarea><textarea id="pop-guna"
+                                        class="form-textarea" rows="2" placeholder="Detail Manfaat"></textarea></div>
+                                <hr>
+                                <h4>Kuis Mini</h4>
+                                <div class="form-group"><input type="text" id="p-quest" class="form-input"
+                                        placeholder="Pertanyaan"></div>
+                                <div class="form-group"><input type="text" id="p-ans" class="form-input"
+                                        placeholder="Jawaban Benar"></div>
+                                <div style="display:flex; gap:10px;"><input type="text" id="p-opt1" class="form-input"
+                                        placeholder="Opsi 1"><input type="text" id="p-opt2" class="form-input"
+                                        placeholder="Opsi 2"><input type="text" id="p-opt3" class="form-input"
+                                        placeholder="Opsi 3"></div>
+                            </div>
+                            <div style="margin-top:30px; text-align:right;">
+                                <button onclick="simpanTanaman()" class="btn btn-alive btn-save"
+                                    style="padding:12px 30px; margin-right:10px;">💾 SIMPAN SEMUA</button>
+                                <button id="btn-delete-plant" onclick="hapusTanaman()"
+                                    class="btn btn-alive btn-delete hidden" style="padding:12px 30px;">HAPUS</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab-tree" class="hidden">
+                    <div id="view-tree-list">
+                        <!-- Header -->
+                        <div class="page-header"
+                            style="justify-content: space-between; display: flex; align-items: center;">
+                            <div>
+                                <h2 class="page-title">Pemantauan Kondisi Pohon</h2>
+                                <p style="color:var(--text-muted);">Update status kesehatan dan data visual pohon
+                                    terkini.</p>
+                            </div>
+                            <button onclick="openTreeUpdateForm()" class="btn btn-success" style="padding:10px 20px;">📷
+                                + Catat Kondisi</button>
+                        </div>
+
+                        <!-- Table -->
+                        <div class="table-card">
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID POHON</th>
+                                            <th>FOTO TERAKHIR</th>
+                                            <th>KONDISI</th>
+                                            <th style="text-align:right;">AKSI</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tree-list-body">
+                                        <!-- Dynamic Rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="tree-pagination"
+                                style="padding:20px; text-align:right; font-size:0.9rem; color:#666;">
+                                Menampilkan semua data
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Update -->
+                    <div id="view-tree-form" class="hidden">
+                        <div class="page-header"><button onclick="showTreeUpdateList()" class="btn btn-outline"
+                                style="margin-bottom:10px;">← Kembali</button>
+                            <h2 class="page-title">Form Laporan Kondisi</h2>
+                        </div>
+                        <div class="form-card">
+                            <input type="hidden" id="tu-id">
+                            <div class="form-group">
+                                <label class="form-label">Pilih Pohon / Item Katalog</label>
+                                <select id="tu-tree-id" class="form-select">
+                                    <option value="">-- Pilih ID Pohon --</option>
+                                    <!-- Dynamic Options from Content Trees -->
+                                </select>
+                                <small style="color:#666;">Data diambil dari Ensiklopedia (Katalog)</small>
+                            </div>
+
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                                <div class="form-group">
+                                    <label class="form-label">Kondisi Saat Ini</label>
+                                    <select id="tu-condition" class="form-select">
+                                        <option value="Sehat">🟢 Sehat</option>
+                                        <option value="Butuh Perhatian">🟡 Butuh Perhatian</option>
+                                        <option value="Kritis">🔴 Kritis / Sakit</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Tinggi (Meter)</label>
+                                    <input type="number" id="tu-height" class="form-input" placeholder="Contoh: 2.5">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Foto Kondisi Terkini (URL)</label>
+                                <div style="display:flex; gap:10px;">
+                                    <input type="text" id="tu-photo" class="form-input" placeholder="https://..."
+                                        oninput="document.getElementById('tu-preview').src = this.value || 'assets/icon-tree.png'">
+                                    <img id="tu-preview" src="assets/icon-tree.png"
+                                        style="width:50px; height:50px; object-fit:cover; border-radius:5px; border:1px solid #ddd;">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Catatan / Deskripsi Perkembangan</label>
+                                <textarea id="tu-notes" class="form-textarea" rows="3"
+                                    placeholder="Ceritakan perkembangan pohon atau masalah yang ditemukan..."></textarea>
+                            </div>
+
+                            <div style="text-align:right; margin-top:20px;">
+                                <button onclick="simpanUpdatePohon()" class="btn btn-primary">🚀 KIRIM UPDATE KE
+                                    DONATUR</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    </div>
+
+    <script type="module" src="js/admin-logic.js"></script>
+    <script>
+        document.getElementById('dash-date').textContent = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        function switchTab(t, element) {
+            if (element) { document.querySelectorAll('.menu-item').forEach(b => b.classList.remove('active')); element.classList.add('active'); }
+            ['dashboard', 'finance', 'ticket', 'umkm', 'aset', 'content', 'tree'].forEach(x => { const el = document.getElementById('tab-' + x); if (el) el.classList.add('hidden'); });
+            const target = document.getElementById('tab-' + t); if (target) target.classList.remove('hidden');
+            if (window.innerWidth < 768) { document.getElementById('sidebar').classList.remove('active'); }
+            if (t === 'content' && window.showContentList) window.showContentList();
+            if (t === 'aset' && window.showAssetList) window.showAssetList();
+            if (t === 'umkm' && window.showUMKMList) window.showUMKMList();
+            if (t === 'ticket' && window.monitorTickets) window.monitorTickets();
+            if (t === 'finance' && window.showFinanceList) window.showFinanceList();
+            if (t === 'tree' && window.showTreeUpdateList) window.showTreeUpdateList();
+        }
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+    </script>
+    <div id="print-area"></div>
+</body>
+
+</html>

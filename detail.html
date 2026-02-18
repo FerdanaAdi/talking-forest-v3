@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<!--
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║   📄 NAMA FILE: detail.html                                                  ║
+║   📖 FUNGSI: Halaman Detail Koleksi Spesies                                 ║
+║   🌿 POSISI: Menampilkan info lengkap tentang pohon/tanaman/hewan           ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+════════════════════════════════════════════════════════════════════════════════
+🔰 PANDUAN LENGKAP UNTUK NAJU
+════════════════════════════════════════════════════════════════════════════════
+
+Halo Naju! 👋
+
+Ini adalah halaman DETAIL KOLEKSI.
+Muncul setelah pemain berhasil scan dan menemukan spesies!
+
+FUNGSI HALAMAN INI:
+1. Menampilkan FOTO spesies (pohon/hewan/tanaman)
+2. Menampilkan NAMA (Indonesia & Latin)
+3. Menampilkan INFO (status, asal, jenis, manfaat)
+4. Menampilkan DESKRIPSI lengkap
+5. Kadang ada KUIS tentang spesies tersebut
+6. Tombol 🔊 untuk baca dengan suara (TTS)
+
+KAPAN HALAMAN INI MUNCUL:
+- Setelah pemain selesai mini-game
+- Saat pemain melihat koleksi dari Kebun/Garden
+
+════════════════════════════════════════════════════════════════════════════════
+📚 PENJELASAN SIMBOL-SIMBOL
+════════════════════════════════════════════════════════════════════════════════
+
+🟢 = BOLEH KAMU EDIT (aman, tidak merusak program)
+🔴 = JANGAN DIEDIT (bisa error/rusak)
+🟡 = HATI-HATI (boleh edit tapi tanya dulu)
+💡 = TIPS (penjelasan tambahan)
+⚠️ = PERINGATAN (hal penting)
+
+════════════════════════════════════════════════════════════════════════════════
+🎯 DAFTAR YANG BOLEH DIEDIT
+════════════════════════════════════════════════════════════════════════════════
+
+✅ BOLEH EDIT:
+1. Judul tab browser (baris ~7)
+2. Teks tombol kembali "⬅ Kembali" (baris ~65)
+3. Label kuis "📝 Kuis" (baris ~75)
+4. Judul section "📖 Fakta Unik" (baris ~85)
+5. Label-label info (📊 Status, 🏠 Asal, 🌱 Jenis, ⚡ Manfaat)
+6. Teks instruksi "(Klik baris di bawah untuk detail 👇)"
+7. Teks tombol modal "Mengerti"
+8. Warna-warna CSS di <style>
+
+❌ JANGAN EDIT:
+1. id="detail-img", id="detail-name", dll
+2. Semua onclick="bukaPopup(...)"
+3. Kode di dalam <script>...</script>
+4. Import js/detail-logic.js
+
+════════════════════════════════════════════════════════════════════════════════
+📂 FILE YANG BERHUBUNGAN
+════════════════════════════════════════════════════════════════════════════════
+
+LOGIKA HALAMAN:
+• js/detail-logic.js → Kode detail page (🔴 JANGAN EDIT!)
+
+DATA SPESIES:
+• assets/data/species.json → Data pohon/hewan (🟢 BOLEH EDIT!)
+
+STYLING:
+• css/style.css → Styling umum (🟡 HATI-HATI)
+• css/mobile.css → Styling mobile (🟡 HATI-HATI)
+
+════════════════════════════════════════════════════════════════════════════════
+-->
+
+<head>
+    <!--
+    ╔══════════════════════════════════════════════════════════════════════════╗
+    ║ 🔴 BAGIAN HEAD - PENGATURAN TEKNIS                                      ║
+    ║ STATUS: JANGAN DIEDIT (kecuali judul)                                   ║
+    ╚══════════════════════════════════════════════════════════════════════════╝
+    -->
+
+    <!-- 🔴 PENGATURAN KARAKTER - JANGAN EDIT -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!--
+    ════════════════════════════════════════════════════════════════════════════
+    🟢🟢🟢 JUDUL TAB BROWSER - BOLEH DIEDIT! 🟢🟢🟢
+    ════════════════════════════════════════════════════════════════════════════
+    
+    CONTOH:
+    SEBELUM: <title>Detail Koleksi</title>
+    SESUDAH: <title>Info Spesies - Talking Forest</title>
+    -->
+    <title>Detail Koleksi</title>
+
+    <!-- 🔴 FONTS & STYLES - JANGAN EDIT -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mobile.css">
+
+    <!--
+    ════════════════════════════════════════════════════════════════════════════
+    🟢 CSS STYLING - BOLEH EDIT WARNA & UKURAN!
+    ════════════════════════════════════════════════════════════════════════════
+    
+    💡 PENJELASAN SINGKAT:
+    - .detail-hero-img = Gambar besar di atas
+    - .detail-wrapper = Wadah konten
+    - .back-nav = Navigasi kembali
+    - .info-card-box = Kotak info
+    - .status-trigger = Baris info yang bisa diklik
+    - .modal-overlay = Popup detail
+    - .modal-green-card = Kartu hijau popup
+    - .quiz-option = Pilihan jawaban kuis
+    -->
+    <style>
+        /* 🟢 GAMBAR UTAMA - BOLEH EDIT UKURAN */
+        .detail-hero-img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .detail-wrapper {
+            padding: 25px;
+            padding-bottom: 100px;
+            margin-top: -20px;
+            position: relative;
+            z-index: 10;
+            background: transparent;
+        }
+
+        .back-nav {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 20;
+        }
+
+        /* 🟢 TOMBOL KEMBALI - BOLEH EDIT WARNA */
+        .back-btn {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            backdrop-filter: blur(5px);
+        }
+
+        #score-display {
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* 🟢 KOTAK INFO - BOLEH EDIT WARNA */
+        .info-card-box {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .status-trigger {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px dashed #eee;
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+        }
+
+        .status-trigger:hover::after {
+            content: '👆';
+            position: absolute;
+            right: 0;
+            font-size: 0.9rem;
+        }
+
+        .info-key {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #2c3e50;
+            text-align: right;
+            max-width: 60%;
+        }
+
+        /* 🟢 TOMBOL SUARA TTS - BOLEH EDIT WARNA */
+        .tts-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #e0f2f1;
+            border: none;
+            color: #00897b;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        /* ════════════════════════════════════════════════════════════════════
+           🟢 MODAL POPUP - BOLEH EDIT WARNA
+           ════════════════════════════════════════════════════════════════════ */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 🟢 KARTU HIJAU POPUP - BOLEH EDIT WARNA GRADIENT */
+        .modal-green-card {
+            background: linear-gradient(135deg, #5d7c46 0%, #4a6741 100%);
+            width: 85%;
+            max-width: 320px;
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 2px solid #8ab868;
+            transform: scale(0.8);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.show .modal-green-card {
+            transform: scale(1);
+        }
+
+        .modal-icon-header {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .modal-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.5rem;
+            margin: 0 0 15px 0;
+        }
+
+        .modal-body-box {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: left;
+        }
+
+        /* 🟢 TOMBOL MENGERTI - BOLEH EDIT WARNA */
+        .btn-mengerti {
+            background: white;
+            color: #4a6741;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: 800;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 🟢 KUIS - BOLEH EDIT WARNA */
+        .quiz-option {
+            background: #fff;
+            border: 2px solid #eee;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            color: #555;
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+
+<!--
+╔══════════════════════════════════════════════════════════════════════════════╗
+║ 🟡 BAGIAN BODY - ISI HALAMAN                                                ║
+║ STATUS: HATI-HATI (ada bagian boleh dan tidak boleh diedit)                ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+💡 STRUKTUR HALAMAN:
+
+┌─────────────────────────────────────────┐
+│  [⬅ Kembali]        [Skor: 100]         │ ← Navigasi
+├─────────────────────────────────────────┤
+│  ┌─────────────────────────────────┐   │
+│  │                                 │   │
+│  │        [GAMBAR SPESIES]         │   │
+│  │                                 │   │
+│  └─────────────────────────────────┘   │
+├─────────────────────────────────────────┤
+│  POHON MANGGA                           │
+│  Mangifera indica                       │
+├─────────────────────────────────────────┤
+│  📝 Kuis (opsional)                     │
+│  [Pertanyaan + Pilihan]                 │
+├─────────────────────────────────────────┤
+│  📖 Fakta Unik                    🔊   │
+│  ─────────────────────────────────      │
+│  📊 Status:        Dilindungi          │
+│  🏠 Asal:          Kalimantan          │
+│  🌱 Jenis:         Pohon               │
+│  ⚡ Manfaat:        Obat-obatan        │
+│  ─────────────────────────────────      │
+│  [Deskripsi lengkap...]                 │
+└─────────────────────────────────────────┘
+-->
+
+<!-- 🟢 WARNA BACKGROUND - BOLEH GANTI -->
+
+<body style="background-color: #fdfbf7;">
+
+    <div class="mobile-frame">
+        <!--
+        ════════════════════════════════════════════════════════════════════════
+        🟢 NAVIGASI ATAS - BOLEH EDIT TEKS!
+        ════════════════════════════════════════════════════════════════════════
+        -->
+        <div class="back-nav">
+            <!--
+            🟢🟢🟢 TOMBOL KEMBALI - BOLEH GANTI TEKSNYA! 🟢🟢🟢
+            
+            CONTOH:
+            SEBELUM: ⬅ Kembali
+            SESUDAH: 🔙 Back
+            SESUDAH: ← Pulang
+            -->
+            <a href="index.html" class="back-btn">⬅ Kembali</a>
+            <!-- 🔴 SKOR - DIISI OTOMATIS OLEH JS -->
+            <span id="score-display">Skor: ...</span>
+        </div>
+
+        <!-- 🔴 GAMBAR SPESIES - DIISI OTOMATIS OLEH JS -->
+        <img id="detail-img" src="assets/loading.jpg" class="detail-hero-img" alt="Foto">
+
+        <main class="detail-wrapper">
+
+            <!--
+            ════════════════════════════════════════════════════════════════════
+            🔴 NAMA SPESIES - DIISI OTOMATIS OLEH JS
+            ════════════════════════════════════════════════════════════════════
+            -->
+            <div style="margin-bottom: 20px; text-align: center;">
+                <h2 id="detail-name" style="margin:0; font-size:2rem; color:#2c3e50;">Memuat...</h2>
+                <p id="detail-latin" style="margin:0; font-style:italic; color:#7f8c8d;">...</p>
+            </div>
+
+            <!--
+            ════════════════════════════════════════════════════════════════════
+            🟢 SECTION KUIS - BOLEH EDIT JUDUL!
+            ════════════════════════════════════════════════════════════════════
+            
+            💡 PENJELASAN:
+            Section ini muncul jika ada kuis untuk spesies.
+            Class "hidden" membuatnya tersembunyi awalnya.
+            
+            🟢 BOLEH GANTI:
+            - Emoji 📝
+            - Judul "Kuis"
+            -->
+            <div id="quiz-section" class="info-card-box hidden" style="border: 2px dashed #f39c12; background:#fffbf0;">
+                <!-- 🟢 JUDUL SECTION KUIS - BOLEH GANTI -->
+                <h3 style="margin-top:0; color:#d35400;">📝 Kuis</h3>
+                <!-- 🔴 PERTANYAAN - DIISI OTOMATIS -->
+                <p id="quiz-question" style="margin-bottom:15px; color:#555;">...</p>
+                <!-- 🔴 PILIHAN JAWABAN - DIISI OTOMATIS -->
+                <div id="quiz-options"></div>
+            </div>
+
+            <!--
+            ════════════════════════════════════════════════════════════════════
+            🟢 SECTION FAKTA UNIK - BOLEH EDIT TEKS!
+            ════════════════════════════════════════════════════════════════════
+            -->
+            <div id="info-card" class="info-card-box">
+                <!-- Tombol Text-to-Speech -->
+                <button class="tts-btn" onclick="bacaInfo()" title="Suara">🔊</button>
+
+                <!--
+                🟢🟢🟢 JUDUL SECTION - BOLEH GANTI! 🟢🟢🟢
+                
+                CONTOH:
+                SEBELUM: 📖 Fakta Unik
+                SESUDAH: 🌿 Info Spesies
+                SESUDAH: 📚 Facts
+                -->
+                <h3 style="margin-top:0; margin-bottom:5px; font-size:1.1rem; color:#4a6741;">📖 Fakta Unik</h3>
+
+                <!--
+                🟢🟢🟢 INSTRUKSI - BOLEH GANTI! 🟢🟢🟢
+                -->
+                <p style="font-size:0.75rem; color:#999; margin-top:0; margin-bottom:15px;">(Klik baris di bawah untuk
+                    detail 👇)</p>
+
+                <!--
+                ════════════════════════════════════════════════════════════════
+                🟢 BARIS INFO - BOLEH EDIT LABEL DAN EMOJI!
+                ════════════════════════════════════════════════════════════════
+                
+                💡 PENJELASAN:
+                Setiap baris bisa diklik untuk melihat detail popup.
+                
+                🟢 BOLEH GANTI:
+                - Emoji (📊, 🏠, 🌱, ⚡)
+                - Label (Status, Asal, Jenis, Manfaat)
+                
+                🔴 JANGAN UBAH:
+                - onclick="bukaPopup('...')"
+                - id="d-status", id="d-asal", dll
+                -->
+                <div class="status-trigger" onclick="bukaPopup('status')">
+                    <!-- 🟢 LABEL - BOLEH GANTI -->
+                    <span class="info-key">📊 Status:</span>
+                    <span id="d-status" class="info-value">...</span>
+                </div>
+                <div class="status-trigger" onclick="bukaPopup('asal')">
+                    <!-- 🟢 LABEL - BOLEH GANTI -->
+                    <span class="info-key">🏠 Asal:</span>
+                    <span id="d-asal" class="info-value">...</span>
+                </div>
+                <div class="status-trigger" onclick="bukaPopup('jenis')">
+                    <!-- 🟢 LABEL - BOLEH GANTI -->
+                    <span class="info-key">🌱 Jenis:</span>
+                    <span id="d-jenis" class="info-value">...</span>
+                </div>
+                <div class="status-trigger" onclick="bukaPopup('manfaat')">
+                    <!-- 🟢 LABEL - BOLEH GANTI -->
+                    <span class="info-key">⚡ Manfaat:</span>
+                    <span id="d-guna" class="info-value">...</span>
+                </div>
+
+                <hr style="border:0; border-top:1px dashed #eee; margin:20px 0;">
+
+                <!-- 🔴 DESKRIPSI - DIISI OTOMATIS OLEH JS -->
+                <p id="d-desc" style="font-size:0.95rem; line-height:1.7; color:#555; text-align:justify;">...</p>
+
+                <!-- 
+                ════════════════════════════════════════════════════════════════
+                🟢 SECTION ANATOMI - BARU!
+                ════════════════════════════════════════════════════════════════
+                -->
+                <div id="anatomy-section" class="hidden"
+                    style="margin-top: 25px; border-top: 2px dashed #eee; padding-top: 20px;">
+                    <h3 style="margin-top:0; margin-bottom:15px; font-size:1.1rem; color:#4a6741;">🔍 Bagian & Fungsinya
+                    </h3>
+                    <div id="anatomy-list" style="display: flex; flex-direction: column; gap: 15px;">
+                        <!-- Item Anatomi akan diisi JS -->
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!--
+    ════════════════════════════════════════════════════════════════════════════════
+    🟢 MODAL POPUP - BOLEH EDIT TEKS TOMBOL!
+    ════════════════════════════════════════════════════════════════════════════════
+    
+    💡 PENJELASAN:
+    Popup ini muncul saat user klik baris info.
+    Menampilkan detail tentang info tersebut.
+    -->
+    <div id="green-modal" class="modal-overlay">
+        <div class="modal-green-card">
+            <!-- 🔴 ICON & JUDUL - DIISI OTOMATIS -->
+            <span class="modal-icon-header" id="m-icon">📜</span>
+            <h3 class="modal-title" id="m-title">Info</h3>
+            <div class="modal-body-box">
+                <!-- 🔴 ISI POPUP - DIISI OTOMATIS -->
+                <p id="m-body" style="margin:0;">...</p>
+            </div>
+
+            <!--
+            🟢🟢🟢 TOMBOL TUTUP MODAL - BOLEH GANTI TEKSNYA! 🟢🟢🟢
+            
+            CONTOH:
+            SEBELUM: Mengerti
+            SESUDAH: OK
+            SESUDAH: Tutup
+            SESUDAH: Got it!
+            -->
+            <button class="btn-mengerti" onclick="tutupPopup()">Mengerti</button>
+        </div>
+    </div>
+
+    <!--
+    ════════════════════════════════════════════════════════════════════════════════
+    🔴🔴🔴 BAGIAN SCRIPT - JANGAN DIEDIT SAMA SEKALI! 🔴🔴🔴
+    ════════════════════════════════════════════════════════════════════════════════
+    
+    💡 PENJELASAN:
+    Script ini mengambil data spesies dan menampilkannya.
+    
+    YANG DILAKUKAN SCRIPT:
+    1. Baca ID spesies dari URL (?id=mangga)
+    2. Ambil data dari species.json
+    3. Isi semua elemen (nama, latin, deskripsi, dll)
+    4. Handle popup dan kuis
+    5. Handle Text-to-Speech
+    ════════════════════════════════════════════════════════════════════════════════
+    -->
+    <script type="module" src="js/detail-logic.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<!--
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║   📄 NAMA FILE: scan.html                                                    ║
+║   📷 FUNGSI: Halaman Scan QR Code & Jelajah Hutan                           ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+════════════════════════════════════════════════════════════════════════════════
+🔰 PANDUAN LENGKAP UNTUK NAJU
+════════════════════════════════════════════════════════════════════════════════
+
+Halo Naju! 👋
+
+Ini adalah halaman untuk MENCARI pohon di hutan menggunakan QR Code.
+Bayangkan seperti game Pokemon GO, tapi kita mencari tanaman asli!
+
+DI HALAMAN INI ADA:
+─────────────────────────────────────────────────────────────────────────────────
+1. 📷 TOMBOL SCAN - Untuk scan QR Code di pohon asli
+2. ⌨️ INPUT MANUAL - Ketik kode kalau kamera tidak bisa
+3. 🏃 ANIMASI RIMBA - Maskot berlari saat mencari
+4. 🌫️ EFEK KABUT - Tantangan menyingkirkan kabut
+5. 🧭 NAVIGASI BAWAH - Menu untuk pindah halaman
+
+════════════════════════════════════════════════════════════════════════════════
+📚 PENJELASAN SIMBOL-SIMBOL
+════════════════════════════════════════════════════════════════════════════════
+
+🟢 = BOLEH KAMU EDIT (aman, tidak akan merusak program)
+🔴 = JANGAN DIEDIT (bisa error kalau diubah)
+🟡 = HATI-HATI (boleh edit tapi tanya dulu kalau ragu)
+💡 = TIPS (penjelasan tambahan)
+⚠️ = PERINGATAN (hal penting yang harus diperhatikan)
+
+════════════════════════════════════════════════════════════════════════════════
+💡 APA ITU HTML?
+════════════════════════════════════════════════════════════════════════════════
+
+HTML adalah bahasa untuk membuat halaman web.
+
+ANALOGI SEDERHANA:
+• HTML = Struktur rumah (dinding, pintu, jendela)
+• CSS = Dekorasi rumah (warna cat, gorden, perabotan)
+• JavaScript = Listrik rumah (lampu bisa nyala-mati, AC jalan)
+
+ISTILAH PENTING:
+• <tag> = Perintah dalam HTML (seperti kata kerja dalam kalimat)
+• class="..." = Memberikan nama/gaya ke elemen
+• @click = Apa yang terjadi kalau diklik
+• x-show = Kapan elemen ditampilkan
+
+════════════════════════════════════════════════════════════════════════════════
+📂 FILE YANG BERHUBUNGAN
+════════════════════════════════════════════════════════════════════════════════
+
+KALAU MAU EDIT TAMPILAN:
+• css/game.css → Ubah warna, ukuran, jarak
+
+KALAU MAU EDIT LOGIKA:
+• js/v3/scan-logic.js → Logika scan (🔴 JANGAN EDIT!)
+• js/v3/dialog-engine.js → Efek ketik dialog (🔴 JANGAN EDIT!)
+
+KALAU MAU GANTI GAMBAR:
+• assets/images/bg/ → Background hutan
+• assets/images/mascot/ → Gambar Rimba
+
+════════════════════════════════════════════════════════════════════════════════
+🎯 DAFTAR YANG BOLEH DIEDIT DI FILE INI
+════════════════════════════════════════════════════════════════════════════════
+
+✅ BOLEH EDIT:
+1. Judul tab browser (baris ~50)
+2. Teks "JELAJAH HUTAN" (baris ~180)
+3. Teks tombol "SCAN QR CODE" (baris ~210)
+4. Placeholder input "______-______" (baris ~235)
+5. Teks tombol "CARI SPESIES" (baris ~240)
+6. Teks tips di bawah (baris ~250)
+7. Emoji navigasi bawah (baris ~345-380)
+
+❌ JANGAN EDIT:
+1. Semua link <script> dan <link> di atas
+2. Kode x-data, x-show, x-model, @click
+3. Kelas class="..." yang panjang-panjang
+4. Apapun di dalam <script>...</script>
+
+════════════════════════════════════════════════════════════════════════════════
+
+-->
+
+<head>
+    <!--
+    ╔══════════════════════════════════════════════════════════════════════════╗
+    ║ 🔴 BAGIAN HEAD - KEPALA DOKUMEN                                         ║
+    ║ STATUS: JANGAN DIEDIT (kecuali judul)                                   ║
+    ╚══════════════════════════════════════════════════════════════════════════╝
+    
+    💡 PENJELASAN:
+    Bagian <head> berisi pengaturan teknis halaman.
+    Seperti "identitas" dan "peralatan" yang dibutuhkan halaman.
+    User tidak melihat bagian ini secara langsung.
+    -->
+
+    <!-- 
+    ═══════════════════════════════════════════════════════════════════════════
+    🔴 PENGATURAN KARAKTER
+    Ini memberitahu browser bahwa kita pakai huruf Indonesia/Unicode
+    ═══════════════════════════════════════════════════════════════════════════
+    -->
+    <meta charset="UTF-8">
+
+    <!-- 
+    ═══════════════════════════════════════════════════════════════════════════
+    🔴 PENGATURAN LAYAR HP
+    Ini agar halaman bisa menyesuaikan ukuran HP/tablet/laptop
+    ═══════════════════════════════════════════════════════════════════════════
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 
+    ═══════════════════════════════════════════════════════════════════════════
+    🟢 JUDUL TAB BROWSER - BOLEH DIEDIT!
+    ═══════════════════════════════════════════════════════════════════════════
+    
+    💡 PENJELASAN:
+    Ini adalah teks yang muncul di tab browser (bagian atas).
+    
+    ✏️ CARA EDIT:
+    Ganti teks di antara <title> dan </title>
+    
+    CONTOH:
+    SEBELUM: <title>Talking Forest - Jelajah</title>
+    SESUDAH: <title>Hutan Berbicara - Petualangan</title>
+    -->
+    <title>Talking Forest - Jelajah</title>
+
+    <!-- 
+    ═══════════════════════════════════════════════════════════════════════════
+    🔴 LIBRARY / PUSTAKA - JANGAN DIEDIT!
+    ═══════════════════════════════════════════════════════════════════════════
+    
+    💡 PENJELASAN:
+    Ini seperti "buku resep" yang kita pinjam dari internet.
+    Kalau dihapus, halaman tidak akan berfungsi!
+    
+    DAFTAR LIBRARY:
+    1. Tailwind CSS = Untuk mempercantik tampilan
+    2. GSAP = Untuk animasi bergerak
+    3. Alpine.js = Untuk logika interaktif
+    4. Google Fonts = Untuk font/huruf khusus
+    
+    ⚠️ PERINGATAN:
+    JANGAN menghapus, mengubah, atau memindahkan baris-baris ini!
+    -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { forest: '#2d6a4f', earth: '#603813', gold: '#ffd700', parchment: '#fdf6e3' },
+                    fontFamily: { 'bakso': ['"Bakso Sapi"', 'cursive'], 'nunito': ['"Nunito"', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bakso+Sapi&family=Nunito:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/game.css">
+    <link rel="stylesheet" href="css/system-ui.css">
+    <script src="js/v3/components/system-ui.js"></script>
+
+    <!-- 
+    ═══════════════════════════════════════════════════════════════════════════
+    🔴 STYLE KHUSUS HALAMAN INI - JANGAN DIEDIT!
+    ═══════════════════════════════════════════════════════════════════════════
+    
+    💡 PENJELASAN:
+    Ini adalah gaya CSS khusus untuk animasi di halaman ini.
+    Kalau diubah, animasi kabut dan parallax bisa rusak.
+    -->
+    <style>
+        .bg-parallax {
+            width: 200%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: flex;
+        }
+
+        .bg-parallax img {
+            width: 50%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .fog-overlay {
+            transition: opacity 0.5s ease-out;
+            cursor: pointer;
+        }
+
+        .glitch-active {
+            filter: url(#glitch-filter);
+        }
+    </style>
+</head>
+
+<!--
+╔══════════════════════════════════════════════════════════════════════════════╗
+║ 🟡 BAGIAN BODY - ISI HALAMAN YANG DILIHAT USER                             ║
+║ STATUS: HATI-HATI (ada bagian yang boleh dan tidak boleh diedit)           ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+💡 PENJELASAN:
+Bagian <body> adalah isi halaman yang dilihat pengunjung.
+Di sini ada tombol-tombol, gambar, dan teks.
+
+STRUKTUR HALAMAN INI:
+┌─────────────────────────────────────────┐
+│  HEADER (Judul "JELAJAH HUTAN")         │
+├─────────────────────────────────────────┤
+│                                         │
+│  KONTEN UTAMA:                          │
+│  - Tombol Scan QR Code                  │
+│  - Input Manual Kode                    │
+│  - Animasi Rimba                        │
+│  - Efek Kabut                           │
+│                                         │
+├─────────────────────────────────────────┤
+│  NAVIGASI BAWAH (5 menu)                │
+└─────────────────────────────────────────┘
+-->
+
+<!-- 
+═══════════════════════════════════════════════════════════════════════════════
+🔴 BODY TAG - JANGAN UBAH CLASS-NYA!
+═══════════════════════════════════════════════════════════════════════════════
+
+💡 PENJELASAN CLASS:
+- bg-forest = Warna latar hijau hutan
+- h-screen = Tinggi penuh layar
+- w-screen = Lebar penuh layar
+- bg-[url('...')] = Gambar latar belakang
+
+🟢 BOLEH GANTI GAMBAR BACKGROUND:
+Cari: assets/images/bg/forest_seamless.jpg
+Ganti dengan path gambar lain dari folder yang sama.
+-->
+
+<body
+    class="bg-forest h-screen w-screen flex items-center justify-center overflow-hidden font-nunito bg-[url('assets/images/bg/forest_seamless.jpg')] bg-cover bg-center">
+
+    <!--
+    ═══════════════════════════════════════════════════════════════════════════
+    🔴 KONTAINER UTAMA - JANGAN UBAH STRUKTUR!
+    ═══════════════════════════════════════════════════════════════════════════
+    
+    💡 PENJELASAN:
+    x-data="scanLogic()" = Menghubungkan ke file js/v3/scan-logic.js
+    x-init="init()" = Menjalankan fungsi awal saat halaman dibuka
+    
+    ⚠️ PERINGATAN:
+    Kalau ini dihapus atau diubah, SEMUA logika scan tidak akan berfungsi!
+    -->
+    <div x-data="scanLogic()" x-init="init()"
+        class="w-full max-w-[480px] h-full relative shadow-2xl overflow-hidden flex flex-col bg-forest transition-all border-x-4 border-forest/50">
+
+        <!--
+        ═══════════════════════════════════════════════════════════════════════
+        🔴 LAYER 0: BACKGROUNDS - JANGAN DIEDIT!
+        ═══════════════════════════════════════════════════════════════════════
+        
+        💡 PENJELASAN:
+        Ini adalah lapisan gambar latar belakang.
+        Ada 3 jenis background yang muncul bergantian:
+        1. Background default (saat idle)
+        2. Background parallax (saat Rimba berlari)
+        3. Background habitat (saat pohon ditemukan)
+        
+        🟢 BOLEH GANTI GAMBAR:
+        Cari: src="assets/images/bg/..." 
+        Ganti dengan path gambar lain.
+        
+        ⚠️ TAPI JANGAN UBAH:
+        - x-show="status === ..."
+        - class="..." yang panjang
+        -->
+        <div class="absolute inset-0 z-0 bg-forest">
+            <!-- BACKGROUND DEFAULT -->
+            <div class="absolute inset-0 bg-cover bg-center"
+                style="background-image: url('assets/images/bg/bg_forest_intro.jpg'); filter: brightness(0.7);">
+            </div>
+            <div class="absolute inset-0 bg-gradient-to-t from-forest via-forest/80 to-transparent"></div>
+
+            <!-- BACKGROUND PARALLAX (Muncul saat status = 2, Rimba berlari) -->
+            <div x-show="status === 2" class="bg-parallax z-10">
+                <!--
+                🟢 GAMBAR HUTAN BERGERAK - BOLEH GANTI
+                Ini adalah gambar yang bergerak saat Rimba berlari.
+                Gambar harus "seamless" (bisa disambung).
+                -->
+                <img src="assets/images/bg/forest_seamless.jpg" alt="Forest">
+                <img src="assets/images/bg/forest_seamless.jpg" alt="Forest">
+            </div>
+
+            <!-- BACKGROUND HABITAT (Muncul saat pohon ditemukan) -->
+            <div x-show="status >= 3" class="absolute inset-0 z-20">
+                <img src="assets/images/bg/forest_seamless.jpg"
+                    class="h-full w-full object-cover grayscale transition-all duration-1000"
+                    :class="status >= 5 ? 'grayscale-0' : 'grayscale'">
+                <div class="absolute inset-0 bg-black/40"></div>
+            </div>
+        </div>
+
+        <!--
+        ═══════════════════════════════════════════════════════════════════════
+        🔴 LAYER 1: KARAKTER & EFEK VISUAL - JANGAN DIEDIT!
+        ═══════════════════════════════════════════════════════════════════════
+        
+        💡 PENJELASAN:
+        Lapisan ini berisi:
+        1. Rimba berlari (saat mencari pohon)
+        2. Kabut misterius (harus diusir dengan klik)
+        3. Siluet pohon (sebelum terungkap)
+        
+        🟢 BOLEH GANTI GAMBAR RIMBA:
+        Cari: src="assets/images/mascot/rimba_run.png"
+        Ganti dengan gambar lain dari folder mascot/
+        
+        🟢 BOLEH GANTI TEKS KABUT:
+        Cari: "AWAS KABUT!" dan "(Ketuk terus untuk mengusir kabut)"
+        -->
+        <div class="absolute inset-0 z-10 flex items-center justify-center">
+
+            <!-- RIMBA BERLARI (Muncul saat status = 2) -->
+            <div x-show="status === 2" class="relative">
+                <!--
+                🟢 GAMBAR RIMBA BERLARI - BOLEH GANTI
+                Ukuran gambar: Minimal 288x288 pixel (w-72 h-72)
+                Format: PNG dengan transparansi
+                -->
+                <img src="assets/images/mascot/rimba_run.png" class="w-72 h-72 object-contain animate-bounce-slow">
+                <!-- Bayangan di bawah Rimba -->
+                <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 w-48 h-6 bg-black/20 rounded-full blur-md">
+                </div>
+            </div>
+
+            <!--
+            ═══════════════════════════════════════════════════════════════════
+            🟢 EFEK KABUT MISTERIUS - BOLEH EDIT TEKS!
+            ═══════════════════════════════════════════════════════════════════
+            
+            💡 PENJELASAN:
+            Kabut ini muncul setelah Rimba berlari (status = 3).
+            User harus klik berulang-ulang untuk mengusir kabut.
+            
+            🟢 BOLEH GANTI:
+            - Emoji 🌫️
+            - Teks "AWAS KABUT!"
+            - Teks "(Ketuk terus untuk mengusir kabut)"
+            
+            🔴 JANGAN UBAH:
+            - x-show="status === 3"
+            - @click="clearFog()"
+            - :style="'opacity: ' + fogOpacity"
+            -->
+            <div x-show="status === 3"
+                class="absolute inset-0 z-20 bg-white/60 backdrop-blur-md fog-overlay flex flex-col items-center justify-center p-8 text-center"
+                :style="'opacity: ' + fogOpacity" @click="clearFog()">
+
+                <!-- 🟢 EMOJI KABUT - BOLEH GANTI -->
+                <div class="text-8xl animate-pulse mb-6">🌫️</div>
+
+                <!-- 🟢 TEKS JUDUL KABUT - BOLEH GANTI -->
+                <h3 class="text-forest font-bakso text-4xl drop-shadow-lg">AWAS KABUT!</h3>
+
+                <!-- 🟢 TEKS INSTRUKSI KABUT - BOLEH GANTI -->
+                <p class="text-forest/80 text-lg font-bold font-nunito mt-2">(Ketuk terus untuk mengusir kabut)</p>
+            </div>
+
+            <!-- SILUET POHON (Muncul saat pohon hampir ditemukan) -->
+            <div x-show="status >= 4 && status !== 6 && speciesData" class="relative flex flex-col items-center">
+                <div class="relative w-64 h-64 flex items-center justify-center">
+                    <!-- Efek Radar Scan -->
+                    <div x-show="status === 5"
+                        class="absolute inset-0 border-4 border-gold/50 rounded-full animate-ping"></div>
+                    <div x-show="status === 5"
+                        class="absolute inset-8 border-2 border-gold/30 rounded-full animate-ping delay-150"></div>
+                    <!-- Gambar Siluet -->
+                    <img :src="'assets/images/species/' + speciesData.assets.siluet"
+                        class="w-56 h-56 object-contain transition-all duration-500"
+                        :class="[showGlitch ? 'brightness-150 scale-110' : 'brightness-0', status >= 5 ? 'opacity-80' : 'opacity-40']">
+                </div>
+            </div>
+        </div>
+
+        <!--
+        ═══════════════════════════════════════════════════════════════════════
+        🟢🔴 LAYER 2: UI OVERLAYS - ADA YANG BOLEH DAN TIDAK BOLEH DIEDIT
+        ═══════════════════════════════════════════════════════════════════════
+        
+        💡 PENJELASAN:
+        Ini adalah lapisan tampilan untuk user:
+        - Header (judul halaman)
+        - Tombol-tombol
+        - Form input
+        - Dialog Rimba
+        - Navigasi bawah
+        -->
+        <div class="relative z-30 flex-1 flex flex-col h-full pointer-events-none">
+
+            <!--
+            ═══════════════════════════════════════════════════════════════════
+            🟢 HEADER HALAMAN - BOLEH EDIT JUDUL!
+            ═══════════════════════════════════════════════════════════════════
+            
+            💡 PENJELASAN:
+            Ini adalah bagian atas halaman yang berisi:
+            1. Tombol kembali (panah)
+            2. Judul halaman
+            
+            🟢 BOLEH GANTI:
+            - Teks "JELAJAH HUTAN"
+            
+            CONTOH PENGGANTIAN:
+            SEBELUM: JELAJAH HUTAN
+            SESUDAH: PETUALANGAN RIMBA
+            SESUDAH: CARI TANAMAN
+            -->
+            <div
+                class="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-forest to-forest/0 flex items-center justify-between px-4 z-40">
+
+                <!-- 🔴 TOMBOL KEMBALI - JANGAN UBAH STRUKTUR -->
+                <a href="index.html"
+                    class="p-2 text-white bg-black/20 hover:bg-black/30 rounded-full transition backdrop-blur-sm pointer-events-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                </a>
+
+                <!--
+                ════════════════════════════════════════════════════════════════
+                🟢🟢🟢 JUDUL HALAMAN - BOLEH DIEDIT! 🟢🟢🟢
+                ════════════════════════════════════════════════════════════════
+                
+                ✏️ CARA EDIT:
+                Ganti teks "JELAJAH HUTAN" dengan teks lain.
+                Jangan hapus class="..." dan tag <h1>.
+                
+                CONTOH:
+                SEBELUM: >JELAJAH HUTAN</h1>
+                SESUDAH: >PETUALANGAN SERU</h1>
+                -->
+                <h1 class="text-xl font-bakso text-gold drop-shadow-md tracking-wider">JELAJAH HUTAN</h1>
+
+                <div class="w-10"></div> <!-- Spacer untuk keseimbangan -->
+            </div>
+
+            <!--
+            ═══════════════════════════════════════════════════════════════════
+            🟢 TAMPILAN UTAMA (IDLE) - BANYAK YANG BOLEH DIEDIT!
+            ═══════════════════════════════════════════════════════════════════
+            
+            💡 PENJELASAN:
+            Ini adalah tampilan pertama yang dilihat user.
+            Muncul saat status = 0 (belum ada aksi).
+            
+            BERISI:
+            1. Tombol SCAN QR CODE (besar, di tengah)
+            2. Garis pembatas "ATAU"
+            3. Form input manual kode
+            4. Kotak tips
+            -->
+            <div x-show="status === 0"
+                class="flex-1 flex flex-col items-center justify-center p-6 gap-6 pt-20 pb-24 pointer-events-auto overflow-y-auto">
+
+                <!--
+                ════════════════════════════════════════════════════════════════
+                🟢 TOMBOL SCAN QR CODE - BOLEH EDIT TEKS & EMOJI!
+                ════════════════════════════════════════════════════════════════
+                
+                💡 PENJELASAN:
+                Tombol besar untuk scan QR Code.
+                Saat diklik, akan membuka kamera (atau alert sementara).
+                
+                🟢 BOLEH GANTI:
+                - Emoji 📷 (kamera)
+                - Teks "SCAN QR CODE"
+                
+                🔴 JANGAN UBAH:
+                - @click="..." 
+                - class="..." yang panjang
+                -->
+                <div
+                    class="w-full max-w-xs aspect-square bg-white/10 p-4 rounded-[2rem] border-2 border-dashed border-white/30 flex items-center justify-center relative">
+
+                    <!-- Hiasan sudut (dekoratif) -->
+                    <div class="absolute -top-2 -left-2 w-8 h-8 border-t-4 border-l-4 border-gold rounded-tl-xl"></div>
+                    <div class="absolute -top-2 -right-2 w-8 h-8 border-t-4 border-r-4 border-gold rounded-tr-xl"></div>
+                    <div class="absolute -bottom-2 -left-2 w-8 h-8 border-b-4 border-l-4 border-gold rounded-bl-xl">
+                    </div>
+                    <div class="absolute -bottom-2 -right-2 w-8 h-8 border-b-4 border-r-4 border-gold rounded-br-xl">
+                    </div>
+
+                    <button @click="playSound('pop'); alert('Kamera sedang dimuat... (Gunakan Input Manual)')"
+                        class="w-full h-full bg-forest rounded-2xl shadow-2xl flex flex-col items-center justify-center gap-3 transform active:scale-95 transition hover:brightness-110 border-4 border-white/10 group">
+
+                        <!--
+                        ════════════════════════════════════════════════════════
+                        🟢🟢🟢 EMOJI KAMERA - BOLEH GANTI! 🟢🟢🟢
+                        ════════════════════════════════════════════════════════
+                        
+                        ✏️ CARA EDIT:
+                        Ganti emoji 📷 dengan emoji lain.
+                        
+                        CONTOH EMOJI LAIN:
+                        🔍 (kaca pembesar)
+                        📱 (HP)
+                        🎯 (target)
+                        -->
+                        <span class="text-7xl group-hover:scale-110 transition">📷</span>
+
+                        <!--
+                        ════════════════════════════════════════════════════════
+                        🟢🟢🟢 TEKS TOMBOL SCAN - BOLEH GANTI! 🟢🟢🟢
+                        ════════════════════════════════════════════════════════
+                        
+                        ✏️ CARA EDIT:
+                        Ganti teks "SCAN QR CODE" dengan teks lain.
+                        
+                        CONTOH:
+                        SEBELUM: >SCAN QR CODE</span>
+                        SESUDAH: >PINDAI KODE</span>
+                        SESUDAH: >BUKA KAMERA</span>
+                        -->
+                        <span class="text-white font-bakso tracking-wider text-xl">SCAN QR CODE</span>
+                    </button>
+                </div>
+
+                <!--
+                ════════════════════════════════════════════════════════════════
+                🟢 GARIS PEMBATAS "ATAU" - BOLEH EDIT TEKS!
+                ════════════════════════════════════════════════════════════════
+                -->
+                <div class="relative w-full max-w-xs flex items-center justify-center my-2">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-white/30"></div>
+                    </div>
+                    <!--
+                    🟢🟢🟢 TEKS PEMBATAS - BOLEH GANTI! 🟢🟢🟢
+                    
+                    CONTOH:
+                    SEBELUM: >ATAU</span>
+                    SESUDAH: >ATAU KETIK MANUAL</span>
+                    -->
+                    <span class="relative bg-forest px-4 text-sm text-gold italic font-bold">ATAU</span>
+                </div>
+
+                <!--
+                ════════════════════════════════════════════════════════════════
+                🟢 FORM INPUT MANUAL - BOLEH EDIT TEKS!
+                ════════════════════════════════════════════════════════════════
+                
+                💡 PENJELASAN:
+                Form ini untuk mengetik kode pohon secara manual.
+                Berguna kalau kamera HP tidak bisa scan QR.
+                
+                🟢 BOLEH GANTI:
+                - Teks "Masukkan Kode Pohon:"
+                - Placeholder "______-______"
+                - Teks tombol "CARI SPESIES 🔍"
+                
+                🔴 JANGAN UBAH:
+                - x-model="manualCode"
+                - @click="processCode(manualCode)"
+                -->
+                <div
+                    class="w-full max-w-xs bg-black/20 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/10">
+
+                    <!--
+                    🟢🟢🟢 LABEL INPUT - BOLEH GANTI! 🟢🟢🟢
+                    
+                    CONTOH:
+                    SEBELUM: Masukkan Kode Pohon:
+                    SESUDAH: Ketik Kode QR:
+                    SESUDAH: Tulis Kode Tanaman:
+                    -->
+                    <label
+                        class="block text-center text-white/80 text-sm font-bold mb-2 uppercase tracking-widest">Masukkan
+                        Kode Pohon:</label>
+
+                    <div class="flex flex-col gap-3">
+                        <!--
+                        🟢🟢🟢 PLACEHOLDER INPUT - BOLEH GANTI! 🟢🟢🟢
+                        
+                        💡 PENJELASAN:
+                        Placeholder adalah teks abu-abu yang muncul sebelum diisi.
+                        
+                        CONTOH:
+                        SEBELUM: placeholder="______-______"
+                        SESUDAH: placeholder="Contoh: POHON-001"
+                        -->
+                        <input type="text" x-model="manualCode" placeholder="______-______"
+                            class="w-full bg-white/90 border-4 border-transparent focus:border-gold rounded-xl px-4 py-3 text-center text-lg text-forest placeholder-forest/30 outline-none font-mono uppercase tracking-widest transition shadow-inner">
+
+                        <button @click="processCode(manualCode)"
+                            class="w-full bg-gold text-forest font-bakso text-lg py-3 rounded-xl shadow-[0_4px_0_#b8860b] hover:brightness-110 active:shadow-none active:translate-y-1 transition">
+                            <!--
+                            🟢🟢🟢 TEKS TOMBOL CARI - BOLEH GANTI! 🟢🟢🟢
+                            
+                            CONTOH:
+                            SEBELUM: CARI SPESIES 🔍
+                            SESUDAH: TEMUKAN POHON 🌳
+                            SESUDAH: MULAI PETUALANGAN 🚀
+                            -->
+                            CARI SPESIES 🔍
+                        </button>
+                    </div>
+                </div>
+
+                <!--
+                ════════════════════════════════════════════════════════════════
+                🟢 KOTAK TIPS - BOLEH EDIT TEKS!
+                ════════════════════════════════════════════════════════════════
+                
+                💡 PENJELASAN:
+                Kotak ini berisi tips untuk user.
+                
+                🟢 BOLEH GANTI:
+                - Emoji 💡
+                - Teks "Tip:"
+                - Isi tips-nya
+                -->
+                <div
+                    class="w-full max-w-xs bg-white/10 border border-white/20 p-3 rounded-xl flex items-start gap-3 mt-2 backdrop-blur-sm">
+
+                    <!-- 🟢 EMOJI TIPS - BOLEH GANTI -->
+                    <span class="text-xl">💡</span>
+
+                    <!--
+                    🟢🟢🟢 ISI TIPS - BOLEH GANTI! 🟢🟢🟢
+                    
+                    CONTOH:
+                    SEBELUM: Cari QR Code di papan informasi pohon atau di batang pohon.
+                    SESUDAH: QR Code ada di dekat akar pohon atau di papan nama.
+                    -->
+                    <p class="text-white/90 text-xs leading-relaxed font-nunito">
+                        <span class="font-bold text-gold">Tip:</span> Cari QR Code di papan informasi pohon atau di
+                        batang pohon.
+                    </p>
+                </div>
+
+                <!-- Pesan Error (muncul otomatis kalau ada kesalahan) -->
+                <div x-show="errorMessage"
+                    class="text-white text-xs font-bold bg-red-500 px-4 py-2 rounded-full mx-auto shadow-lg animate-bounce"
+                    x-text="errorMessage"></div>
+            </div>
+
+            <!--
+            ═══════════════════════════════════════════════════════════════════
+            🔴 TAMPILAN LOADING - JANGAN DIEDIT!
+            ═══════════════════════════════════════════════════════════════════
+            
+            💡 PENJELASAN:
+            Ini muncul saat sistem sedang memproses kode.
+            Berupa animasi loading berputar.
+            -->
+            <div x-show="status === 1" class="flex-1 flex flex-col items-center justify-center p-6 gap-4">
+                <div class="w-20 h-20 border-8 border-white/20 border-t-gold rounded-full animate-spin"></div>
+                <!--
+                🟢 TEKS LOADING - BOLEH GANTI
+                SEBELUM: MEMERIKSA KODE...
+                SESUDAH: MENCARI POHON...
+                -->
+                <p class="text-gold font-bakso text-xl tracking-widest animate-pulse">MEMERIKSA KODE...</p>
+            </div>
+
+            <!--
+            ═══════════════════════════════════════════════════════════════════
+            🟡 TAMPILAN DIALOG RIMBA - HATI-HATI SAAT EDIT!
+            ═══════════════════════════════════════════════════════════════════
+            
+            💡 PENJELASAN:
+            Ini adalah kotak dialog saat Rimba berbicara.
+            Muncul saat pohon ditemukan dan sedang didiagnosis.
+            
+            🟢 BOLEH GANTI:
+            - Teks "STATUS: AMNESIA AKUT"
+            - Teks tombol "PULIHKAN WAKTU ⚡"
+            
+            🔴 JANGAN UBAH:
+            - x-show, x-text, @click
+            - :src (path gambar dinamis)
+            -->
+            <div x-show="status === 5" class="mt-auto p-4 pb-24 pointer-events-auto">
+                <div
+                    class="bg-forest/95 border-2 border-gold p-6 rounded-t-3xl shadow-[0_-5px_30px_rgba(0,0,0,0.5)] relative">
+
+                    <!--
+                    🟢 BADGE STATUS - BOLEH GANTI TEKS!
+                    
+                    CONTOH:
+                    SEBELUM: STATUS: AMNESIA AKUT
+                    SESUDAH: STATUS: BUTUH BANTUAN
+                    -->
+                    <div
+                        class="absolute -top-3 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[10px] font-mono px-4 py-1 rounded-full border border-white shadow-lg">
+                        STATUS: AMNESIA AKUT
+                    </div>
+
+                    <div class="flex items-end gap-3 mb-4">
+                        <!-- Gambar Rimba (berubah sesuai mood) -->
+                        <img :src="'assets/images/mascot/rimba_' + (currentMood || 'sad') + '.png'"
+                            class="w-28 h-28 object-contain drop-shadow-md -mb-2">
+
+                        <!-- Kotak Dialog -->
+                        <div class="bg-parchment rounded-xl p-3 flex-1 border border-earth/20 shadow-inner">
+                            <h4 class="text-forest font-bold text-xs uppercase mb-1">RIMBA</h4>
+                            <p class="text-earth text-sm leading-relaxed font-nunito"
+                                x-text="dialogEngine.text || '...'"></p>
+                        </div>
+                    </div>
+
+                    <!-- Tombol Lanjut -->
+                    <button x-show="!isLastDialog" @click="playSound('pop'); nextDialog()"
+                        class="w-full text-white/50 text-xs text-center pb-2 animate-pulse">(Ketuk untuk
+                        lanjut)</button>
+
+                    <!--
+                    🟢 TOMBOL PULIHKAN WAKTU - BOLEH GANTI TEKS!
+                    
+                    CONTOH:
+                    SEBELUM: PULIHKAN WAKTU ⚡
+                    SESUDAH: SELAMATKAN POHON 🌳
+                    SESUDAH: MULAI MISI 🎯
+                    -->
+                    <button x-show="isLastDialog" @click="playSound('pop'); startRecovery()"
+                        class="w-full bg-gradient-to-r from-red-600 to-red-500 py-3 rounded-xl text-white font-bold shadow-lg active:scale-95 transition border-b-4 border-red-800">
+                        PULIHKAN WAKTU ⚡
+                    </button>
+                </div>
+
+                <!--
+                ═══════════════════════════════════════════════════════════════
+                🟢 TAMPILAN SUDAH PERNAH DITEMUKAN - BOLEH EDIT TEKS!
+                ═══════════════════════════════════════════════════════════════
+                
+                💡 PENJELASAN:
+                Ini muncul kalau user scan pohon yang sudah pernah dikumpulkan.
+                
+                🟢 BOLEH GANTI:
+                - Teks "COLLECTED" (badge)
+                - Teks tombol "BACA CERITA LAGI"
+                - Teks tombol "KEMBALI KE JELAJAH"
+                -->
+                <div x-show="status === 6 && speciesData"
+                    class="mt-auto p-4 pb-24 pointer-events-auto flex flex-col items-center justify-center h-full">
+                    <div
+                        class="bg-white/95 p-6 rounded-3xl shadow-xl flex flex-col items-center gap-1 text-center max-w-xs border-4 border-gold/50 relative overflow-hidden">
+
+                        <!-- Badge "COLLECTED" -->
+                        <div
+                            class="absolute top-4 right-[-35px] rotate-45 bg-green-500 text-white text-[9px] font-bold px-10 py-1 shadow-md">
+                            COLLECTED
+                        </div>
+
+                        <!-- Gambar Siluet Pohon -->
+                        <div
+                            class="w-32 h-32 bg-forest/10 rounded-full flex items-center justify-center mb-2 overflow-hidden border-4 border-forest shadow-inner">
+                            <img :src="'assets/images/species/' + speciesData.assets.siluet"
+                                class="w-24 h-24 object-contain brightness-0 opacity-50">
+                        </div>
+
+                        <!-- Nama Pohon -->
+                        <div>
+                            <h2 class="font-bakso text-2xl text-forest uppercase tracking-wide"
+                                x-text="speciesData.name"></h2>
+                            <p class="font-nunito text-xs text-earth italic -mt-1"
+                                x-text="speciesData.latin || 'Plantae Incognita'"></p>
+                        </div>
+
+                        <!-- Tombol-tombol -->
+                        <div class="w-full flex flex-col gap-2 mt-4">
+                            <!--
+                            🟢🟢🟢 TOMBOL BACA CERITA - BOLEH GANTI TEKS! 🟢🟢🟢
+                            -->
+                            <button @click="window.location.href='story.html?scene=reveal&code=' + speciesData.id"
+                                class="w-full bg-gold text-earth font-bold py-3 rounded-xl shadow-md hover:brightness-110 transition text-xs border-b-4 border-yellow-600 flex items-center justify-center gap-2">
+                                <span>📖</span> BACA CERITA LAGI
+                            </button>
+
+                            <!--
+                            🟢🟢🟢 TOMBOL KEMBALI - BOLEH GANTI TEKS! 🟢🟢🟢
+                            -->
+                            <button @click="status = 0; manualCode = ''"
+                                class="w-full bg-forest text-white font-bold py-3 rounded-xl shadow-md hover:bg-[#1a4031] transition text-xs border-b-4 border-[#1a4031] flex items-center justify-center gap-2">
+                                <span>⬅️</span> KEMBALI KE JELAJAH
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!--
+            ═══════════════════════════════════════════════════════════════════
+            🟢 NAVIGASI BAWAH - BOLEH EDIT EMOJI & TEKS!
+            ═══════════════════════════════════════════════════════════════════
+            
+            💡 PENJELASAN:
+            Ini adalah menu navigasi di bagian bawah layar.
+            Ada 5 menu: Markas, Jelajah, Kebun, Donasi, Profil.
+            
+            🟢 BOLEH GANTI:
+            - Emoji setiap menu (🏠, 📸, 🌿, 💚, 👤)
+            - Teks label setiap menu
+            
+            🔴 JANGAN UBAH:
+            - href="..." (link tujuan)
+            - @click="..." (aksi saat diklik)
+            - class="..." yang panjang
+            -->
+            <div
+                class="absolute bottom-0 left-0 right-0 h-16 bg-forest flex items-center justify-around px-2 z-50 pointer-events-auto border-t border-white/10 shadow-[0_-4px_10px_rgba(0,0,0,0.3)]">
+
+                <!--
+                ════════════════════════════════════════════════════════════════
+                🟢 MENU 1: MARKAS (Homepage)
+                ════════════════════════════════════════════════════════════════
+                
+                🟢 BOLEH GANTI:
+                - Emoji 🏠
+                - Teks "Markas"
+                -->
+                <a href="index.html"
+                    class="flex flex-col items-center gap-1 w-1/5 opacity-70 hover:opacity-100 transition">
+                    <span class="text-xl text-white">🏠</span>
+                    <span class="text-[9px] text-white font-bold">Markas</span>
+                </a>
+
+                <!--
+                ════════════════════════════════════════════════════════════════
+                🟢 MENU 2: JELAJAH (Halaman ini - AKTIF)
+                ════════════════════════════════════════════════════════════════
+                
+                💡 Menu ini tampil berbeda karena sedang aktif (halaman saat ini).
+                
+                🟢 BOLEH GANTI:
+                - Emoji 📸
+                - Teks "Jelajah"
+                -->
+                <div class="flex flex-col items-center gap-1 w-1/5">
+                    <div class="bg-white/10 p-2 rounded-xl -mt-4 border-2 border-gold shadow-lg backdrop-blur-sm">
+                        <span class="text-2xl">📸</span>
+                    </div>
+                    <span class="text-[9px] text-gold font-bold">Jelajah</span>
+                </div>
+
+                <!--
+                ════════════════════════════════════════════════════════════════
+                🟢 MENU 3: KEBUN (Koleksi)
+                ════════════════════════════════════════════════════════════════
+                
+                🟢 BOLEH GANTI:
+                - Emoji 🌿
+                - Teks "Kebun"
+                -->
+                <a href="v3/garden.html"
+                    class="flex flex-col items-center gap-1 w-1/5 opacity-70 hover:opacity-100 transition"
+                    @click="playSound('pop')">
+                    <span class="text-xl text-white">🌿</span>
+                    <span class="text-[9px] text-white font-bold">Kebun</span>
+                </a>
+
+                <!--
+                ════════════════════════════════════════════════════════════════
+                🟢 MENU 4: DONASI
+                ════════════════════════════════════════════════════════════════
+                
+                🟢 BOLEH GANTI:
+                - Emoji 💚
+                - Teks "Donasi"
+                -->
+                <a href="v3/donate.html"
+                    class="flex flex-col items-center gap-1 w-1/5 opacity-70 hover:opacity-100 transition"
+                    @click="playSound('pop')">
+                    <span class="text-xl text-white">💚</span>
+                    <span class="text-[9px] text-white font-bold">Donasi</span>
+                </a>
+
+                <!--
+                ════════════════════════════════════════════════════════════════
+                🟢 MENU 5: PROFIL
+                ════════════════════════════════════════════════════════════════
+                
+                🟢 BOLEH GANTI:
+                - Emoji 👤
+                - Teks "Profil"
+                -->
+                <a href="v3/profile.html"
+                    class="flex flex-col items-center gap-1 w-1/5 opacity-70 hover:opacity-100 transition"
+                    @click="playSound('pop')">
+                    <span class="text-xl text-white">👤</span>
+                    <span class="text-[9px] text-white font-bold">Profil</span>
+                </a>
+            </div>
+
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════════════════════
+             SYSTEM UI TEMPLATES (ALUR 12-15)
+             ═══════════════════════════════════════════════════════════════════════ -->
+
+        <!-- Toast Container -->
+        <div class="toast-container" x-data x-show="$store.systemUI.toasts.length > 0">
+            <template x-for="toast in $store.systemUI.toasts" :key="toast.id">
+                <div class="toast" :class="[toast.type, !toast.visible ? 'hiding' : '']" x-show="toast.visible"
+                    x-transition>
+                    <span class="toast-icon"
+                        x-text="toast.type === 'success' ? '✅' : toast.type === 'error' ? '❌' : toast.type === 'xp' ? '⭐' : 'ℹ️'"></span>
+                    <span x-text="toast.message"></span>
+                </div>
+            </template>
+        </div>
+
+        <!-- Modal Overlay -->
+        <template x-if="$store.systemUI.modal.isOpen" x-data>
+            <div class="modal-overlay"
+                :class="{'modal-level-up': $store.systemUI.modal.type === 'LEVEL_UP', 'modal-achievement': $store.systemUI.modal.type === 'ACHIEVEMENT_UNLOCK'}">
+
+                <!-- Level Up Modal -->
+                <template x-if="$store.systemUI.modal.type === 'LEVEL_UP'">
+                    <div class="modal-content">
+                        <div class="level-badge" x-text="$store.systemUI.modal.data.level || '?'"></div>
+                        <h2 class="modal-title">🎉 NAIK LEVEL!</h2>
+                        <p class="modal-body">Selamat! Kamu sekarang di Level <span
+                                x-text="$store.systemUI.modal.data.level"></span>!</p>
+                        <div class="modal-actions">
+                            <button class="modal-btn primary" @click="$store.systemUI.closeModal()">Lanjut! 🚀</button>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Achievement Unlock Modal (ALUR 12.4) -->
+                <template x-if="$store.systemUI.modal.type === 'ACHIEVEMENT_UNLOCK'">
+                    <div class="modal-content">
+                        <div class="modal-icon badge-bounce">🔓</div>
+                        <h2 class="modal-title">LENCANA BARU!</h2>
+                        <div class="badge-icon-large" x-text="$store.systemUI.modal.data.badge?.icon || '🏆'"></div>
+                        <h3 class="badge-name" x-text="$store.systemUI.modal.data.badge?.name || 'Badge'"></h3>
+                        <p class="modal-body" x-text="$store.systemUI.modal.data.badge?.description || ''"></p>
+                        <p class="xp-reward" x-text="'+' + ($store.systemUI.modal.data.xp || 50) + ' XP 🎉'"></p>
+                        <div class="modal-actions">
+                            <button class="modal-btn primary" @click="$store.systemUI.closeModal()">KEREN! ✓</button>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Badge Detail Modal -->
+                <template x-if="$store.systemUI.modal.type === 'BADGE_DETAIL'">
+                    <div class="modal-content">
+                        <div class="modal-icon" x-text="$store.systemUI.modal.data.icon || '🏆'"></div>
+                        <h2 class="modal-title" x-text="$store.systemUI.modal.data.name || 'Badge'"></h2>
+                        <p class="modal-body" x-text="$store.systemUI.modal.data.description || ''"></p>
+                        <div class="modal-actions">
+                            <button class="modal-btn primary" @click="$store.systemUI.closeModal()">Tutup</button>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Confirm Exit Modal -->
+                <template x-if="$store.systemUI.modal.type === 'CONFIRM_EXIT'">
+                    <div class="modal-content">
+                        <div class="modal-icon">🚪</div>
+                        <h2 class="modal-title">Keluar?</h2>
+                        <p class="modal-body">Progress kamu sudah tersimpan otomatis. Yakin ingin keluar?</p>
+                        <div class="modal-actions">
+                            <button class="modal-btn primary"
+                                @click="$store.systemUI.modal.data.onConfirm?.(); $store.systemUI.closeModal()">Ya,
+                                Keluar</button>
+                            <button class="modal-btn secondary" @click="$store.systemUI.closeModal()">Batal</button>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Edit Nickname Modal (ALUR 12.1) -->
+                <template x-if="$store.systemUI.modal.type === 'EDIT_NICKNAME'" x-data="{ 
+                    newName: $store.systemUI.modal.data.currentName || '',
+                    limit: 15
+                }">
+                    <div class="modal-content relative pt-10 px-6 pb-6 text-left">
+                        <button @click="$store.systemUI.closeModal()"
+                            class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition">
+                            <span class="material-icons-round">close</span>
+                        </button>
+                        <div class="text-center mb-6">
+                            <h2 class="text-xl font-bold text-forest flex items-center justify-center gap-2">
+                                <span>✏️</span> EDIT NICKNAME
+                            </h2>
+                            <div class="h-1 w-32 bg-forest/20 mx-auto mt-2 rounded-full"></div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Nama saat ini:</label>
+                            <div class="text-lg font-bakso text-gray-800 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200"
+                                x-text="'&quot;' + ($store.systemUI.modal.data.currentName || '-') + '&quot;'"></div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Nama baru:</label>
+                            <input type="text" x-model="newName" :maxlength="limit" placeholder="Ketik nama baru..."
+                                class="w-full px-4 py-3 rounded-xl bg-white border-2 border-forest/30 text-gray-800 font-bold focus:outline-none focus:border-forest transition placeholder-gray-400 shadow-inner">
+                        </div>
+                        <div class="flex justify-between text-xs font-bold text-gray-400 mb-4 px-1">
+                            <span x-show="newName.length === 0" class="text-red-400">*Wajib diisi</span>
+                            <span x-show="newName.length > 0"></span>
+                            <span x-text="newName.length + '/' + limit + ' karakter'"></span>
+                        </div>
+                        <div class="flex items-center gap-2 bg-yellow-50 p-3 rounded-lg border border-yellow-200 mb-6">
+                            <span class="text-yellow-600">⚠️</span>
+                            <span class="text-xs text-yellow-700 font-bold">
+                                Sisa ganti: <span x-text="$store.systemUI.modal.data.remainingEdits || 2">2</span>x
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button
+                                class="modal-btn secondary !text-gray-500 hover:!bg-gray-100 flex items-center justify-center"
+                                @click="$store.systemUI.closeModal()">
+                                BATAL
+                            </button>
+                            <button
+                                class="modal-btn primary flex items-center justify-center shadow-lg shadow-green-500/30"
+                                @click="if(newName.trim().length > 0) { $store.systemUI.modal.data.onSave?.(newName); $store.systemUI.closeModal(); } else { alert('Nama tidak boleh kosong!'); }"
+                                :disabled="newName.trim().length === 0"
+                                :class="newName.trim().length === 0 ? 'opacity-50 cursor-not-allowed filter grayscale' : ''">
+                                SIMPAN
+                            </button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </template>
+
+        <!-- Loading Overlay -->
+        <template x-if="$store.systemUI.loading.isActive" x-data>
+            <div class="loading-overlay">
+                <div class="loading-spinner"></div>
+                <p class="loading-text" x-text="$store.systemUI.loading.message"></p>
+            </div>
+        </template>
+
+        <!-- Error Overlay -->
+        <template x-if="$store.systemUI.error.isActive" x-data>
+            <div class="error-overlay" :class="$store.systemUI.error.code === 'OFFLINE' ? 'error-offline' : ''">
+                <div class="error-icon" x-text="$store.systemUI.error.code === 'OFFLINE' ? '📡' : '😵'"></div>
+                <h2 class="error-title"
+                    x-text="$store.systemUI.error.code === 'OFFLINE' ? 'Tidak Ada Koneksi' : 'Terjadi Kesalahan'"></h2>
+                <p class="error-message" x-text="$store.systemUI.error.message"></p>
+                <button class="error-btn" @click="$store.systemUI.hideError(); location.reload()">Coba Lagi 🔄</button>
+            </div>
+        </template>
+    </div>
+
+    </div>
+
+    <!--
+    ═══════════════════════════════════════════════════════════════════════════
+    🔴 SCRIPTS - JANGAN DIEDIT SAMA SEKALI!
+    ═══════════════════════════════════════════════════════════════════════════
+    
+    💡 PENJELASAN:
+    Ini adalah file JavaScript yang menggerakkan halaman.
+    
+    ⚠️ PERINGATAN KERAS:
+    - JANGAN menghapus baris ini
+    - JANGAN mengubah path/nama file
+    - JANGAN memindahkan posisi baris ini
+    
+    Kalau dihapus atau diubah:
+    → Semua tombol tidak akan berfungsi
+    → Animasi tidak akan jalan
+    → Scan QR tidak akan bekerja
+    -->
+    <script src="js/v3/dialog-engine.js"></script>
+    <script src="js/v3/scan-logic.js"></script>
+</body>
+
+</html>
