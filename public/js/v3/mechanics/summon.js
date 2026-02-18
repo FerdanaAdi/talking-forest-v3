@@ -184,9 +184,52 @@ export class SummonGame {
         this.factCard.style.marginBottom = '0';
     }
 
-    nextLevel() {
-        // Reload round baru
-        this.startRound();
+    finishAndSave() {
+        try {
+            // 1. Ambil ID Species dari ronde ini
+            const speciesId = this.currentRound.target.id;
+
+            // 2. Mock State
+            let playerData = JSON.parse(localStorage.getItem('tf_player_v3')) || {
+                inventory: [], xp: 0, badges: [], level: 1
+            };
+            if (!playerData.inventory) playerData.inventory = [];
+
+            // 3. Simpan Progress
+            const pm = new ProgressManager({ player: playerData });
+            pm.saveProgress(speciesId, 75); // Summon XP reward
+
+            // 4. Tampilkan Modal & Redirect
+            if (window.Alpine) {
+                Alpine.store('systemUI').showModal('GAME_WON', {
+                    title: 'TEBAKAN BENAR! 🦅',
+                    message: `Itu adalah suara ${this.currentRound.target.name}!`,
+                    xp: 75,
+                    onContinue: () => {
+                        window.location.href = `quiz.html?id=${speciesId}&source=summon`;
+                    }
+                });
+            } else {
+                // Fallback jika System UI tidak tersedia
+                if (window.Alpine && window.Alpine.store('systemUI')) {
+                    window.Alpine.store('systemUI').showModal('GAME_WON', {
+                        title: 'HEBAT! 🦅',
+                        message: 'Suara tertebak! Sekarang jawab kuis ya...',
+                        xp: 75,
+                        onContinue: () => {
+                            window.location.href = `quiz.html?id=${speciesId}&source=summon`;
+                        }
+                    });
+                } else {
+                    alert("🦅 HEBAT! Suara tertebak!\\nSekarang jawab kuis dulu ya...");
+                    window.location.href = `quiz.html?id=${speciesId}&source=summon`;
+                }
+            }
+
+        } catch (e) {
+            console.error("Logic Error:", e);
+            window.location.href = 'index.html';
+        }
     }
 
     playSfx(type) {

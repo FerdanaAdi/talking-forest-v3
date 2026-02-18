@@ -1,18 +1,76 @@
-/* --- mobile.css --- */
+/* 
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║   📄 NAMA FILE: css/mobile.css                                               ║
+║   📱 FUNGSI: Style untuk tampilan mobile (HP)                               ║
+║   📍 POSISI: Mengatur layout seperti HP di layar besar                      ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
 
-/* Frame Utama (Pembungkus) */
+════════════════════════════════════════════════════════════════════════════════
+🔰 PANDUAN UNTUK NAJU
+════════════════════════════════════════════════════════════════════════════════
+
+Halo Naju! 👋
+
+File ini sangat PENDEK dan SEDERHANA! 
+Fungsinya: Membuat tampilan app seperti HP di layar komputer.
+
+════════════════════════════════════════════════════════════════════════════════
+📚 SIMBOL-SIMBOL
+════════════════════════════════════════════════════════════════════════════════
+
+🟢 = BOLEH EDIT
+🔴 = JANGAN EDIT
+
+════════════════════════════════════════════════════════════════════════════════
+🎯 YANG BOLEH DIEDIT
+════════════════════════════════════════════════════════════════════════════════
+
+✅ BOLEH EDIT:
+1. max-width: 480px → Lebar maksimal HP (bisa 420px atau 520px)
+2. box-shadow → Bayangan di kiri kanan "HP"
+3. scrollbar warna → Warna scrollbar (#ccc)
+
+❌ JANGAN EDIT:
+1. Nama class .mobile-frame
+2. Struktur display/position
+
+════════════════════════════════════════════════════════════════════════════════
+*/
+
+/* --- 🔴 FRAME UTAMA (Pembungkus seperti HP) --- */
 .mobile-frame {
     width: 100%;
-    max-width: 480px; /* Lebar maksimal seperti HP */
-    background-color: var(--bg-cream); /* Warna dasar aplikasi */
+
+    /* 🟢 LEBAR MAKSIMAL - Boleh ganti (420px-520px) */
+    max-width: 480px;
+
+    /* 🟢 WARNA BACKGROUND - Diambil dari style.css */
+    background-color: var(--bg-cream);
+
     min-height: 100vh;
-    margin: 0 auto; /* Posisi tengah */
+    margin: 0 auto;
+    /* Posisi tengah */
     position: relative;
-    box-shadow: 0 0 50px rgba(0,0,0,0.5); /* Bayangan di kiri kanan */
+
+    /* 🟢 BAYANGAN - Boleh ganti warna/ukuran */
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+
     overflow-x: hidden;
 }
 
-/* Scrollbar cantik */
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+/* 🟢 SCROLLBAR - Boleh ganti warna */
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    /* 🟢 WARNA SCROLLBAR - Boleh ganti */
+    background: #ccc;
+    border-radius: 10px;
+}

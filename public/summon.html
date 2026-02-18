@@ -2,43 +2,139 @@
 <html lang="id">
 
 <!--
-============================================
-📄 FILE: summon.html
-🦅 FUNGSI: Mini-Game Sound & Shadow (Tebak Suara Hewan)
-============================================
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║   📄 NAMA FILE: summon.html                                                  ║
+║   🦅 FUNGSI: Mini-Game Sound & Shadow (Tebak Suara Hewan)                   ║
+║   🐾 CHAPTER: 3 - Fauna (Hewan)                                             ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
 
-🔰 PANDUAN UNTUK NAJU:
+════════════════════════════════════════════════════════════════════════════════
+🔰 PANDUAN LENGKAP UNTUK NAJU
+════════════════════════════════════════════════════════════════════════════════
 
-Ini adalah halaman game "Panggil Hewan".
-Pemain mendengar suara, lalu menebak siluet hewan yang benar.
+Halo Naju! 👋
 
-💡 YANG BOLEH KAMU EDIT:
-1. Teks Judul dan Instruksi
-2. Warna (cek file game.css)
-3. Emoji 🔊, ❓, dll
+Ini adalah halaman MINI-GAME SUMMON untuk Chapter 3 (Fauna/Hewan).
+Pemain harus mendengar suara, lalu menebak siluet hewan yang benar!
 
-⚠️ YANG JANGAN DIEDIT:
-- <div id="game-container"> (Area permainan)
-- <script> ... </script> (Kode program)
-- class="..." (Styling)
+CARA MAIN:
+1. Pemain klik tombol 🔊 untuk mendengar suara
+2. Muncul 3 siluet hewan (bayangan hitam)
+3. Pemain pilih siluet yang sesuai dengan suara
+4. Kalau benar → Muncul kartu fakta tentang hewan
+5. Pemain dapat XP dan bisa lanjut
 
-============================================
+CONTOH:
+- Suara: "Tok tok tok tok" (suara paruh burung)
+- Jawaban yang benar: Siluet Enggang Gading
+
+════════════════════════════════════════════════════════════════════════════════
+📚 PENJELASAN SIMBOL-SIMBOL
+════════════════════════════════════════════════════════════════════════════════
+
+🟢 = BOLEH KAMU EDIT (aman, tidak merusak program)
+🔴 = JANGAN DIEDIT (bisa error/rusak)
+🟡 = HATI-HATI (boleh edit tapi tanya dulu)
+💡 = TIPS (penjelasan tambahan)
+⚠️ = PERINGATAN (hal penting)
+
+════════════════════════════════════════════════════════════════════════════════
+🎯 DAFTAR YANG BOLEH DIEDIT
+════════════════════════════════════════════════════════════════════════════════
+
+✅ BOLEH EDIT:
+1. Judul tab browser (baris ~45)
+2. Emoji tombol kembali 🔙 (baris ~85)
+3. Judul game "PANTULAN SUARA 🔊" (baris ~90)
+4. Teks tombol "DENGAR" (baris ~115)
+5. Teks instruksi "Siapakah aku?" (baris ~130)
+6. Judul popup "Benar! 🎉" (baris ~155)
+7. Teks fakta placeholder (baris ~160)
+8. Emoji tombol tutup ➜ (baris ~150)
+
+❌ JANGAN EDIT:
+1. Semua tag <script src="...">
+2. id="game-container", id="silhouettes-container", dll
+3. Kode di dalam <script>...</script>
+4. Visualisasi gelombang suara
+
+════════════════════════════════════════════════════════════════════════════════
+📂 FILE YANG BERHUBUNGAN
+════════════════════════════════════════════════════════════════════════════════
+
+LOGIKA GAME:
+• js/v3/mechanics/summon.js → Kode game (🔴 JANGAN EDIT!)
+
+GAMBAR LATAR:
+• assets/images/bg/bg_jungle_dark.jpg → Background (🟢 BOLEH GANTI)
+
+DATA HEWAN:
+• assets/data/species.json → Daftar fauna (🟡 HATI-HATI)
+
+FILE SUARA:
+• assets/audio/ → File suara hewan (🟢 BOLEH TAMBAH)
+
+SISTEM PROGRESS:
+• js/v3/progress-manager.js → Simpan XP (🔴 JANGAN EDIT!)
+• js/v3/ending-handler.js → Cek akhir game (🔴 JANGAN EDIT!)
+
+════════════════════════════════════════════════════════════════════════════════
 -->
 
 <head>
+    <!--
+    ╔══════════════════════════════════════════════════════════════════════════╗
+    ║ 🔴 BAGIAN HEAD - PENGATURAN TEKNIS                                      ║
+    ║ STATUS: JANGAN DIEDIT (kecuali judul)                                   ║
+    ╚══════════════════════════════════════════════════════════════════════════╝
+    -->
+
+    <!-- 🔴 PENGATURAN KARAKTER - JANGAN EDIT -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- ✅ EDIT: Judul Tab -->
+    <!--
+    ════════════════════════════════════════════════════════════════════════════
+    🟢🟢🟢 JUDUL TAB BROWSER - BOLEH DIEDIT! 🟢🟢🟢
+    ════════════════════════════════════════════════════════════════════════════
+    
+    ✏️ CARA EDIT:
+    Ganti teks di antara <title> dan </title>
+    
+    CONTOH:
+    SEBELUM: <title>Talking Forest - Tebak Suara</title>
+    SESUDAH: <title>Cari Hewan - Hutan Berbicara</title>
+    -->
     <title>Talking Forest - Tebak Suara</title>
 
-    <!-- LIBRARY -->
+    <!--
+    ════════════════════════════════════════════════════════════════════════════
+    🔴 LIBRARY / PUSTAKA - JANGAN DIEDIT!
+    ════════════════════════════════════════════════════════════════════════════
+    
+    💡 PENJELASAN:
+    Library yang dibutuhkan:
+    1. Tailwind CSS = Mempercantik tampilan
+    2. GSAP = Animasi yang mulus
+    3. Google Fonts = Font khusus (Bakso Sapi, Nunito)
+    4. game.css = Styling umum game
+    5. progress-manager.js = Menyimpan progress
+    6. ending-handler.js = Mengecek akhir game
+    -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="css/system-ui.css">
+    <script src="js/v3/components/system-ui.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bakso+Sapi&family=Nunito:wght@400;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="css/game.css">
+    <script src="js/v3/progress-manager.js"></script>
+    <script src="js/v3/ending-handler.js"></script>
 
+    <!-- 🔴 KONFIGURASI WARNA - JANGAN EDIT -->
     <script>
         tailwind.config = {
             theme: {
@@ -51,6 +147,47 @@ Pemain mendengar suara, lalu menebak siluet hewan yang benar.
     </script>
 </head>
 
+<!--
+╔══════════════════════════════════════════════════════════════════════════════╗
+║ 🟡 BAGIAN BODY - ISI HALAMAN YANG DILIHAT USER                             ║
+║ STATUS: HATI-HATI (ada bagian boleh dan tidak boleh diedit)                ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+💡 PENJELASAN:
+Struktur halaman ini:
+
+┌─────────────────────────────────────────┐
+│  HEADER (Kembali + Judul)               │
+├─────────────────────────────────────────┤
+│                                         │
+│  AREA UTAMA:                            │
+│  ┌─────────────────────┐               │
+│  │   🔊 TOMBOL DENGAR  │               │
+│  └─────────────────────┘               │
+│                                         │
+│  "Siapakah aku?"                        │
+│                                         │
+│  ┌───────┬───────┬───────┐             │
+│  │ 🦅?   │ 🐒?   │ 🦎?   │ ← Siluet    │
+│  └───────┴───────┴───────┘             │
+│                                         │
+└─────────────────────────────────────────┘
+
+POPUP (muncul saat benar):
+┌─────────────────────────────────────────┐
+│  Benar! 🎉                              │
+│  [Gambar Hewan]                         │
+│  "Fakta menarik tentang hewan..."       │
+│                               [➜]       │
+└─────────────────────────────────────────┘
+-->
+
+<!-- 
+🟢 BACKGROUND - BOLEH GANTI GAMBARNYA
+Cari: bg-[url('assets/images/bg/bg_jungle_dark.jpg')]
+Ganti path gambar dengan gambar lain.
+-->
+
 <body
     class="bg-stone-900 h-screen w-screen flex items-center justify-center overflow-hidden font-nunito bg-[url('assets/images/bg/bg_jungle_dark.jpg')] bg-cover bg-center">
 
@@ -58,18 +195,48 @@ Pemain mendengar suara, lalu menebak siluet hewan yang benar.
     <div
         class="w-full max-w-[480px] h-full bg-black/70 relative shadow-2xl overflow-hidden flex flex-col items-center backdrop-blur-sm border-x-4 border-stone-800">
 
-        <!-- ================================================ -->
-        <!-- ✅ ZONA EDIT 1: HEADER                          -->
-        <!-- Boleh ganti: Emoji, Judul                       -->
-        <!-- ================================================ -->
+        <!--
+        ════════════════════════════════════════════════════════════════════════
+        🟢 HEADER - BOLEH EDIT TEKS & EMOJI!
+        ════════════════════════════════════════════════════════════════════════
+        
+        💡 PENJELASAN:
+        Header berisi 2 bagian:
+        1. Tombol Kembali (kiri)
+        2. Judul Game (tengah)
+        -->
         <header class="w-full p-4 flex justify-between items-center bg-stone-800/90 shadow-lg z-20">
+
+            <!--
+            ════════════════════════════════════════════════════════════════════
+            🟢🟢🟢 TOMBOL KEMBALI - BOLEH GANTI EMOJI! 🟢🟢🟢
+            ════════════════════════════════════════════════════════════════════
+            
+            CONTOH EMOJI LAIN:
+            ⬅️ (panah kiri)
+            🏠 (rumah)
+            ✖️ (silang)
+            
+            🔴 JANGAN UBAH:
+            - onclick="window.location.href='index.html'"
+            -->
             <button onclick="window.location.href='index.html'" class="text-white hover:scale-110 transition">
-                <!-- ✅ EDIT: Tombol Kembali -->
+                <!-- 🟢 EMOJI - BOLEH GANTI -->
                 🔙
             </button>
 
+            <!--
+            ════════════════════════════════════════════════════════════════════
+            🟢🟢🟢 JUDUL GAME - BOLEH GANTI! 🟢🟢🟢
+            ════════════════════════════════════════════════════════════════════
+            
+            CONTOH:
+            SEBELUM: PANTULAN SUARA 🔊
+            SESUDAH: TEBAK HEWAN 🦅
+            SESUDAH: SUARA SIAPA? 🐾
+            SESUDAH: WILDLIFE CALL 🌿
+            -->
             <h1 class="font-bakso text-2xl text-orange-400 drop-shadow-md tracking-wider">
-                <!-- ✅ EDIT: Judul Game -->
                 PANTULAN SUARA 🔊
             </h1>
 
@@ -80,23 +247,56 @@ Pemain mendengar suara, lalu menebak siluet hewan yang benar.
         <!-- AREA UTAMA -->
         <main class="flex-1 w-full flex flex-col items-center justify-center p-6 gap-8 relative">
 
-            <!-- 1. TOMBOL DENGAR SUARA -->
-            <!-- ================================================ -->
-            <!-- ✅ ZONA EDIT 2: TOMBOL PLAY SUARA               -->
-            <!-- ================================================ -->
+            <!--
+            ════════════════════════════════════════════════════════════════════
+            🟢 TOMBOL DENGAR SUARA - BOLEH EDIT EMOJI & TEKS!
+            ════════════════════════════════════════════════════════════════════
+            
+            💡 PENJELASAN:
+            Tombol besar untuk memutar suara hewan.
+            Saat diklik, akan memainkan file audio.
+            
+            🟢 BOLEH GANTI:
+            - Emoji 🔊
+            - Teks "DENGAR"
+            
+            🔴 JANGAN UBAH:
+            - id="btn-play-sound"
+            -->
             <div class="relative group">
+                <!-- Efek glow di belakang tombol -->
                 <div
                     class="absolute inset-0 bg-yellow-400 rounded-full blur-xl opacity-20 group-hover:opacity-40 transition animate-pulse">
                 </div>
+
                 <button id="btn-play-sound"
                     class="relative w-32 h-32 rounded-full bg-gradient-to-br from-yellow-500 to-orange-600 border-4 border-white shadow-2xl flex flex-col items-center justify-center active:scale-95 transition-transform hover:scale-105">
+
+                    <!-- 🟢 EMOJI SPEAKER - BOLEH GANTI -->
                     <span class="text-5xl drop-shadow-lg filter">🔊</span>
-                    <!-- ✅ EDIT: Teks tombol -->
+
+                    <!--
+                    🟢🟢🟢 TEKS TOMBOL - BOLEH GANTI! 🟢🟢🟢
+                    
+                    CONTOH:
+                    SEBELUM: DENGAR
+                    SESUDAH: PUTAR
+                    SESUDAH: PLAY
+                    SESUDAH: LISTEN
+                    -->
                     <span class="text-xs font-bold text-white mt-1">DENGAR</span>
                 </button>
             </div>
 
-            <!-- VISUALISASI GELOMBANG SUARA (Placeholder) -->
+            <!--
+            ════════════════════════════════════════════════════════════════════
+            🔴 VISUALISASI GELOMBANG SUARA - JANGAN DIEDIT!
+            ════════════════════════════════════════════════════════════════════
+            
+            💡 PENJELASAN:
+            Ini adalah animasi bar yang bergerak saat suara diputar.
+            Seperti equalizer musik.
+            -->
             <div id="sound-wave" class="flex gap-1 h-8 items-center opacity-0 transition-opacity duration-300">
                 <div class="w-1 h-full bg-yellow-300 rounded animate-[bounce_0.5s_infinite]"></div>
                 <div class="w-1 h-3/4 bg-yellow-300 rounded animate-[bounce_0.5s_infinite_0.1s]"></div>
@@ -105,14 +305,40 @@ Pemain mendengar suara, lalu menebak siluet hewan yang benar.
                 <div class="w-1 h-full bg-yellow-300 rounded animate-[bounce_0.5s_infinite]"></div>
             </div>
 
-            <!-- 2. SILUET PILIHAN (JAWABAN) -->
+            <!-- AREA SILUET PILIHAN -->
             <div class="w-full">
-                <!-- ✅ EDIT: Instruksi -->
-                <p id="instruction-text" class="text-center text-stone-300 mb-4 font-bold animate-pulse">Siapakah aku?
+                <!--
+                ════════════════════════════════════════════════════════════════
+                🟢🟢🟢 TEKS INSTRUKSI - BOLEH GANTI! 🟢🟢🟢
+                ════════════════════════════════════════════════════════════════
+                
+                CONTOH:
+                SEBELUM: Siapakah aku?
+                SESUDAH: Hewan apa ini?
+                SESUDAH: Tebak suara siapa?
+                SESUDAH: Which animal is this?
+                
+                🔴 JANGAN UBAH:
+                - id="instruction-text"
+                -->
+                <p id="instruction-text" class="text-center text-stone-300 mb-4 font-bold animate-pulse">
+                    Siapakah aku?
                 </p>
 
+                <!--
+                ════════════════════════════════════════════════════════════════
+                🔴 KONTAINER SILUET - JANGAN DIEDIT!
+                ════════════════════════════════════════════════════════════════
+                
+                💡 PENJELASAN:
+                Grid 3 kolom untuk menampilkan 3 siluet hewan.
+                Isi siluet akan diisi otomatis oleh JavaScript.
+                
+                ⚠️ KENAPA TIDAK BOLEH EDIT:
+                JavaScript mencari kontainer ini berdasarkan id.
+                -->
                 <div id="silhouettes-container" class="grid grid-cols-3 gap-4">
-                    <!-- Placeholder Kotak Siluet (Diisi JS) -->
+                    <!-- Placeholder akan diganti oleh JS -->
                     <div class="aspect-square bg-black rounded-xl border-2 border-stone-600 animate-pulse"></div>
                     <div class="aspect-square bg-black rounded-xl border-2 border-stone-600 animate-pulse"></div>
                     <div class="aspect-square bg-black rounded-xl border-2 border-stone-600 animate-pulse"></div>
@@ -121,23 +347,80 @@ Pemain mendengar suara, lalu menebak siluet hewan yang benar.
 
         </main>
 
-        <!-- FACT CARD OVERLAY (Muncul saat Benar) -->
-        <!-- ================================================ -->
-        <!-- ✅ ZONA EDIT 3: POPUP FAKTA (Template)          -->
-        <!-- ================================================ -->
+        <!--
+        ════════════════════════════════════════════════════════════════════════════
+        🟢 POPUP KARTU FAKTA - BOLEH EDIT TEKS TEMPLATE!
+        ════════════════════════════════════════════════════════════════════════════
+        
+        💡 PENJELASAN:
+        Popup ini muncul saat pemain menjawab BENAR.
+        Berisi informasi menarik tentang hewan.
+        
+        STRUKTUR:
+        - Judul "Benar! 🎉"
+        - Gambar hewan
+        - Fakta tentang hewan
+        - Tombol lanjut (➜)
+        
+        ⚠️ CATATAN PENTING:
+        Isi popup (gambar & fakta) akan DIGANTI OTOMATIS oleh JavaScript
+        berdasarkan hewan yang dimainkan.
+        Teks di sini hanya TEMPLATE/CONTOH.
+        -->
         <div id="fact-overlay" class="absolute inset-0 z-50 flex items-end justify-center pointer-events-none">
             <div id="fact-card"
                 class="bg-white m-4 p-6 rounded-3xl shadow-2xl w-full max-w-sm mb-[-100%] transition-all duration-500 border-4 border-forest relative pointer-events-auto">
 
-                <!-- Tombol Tutup -->
+                <!--
+                ════════════════════════════════════════════════════════════════
+                🟢🟢🟢 TOMBOL LANJUT - BOLEH GANTI EMOJI! 🟢🟢🟢
+                ════════════════════════════════════════════════════════════════
+                
+                CONTOH EMOJI LAIN:
+                ▶ (play)
+                ✓ (centang)
+                → (panah)
+                🏠 (rumah)
+                
+                🔴 JANGAN UBAH:
+                - onclick="nextLevel()"
+                -->
                 <button onclick="nextLevel()"
-                    class="absolute -top-5 -right-2 bg-red-500 text-white w-10 h-10 rounded-full font-bold shadow-lg border-2 border-white hover:scale-110 transition">➜</button>
+                    class="absolute -top-5 -right-2 bg-red-500 text-white w-10 h-10 rounded-full font-bold shadow-lg border-2 border-white hover:scale-110 transition">
+                    ➜
+                </button>
 
+                <!--
+                🟢🟢🟢 JUDUL POPUP - BOLEH GANTI! 🟢🟢🟢
+                
+                CONTOH:
+                SEBELUM: Benar! 🎉
+                SESUDAH: Hebat! 🌟
+                SESUDAH: Mantap! 👏
+                SESUDAH: Correct! ✓
+                
+                🔴 JANGAN UBAH:
+                - id="fact-title"
+                -->
                 <h2 id="fact-title" class="font-bakso text-2xl text-forest mb-2">Benar! 🎉</h2>
+
+                <!-- Gambar hewan (diisi oleh JS) -->
                 <div id="fact-image"
-                    class="w-full h-32 bg-gray-200 rounded-xl mb-4 flex items-center justify-center text-4xl">🦅</div>
+                    class="w-full h-32 bg-gray-200 rounded-xl mb-4 flex items-center justify-center text-4xl">
+                    🦅
+                </div>
+
+                <!--
+                🟢🟢🟢 FAKTA PLACEHOLDER - BOLEH GANTI! 🟢🟢🟢
+                
+                💡 PENJELASAN:
+                Ini hanya teks CONTOH yang akan diganti oleh JS.
+                Teks asli diambil dari database (species.json).
+                
+                🔴 JANGAN UBAH:
+                - id="fact-desc"
+                -->
                 <p id="fact-desc" class="text-stone-600 text-sm leading-relaxed">
-                    <!-- Isi fakta akan diganti otomatis oleh JS -->
                     Enggang Gading memiliki paruh yang sangat kuat untuk memecahkan biji-bijian keras!
                 </p>
             </div>
@@ -145,7 +428,37 @@ Pemain mendengar suara, lalu menebak siluet hewan yang benar.
 
     </div>
 
-    <!-- SCRIPT -->
+    <!--
+    ════════════════════════════════════════════════════════════════════════════════
+    🔴🔴🔴 BAGIAN SCRIPT - JANGAN DIEDIT SAMA SEKALI! 🔴🔴🔴
+    ════════════════════════════════════════════════════════════════════════════════
+    
+    💡 PENJELASAN:
+    Ini adalah "otak" dari summon game.
+    
+    YANG DILAKUKAN SCRIPT INI:
+    1. Mengimport SummonGame dari file summon.js
+    2. Membuat instance game baru
+    3. Menghubungkan tombol nextLevel ke fungsi finishAndSave
+    
+    ALUR PROGRAM:
+    1. Halaman dibuka → SummonGame() diinisialisasi
+    2. Game ambil data fauna dari species.json
+    3. Tombol 🔊 diklik → Suara diputar
+    4. User pilih siluet → Dicek benar/salah
+    5. Kalau benar → Popup muncul, XP disimpan
+    6. Tombol ➜ diklik → finishAndSave() → Cek ending
+    
+    ⚠️ PERINGATAN KERAS:
+    JANGAN mengubah apapun di bawah ini!
+    
+    KALAU DIUBAH:
+    - Suara tidak diputar
+    - Siluet tidak muncul
+    - Progress tidak tersimpan
+    - XP tidak bertambah
+    ════════════════════════════════════════════════════════════════════════════════
+    -->
     <script type="module">
         import { SummonGame } from './js/v3/mechanics/summon.js';
 
@@ -153,8 +466,86 @@ Pemain mendengar suara, lalu menebak siluet hewan yang benar.
         const game = new SummonGame();
 
         // Expose fungsi ke window biar bisa dipanggil tombol HTML
-        window.nextLevel = () => game.nextLevel();
+        window.nextLevel = () => game.finishAndSave();
     </script>
+    <!-- SYSTEM UI TEMPLATES -->
+    <!-- Toast Container -->
+    <div class="toast-container" x-data>
+        <template x-for="toast in $store.systemUI.toasts" :key="toast.id">
+            <div class="toast" :class="{
+                     'toast-success': toast.type === 'success',
+                     'toast-error': toast.type === 'error',
+                     'toast-xp': toast.type === 'xp',
+                     'toast-info': toast.type === 'info',
+                     'show': toast.visible
+                 }" x-show="toast.visible" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-300"
+                x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-2">
+                <div class="toast-icon">
+                    <span x-show="toast.type === 'success'">✅</span>
+                    <span x-show="toast.type === 'error'">❌</span>
+                    <span x-show="toast.type === 'xp'">✨</span>
+                    <span x-show="toast.type === 'info'">ℹ️</span>
+                </div>
+                <div class="toast-message" x-text="toast.message"></div>
+            </div>
+        </template>
+    </div>
+
+    <!-- Modal Overlay -->
+    <template x-if="$store.systemUI.modal.isOpen">
+        <div class="modal-overlay" x-data
+            :class="{'modal-level-up': $store.systemUI.modal.type === 'LEVEL_UP', 'modal-achievement': $store.systemUI.modal.type === 'ACHIEVEMENT_UNLOCK'}">
+
+            <!-- Game Won Modal -->
+            <template x-if="$store.systemUI.modal.type === 'GAME_WON'">
+                <div class="modal-content">
+                    <div class="modal-icon">🎉</div>
+                    <h2 class="modal-title" x-text="$store.systemUI.modal.data.title || 'Hebat!'"></h2>
+                    <p class="modal-body"
+                        x-text="$store.systemUI.modal.data.message || 'Kamu berhasil menyelesaikan tantangan!'"></p>
+                    <p class="xp-reward" x-text="'+' + ($store.systemUI.modal.data.xp || 100) + ' XP'"></p>
+                    <div class="modal-actions">
+                        <button class="modal-btn primary"
+                            @click="$store.systemUI.modal.data.onContinue?.(); $store.systemUI.closeModal()">LANJUT
+                            ▶</button>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Level Up Modal -->
+            <template x-if="$store.systemUI.modal.type === 'LEVEL_UP'">
+                <div class="modal-content">
+                    <div class="level-badge" x-text="$store.systemUI.modal.data.level || '?'"></div>
+                    <h2 class="modal-title">🎉 SELAMAT! 🎉</h2>
+                    <p class="modal-subtitle"
+                        style="text-align:center; font-weight:bold; color:#4CAF50; margin-bottom:10px;">NAIK LEVEL!</p>
+                    <p class="modal-body">Kamu sekarang di Level <span
+                            x-text="$store.systemUI.modal.data.level"></span>!</p>
+                    <div class="modal-actions">
+                        <button class="modal-btn primary" @click="$store.systemUI.closeModal()">LANJUT ▶</button>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Achievement Modal -->
+            <template x-if="$store.systemUI.modal.type === 'ACHIEVEMENT_UNLOCK'">
+                <div class="modal-content">
+                    <div class="modal-icon badge-bounce">🔓</div>
+                    <h2 class="modal-title">LENCANA BARU!</h2>
+                    <div class="badge-icon-large" x-text="$store.systemUI.modal.data.badge?.icon || '🏆'"></div>
+                    <h3 class="badge-name" x-text="$store.systemUI.modal.data.badge?.name || 'Badge'"></h3>
+                    <p class="modal-body" x-text="$store.systemUI.modal.data.badge?.description || ''"></p>
+                    <p class="xp-reward" x-text="'+' + ($store.systemUI.modal.data.xp || 50) + ' XP 🎉'"></p>
+                    <div class="modal-actions">
+                        <button class="modal-btn primary" @click="$store.systemUI.closeModal()">KEREN! ✓</button>
+                    </div>
+                </div>
+            </template>
+
+        </div>
+    </template>
 </body>
 
 </html>

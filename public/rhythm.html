@@ -2,44 +2,132 @@
 <html lang="id">
 
 <!--
-============================================
-📄 FILE: rhythm.html
-🎵 FUNGSI: Mini-Game Rhythm (Ketuk Sesuai Irama)
-============================================
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║   📄 NAMA FILE: rhythm.html                                                  ║
+║   🎵 FUNGSI: Mini-Game Rhythm (Ketuk Sesuai Irama)                          ║
+║   🌸 CHAPTER: 2 - Tanaman (Plants)                                          ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
 
-🔰 PANDUAN UNTUK NAJU:
+════════════════════════════════════════════════════════════════════════════════
+🔰 PANDUAN LENGKAP UNTUK NAJU
+════════════════════════════════════════════════════════════════════════════════
 
-Ini adalah halaman game "Musik Tanaman".
-Pemain harus menuk tombol saat "not balok" (kotak warna) jatuh pas di garis.
+Halo Naju! 👋
 
-💡 YANG BOLEH KAMU EDIT:
-1. Teks h1, h2, dan pesan-pesan
-2. Warna (cek file game.css atau class Tailwind)
-3. Emoji 🎵, ✨, dll
+Ini adalah halaman MINI-GAME RHYTHM untuk Chapter 2 (Tanaman).
+Seperti game Guitar Hero atau Piano Tiles!
 
-⚠️ YANG JANGAN DIEDIT:
-- <div id="game-canvas"> (Area permainan)
-- <script> ... </script> (Kode program)
-- class="..." (Styling)
+CARA MAIN:
+1. Ada 3 jalur (kiri, tengah, kanan)
+2. Kotak warna jatuh dari atas
+3. Saat kotak sampai di garis kuning → TEKAN tombol yang sesuai!
+4. Merah = A, Hijau = S, Biru = D
+5. Semakin banyak benar → Skor naik → Tanaman tumbuh!
 
-============================================
+════════════════════════════════════════════════════════════════════════════════
+📚 PENJELASAN SIMBOL-SIMBOL
+════════════════════════════════════════════════════════════════════════════════
+
+🟢 = BOLEH KAMU EDIT (aman, tidak merusak program)
+🔴 = JANGAN DIEDIT (bisa error/rusak)
+🟡 = HATI-HATI (boleh edit tapi tanya dulu)
+💡 = TIPS (penjelasan tambahan)
+⚠️ = PERINGATAN (hal penting)
+
+════════════════════════════════════════════════════════════════════════════════
+🎯 DAFTAR YANG BOLEH DIEDIT
+════════════════════════════════════════════════════════════════════════════════
+
+✅ BOLEH EDIT:
+1. Judul tab browser (baris ~45)
+2. Emoji tombol kembali 🔙 (baris ~85)
+3. Judul game "Irama Hutan" (baris ~90)
+4. Label skor "⭐" (baris ~95)
+5. Teks "Tap di sini!" (baris ~120)
+6. Label tombol (A, S, D) (baris ~145-160)
+7. Overlay "Siap Main?" (baris ~165-175)
+8. Teks instruksi di overlay (baris ~170)
+9. Teks tombol "MULAI!" (baris ~175)
+
+❌ JANGAN EDIT:
+1. Semua tag <script src="...">
+2. id="game-container", id="notes-layer", dll
+3. Kode di dalam <script>...</script>
+4. Struktur jalur (lane-1, lane-2, lane-3)
+
+════════════════════════════════════════════════════════════════════════════════
+📂 FILE YANG BERHUBUNGAN
+════════════════════════════════════════════════════════════════════════════════
+
+LOGIKA GAME:
+• js/v3/mechanics/rhythm.js → Kode game (🔴 JANGAN EDIT!)
+
+GAMBAR LATAR:
+• assets/images/bg/bg_jungle_blur.jpg → Background (🟢 BOLEH GANTI)
+
+SISTEM PROGRESS:
+• js/v3/progress-manager.js → Simpan XP (🔴 JANGAN EDIT!)
+• js/v3/ending-handler.js → Cek akhir game (🔴 JANGAN EDIT!)
+
+════════════════════════════════════════════════════════════════════════════════
 -->
 
 <head>
+    <!--
+    ╔══════════════════════════════════════════════════════════════════════════╗
+    ║ 🔴 BAGIAN HEAD - PENGATURAN TEKNIS                                      ║
+    ║ STATUS: JANGAN DIEDIT (kecuali judul)                                   ║
+    ╚══════════════════════════════════════════════════════════════════════════╝
+    -->
+
+    <!-- 🔴 PENGATURAN KARAKTER - JANGAN EDIT -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- ✅ EDIT: Judul di Tab Browser -->
+    <!--
+    ════════════════════════════════════════════════════════════════════════════
+    🟢🟢🟢 JUDUL TAB BROWSER - BOLEH DIEDIT! 🟢🟢🟢
+    ════════════════════════════════════════════════════════════════════════════
+    
+    ✏️ CARA EDIT:
+    Ganti teks di antara <title> dan </title>
+    
+    CONTOH:
+    SEBELUM: <title>Talking Forest - Rhythm Game</title>
+    SESUDAH: <title>Game Irama - Hutan Berbicara</title>
+    -->
     <title>Talking Forest - Rhythm Game</title>
 
-    <!-- LIBRARY (Jangan Dihapus) -->
+    <!--
+    ════════════════════════════════════════════════════════════════════════════
+    🔴 LIBRARY / PUSTAKA - JANGAN DIEDIT!
+    ════════════════════════════════════════════════════════════════════════════
+    
+    💡 PENJELASAN:
+    Library yang dibutuhkan:
+    1. Alpine.js = Untuk System UI
+    2. System UI = Toast dan Modal
+    3. Tailwind CSS = Mempercantik tampilan
+    4. GSAP = Animasi kotak jatuh yang mulus
+    5. Google Fonts = Font khusus (Bakso Sapi, Nunito)
+    6. game.css = Styling umum game
+    7. progress-manager.js = Menyimpan progress
+    8. ending-handler.js = Mengecek akhir game
+    -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="css/system-ui.css">
+    <script src="js/v3/components/system-ui.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bakso+Sapi&family=Nunito:wght@400;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="css/game.css">
+    <script src="js/v3/progress-manager.js"></script>
+    <script src="js/v3/ending-handler.js"></script>
 
-    <!-- KONFIGURASI WARNA -->
+    <!-- 🔴 KONFIGURASI WARNA - JANGAN EDIT -->
     <script>
         tailwind.config = {
             theme: {
@@ -52,6 +140,42 @@ Pemain harus menuk tombol saat "not balok" (kotak warna) jatuh pas di garis.
     </script>
 </head>
 
+<!--
+╔══════════════════════════════════════════════════════════════════════════════╗
+║ 🟡 BAGIAN BODY - ISI HALAMAN YANG DILIHAT USER                             ║
+║ STATUS: HATI-HATI (ada bagian boleh dan tidak boleh diedit)                ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+💡 PENJELASAN:
+Struktur halaman ini:
+
+┌─────────────────────────────────────────┐
+│  HEADER (Kembali + Judul + Skor)        │
+├─────────────────────────────────────────┤
+│                                         │
+│  AREA PERMAINAN:                        │
+│  ┌─────┬─────┬─────┐                   │
+│  │  🔴  │  🟢  │  🔵  │ ← 3 Jalur       │
+│  │     │     │     │                   │
+│  │  ▼  │     │  ▼  │ ← Kotak jatuh     │
+│  │     │  ▼  │     │                   │
+│  ├─────┼─────┼─────┤ ← GARIS TARGET    │
+│  │     │     │     │                   │
+│  └─────┴─────┴─────┘                   │
+│                                         │
+├─────────────────────────────────────────┤
+│  TOMBOL KONTROL                         │
+│  [ A ]    [ S ]    [ D ]                │
+│  Merah    Hijau    Biru                 │
+└─────────────────────────────────────────┘
+-->
+
+<!-- 
+🟢 BACKGROUND - BOLEH GANTI GAMBARNYA
+Cari: bg-[url('assets/images/bg/bg_jungle_blur.jpg')]
+Ganti path gambar dengan gambar lain.
+-->
+
 <body
     class="bg-stone-900 h-screen w-screen flex items-center justify-center overflow-hidden font-nunito bg-[url('assets/images/bg/bg_jungle_blur.jpg')] bg-cover bg-center">
 
@@ -59,34 +183,97 @@ Pemain harus menuk tombol saat "not balok" (kotak warna) jatuh pas di garis.
     <div
         class="w-full max-w-[480px] h-full bg-black/60 relative shadow-2xl overflow-hidden flex flex-col items-center backdrop-blur-md">
 
-        <!-- ================================================ -->
-        <!-- ✅ ZONA EDIT 1: HEADER (Judul & Score)            -->
-        <!-- Boleh ganti: Teks "Skor", Emoji                  -->
-        <!-- ================================================ -->
+        <!--
+        ════════════════════════════════════════════════════════════════════════
+        🟢 HEADER - BOLEH EDIT TEKS & EMOJI!
+        ════════════════════════════════════════════════════════════════════════
+        
+        💡 PENJELASAN:
+        Header berisi 3 bagian:
+        1. Tombol Kembali (kiri)
+        2. Judul Game (tengah)
+        3. Skor (kanan)
+        -->
         <header class="w-full p-4 flex justify-between items-center bg-forest/80 shadow-lg z-20">
+
+            <!--
+            ════════════════════════════════════════════════════════════════════
+            🟢🟢🟢 TOMBOL KEMBALI - BOLEH GANTI EMOJI! 🟢🟢🟢
+            ════════════════════════════════════════════════════════════════════
+            
+            CONTOH EMOJI LAIN:
+            ⬅️ (panah kiri)
+            🏠 (rumah)
+            ✖️ (silang)
+            
+            🔴 JANGAN UBAH:
+            - onclick="window.history.back()"
+            -->
             <button onclick="window.history.back()" class="text-white hover:scale-110 transition">
-                <!-- ✅ EDIT: Tombol Kembali -->
+                <!-- 🟢 EMOJI - BOLEH GANTI -->
                 🔙
             </button>
 
             <div class="text-center">
+                <!--
+                ════════════════════════════════════════════════════════════════
+                🟢🟢🟢 JUDUL GAME - BOLEH GANTI! 🟢🟢🟢
+                ════════════════════════════════════════════════════════════════
+                
+                CONTOH:
+                SEBELUM: Irama Hutan
+                SESUDAH: Musik Tanaman
+                SESUDAH: Ketukan Alam
+                SESUDAH: Rhythm Forest
+                -->
                 <h1 class="font-bakso text-2xl text-yellow-300 drop-shadow-md">
-                    <!-- ✅ EDIT: Judul Game -->
                     Irama Hutan
                 </h1>
             </div>
 
+            <!--
+            ════════════════════════════════════════════════════════════════════
+            🟢 KOTAK SKOR - BOLEH GANTI EMOJI BINTANG!
+            ════════════════════════════════════════════════════════════════════
+            
+            ✏️ BOLEH GANTI:
+            - Emoji ⭐ dengan emoji lain
+            
+            CONTOH:
+            SEBELUM: ⭐ <span id="score-display">0</span>
+            SESUDAH: 🎵 <span id="score-display">0</span>
+            SESUDAH: 🌸 <span id="score-display">0</span>
+            
+            🔴 JANGAN UBAH:
+            - id="score-display" (angka skor diisi otomatis)
+            -->
             <div class="bg-black/40 px-3 py-1 rounded-full text-white font-bold font-mono">
-                <!-- ✅ EDIT: Label Skor -->
+                <!-- 🟢 EMOJI SKOR - BOLEH GANTI -->
                 ⭐ <span id="score-display">0</span>
             </div>
         </header>
 
-        <!-- AREA PERMAINAN (JANGAN DIEDIT) -->
+        <!--
+        ════════════════════════════════════════════════════════════════════════
+        🔴 AREA PERMAINAN - JANGAN DIEDIT!
+        ════════════════════════════════════════════════════════════════════════
+        
+        💡 PENJELASAN:
+        Ini adalah "arena" tempat kotak-kotak jatuh.
+        
+        STRUKTUR:
+        - 3 Jalur vertikal (lane-1, lane-2, lane-3)
+        - Garis target kuning di bawah (hit line)
+        - Layer untuk menampilkan kotak (notes-layer)
+        - Visual bunga yang tumbuh (flower-container)
+        
+        ⚠️ KENAPA TIDAK BOLEH EDIT:
+        Kalau struktur berubah, kotak tidak akan jatuh dengan benar.
+        -->
         <div id="game-container"
             class="relative flex-1 w-full bg-gradient-to-b from-transparent to-black/50 overflow-hidden">
 
-            <!-- Jalur Not (Lanes) -->
+            <!-- 3 Jalur Vertikal -->
             <div class="absolute inset-0 flex justify-center gap-4 pointer-events-none">
                 <div class="w-20 h-full border-x border-white/10 bg-white/5 relative" id="lane-1"></div>
                 <div class="w-20 h-full border-x border-white/10 bg-white/5 relative" id="lane-2"></div>
@@ -97,54 +284,139 @@ Pemain harus menuk tombol saat "not balok" (kotak warna) jatuh pas di garis.
             <div
                 class="absolute bottom-24 left-0 w-full h-2 bg-yellow-400/50 shadow-[0_0_15px_rgba(255,215,0,0.8)] z-10">
             </div>
+
+            <!--
+            ════════════════════════════════════════════════════════════════════
+            🟢 TEKS PENANDA GARIS - BOLEH GANTI!
+            ════════════════════════════════════════════════════════════════════
+            
+            CONTOH:
+            SEBELUM: Tap di sini!
+            SESUDAH: TEKAN!
+            SESUDAH: HIT IT!
+            SESUDAH: Ketuk saat sampai di sini
+            -->
             <div
                 class="absolute bottom-24 left-0 w-full text-center text-white/50 text-xs mt-2 uppercase tracking-widest">
-                <!-- ✅ EDIT: Teks penanda garis -->
                 Tap di sini!
             </div>
 
-            <!-- Tempat Not Balok (Diisi Script) -->
+            <!-- Tempat Kotak Jatuh (Diisi oleh JavaScript) -->
             <div id="notes-layer" class="absolute inset-0 z-10 pointer-events-none"></div>
 
-            <!-- Visual Bunga (Tumbuh kalau benar) -->
+            <!-- Visual Tanaman yang Tumbuh -->
             <div id="flower-container"
                 class="absolute bottom-40 left-1/2 -translate-x-1/2 z-0 opacity-50 transition-all duration-300">
-                <!-- Placeholder Bunga (Kotak) -->
                 <div id="flower-visual" class="w-32 h-32 bg-green-500 rounded-full blur-xl animate-pulse"></div>
             </div>
         </div>
 
-        <!-- ================================================ -->
-        <!-- ✅ ZONA EDIT 2: TOMBOL KONTROL (Tap Zone)         -->
-        <!-- Boleh ganti: Label tombol, warna (bg-red-500 dll) -->
-        <!-- ================================================ -->
+        <!--
+        ════════════════════════════════════════════════════════════════════════
+        🟢 TOMBOL KONTROL - BOLEH EDIT LABEL & WARNA!
+        ════════════════════════════════════════════════════════════════════════
+        
+        💡 PENJELASAN:
+        Ada 3 tombol untuk 3 jalur:
+        - MERAH (Kiri) = Tombol A
+        - HIJAU (Tengah) = Tombol S
+        - BIRU (Kanan) = Tombol D
+        
+        🟢 BOLEH GANTI:
+        - Label huruf (A, S, D)
+        - Warna tombol (bg-red-500, bg-green-500, bg-blue-500)
+        
+        🔴 JANGAN UBAH:
+        - id="btn-1", id="btn-2", id="btn-3"
+        -->
         <div
             class="w-full h-24 bg-gray-900 border-t-4 border-forest flex items-center justify-center gap-4 p-2 z-30 pb-6">
 
-            <!-- Tombol KIRI -->
+            <!--
+            ════════════════════════════════════════════════════════════════════
+            🟢 TOMBOL KIRI (MERAH) - BOLEH EDIT LABEL!
+            ════════════════════════════════════════════════════════════════════
+            
+            ✏️ BOLEH GANTI:
+            - Huruf "A" dengan huruf/emoji lain
+            - Warna bg-red-500 dengan warna lain
+            
+            CONTOH HURUF LAIN: 1, ←, 🔴
+            CONTOH WARNA LAIN: bg-orange-500, bg-pink-500
+            -->
             <button id="btn-1"
                 class="w-20 h-20 rounded-full bg-red-500 border-4 border-red-700 shadow-lg active:scale-90 active:bg-red-400 transition flex items-center justify-center">
                 <span class="text-2xl font-bold text-white mb-1">A</span>
             </button>
 
-            <!-- Tombol TENGAH -->
+            <!--
+            ════════════════════════════════════════════════════════════════════
+            🟢 TOMBOL TENGAH (HIJAU) - BOLEH EDIT LABEL!
+            ════════════════════════════════════════════════════════════════════
+            -->
             <button id="btn-2"
                 class="w-20 h-20 rounded-full bg-green-500 border-4 border-green-700 shadow-lg active:scale-90 active:bg-green-400 transition flex items-center justify-center">
                 <span class="text-2xl font-bold text-white mb-1">S</span>
             </button>
 
-            <!-- Tombol KANAN -->
+            <!--
+            ════════════════════════════════════════════════════════════════════
+            🟢 TOMBOL KANAN (BIRU) - BOLEH EDIT LABEL!
+            ════════════════════════════════════════════════════════════════════
+            -->
             <button id="btn-3"
                 class="w-20 h-20 rounded-full bg-blue-500 border-4 border-blue-700 shadow-lg active:scale-90 active:bg-blue-400 transition flex items-center justify-center">
                 <span class="text-2xl font-bold text-white mb-1">D</span>
             </button>
         </div>
 
-        <!-- OVERLAY MULAI GAME -->
+        <!--
+        ════════════════════════════════════════════════════════════════════════
+        🟢 OVERLAY MULAI GAME - BOLEH EDIT SEMUA TEKS!
+        ════════════════════════════════════════════════════════════════════════
+        
+        💡 PENJELASAN:
+        Ini adalah layar yang muncul SEBELUM game dimulai.
+        User harus klik tombol "MULAI!" untuk main.
+        
+        🟢 BOLEH GANTI:
+        - Judul "Siap Main?"
+        - Instruksi di bawahnya
+        - Teks tombol "MULAI! ▶"
+        -->
         <div id="start-overlay"
             class="absolute inset-0 bg-black/80 z-50 flex flex-col items-center justify-center text-center p-6 backdrop-blur-sm">
+
+            <!--
+            🟢🟢🟢 JUDUL OVERLAY - BOLEH GANTI! 🟢🟢🟢
+            
+            CONTOH:
+            SEBELUM: Siap Main?
+            SESUDAH: Ayo Mulai!
+            SESUDAH: Ready?
+            -->
             <h2 class="font-bakso text-4xl text-yellow-400 mb-2 animate-bounce-short">Siap Main?</h2>
+
+            <!--
+            🟢🟢🟢 INSTRUKSI - BOLEH GANTI! 🟢🟢🟢
+            
+            CONTOH:
+            SEBELUM: Tap tombol warna saat kotak jatuh pas di garis!
+            SESUDAH: Tekan tombol yang sesuai saat kotak mencapai garis kuning!
+            -->
             <p class="text-white mb-6">Tap tombol warna saat kotak jatuh pas di garis!</p>
+
+            <!--
+            🟢🟢🟢 TOMBOL MULAI - BOLEH GANTI TEKSNYA! 🟢🟢🟢
+            
+            CONTOH:
+            SEBELUM: MULAI! ▶
+            SESUDAH: MAIN 🎮
+            SESUDAH: START!
+            
+            🔴 JANGAN UBAH:
+            - onclick="startGame()"
+            -->
             <button onclick="startGame()"
                 class="bg-green-600 hover:bg-green-500 text-white font-bold px-8 py-3 rounded-xl shadow-lg hover:scale-105 transition">
                 MULAI! ▶
@@ -153,10 +425,29 @@ Pemain harus menuk tombol saat "not balok" (kotak warna) jatuh pas di garis.
 
     </div>
 
-    <!-- AUDIO (Placeholder) -->
-    <!-- Untuk rhythm game, kita pakai JS untuk buat beat sederhana dulu -->
-
-    <!-- LOAD SCRIPT -->
+    <!--
+    ════════════════════════════════════════════════════════════════════════════════
+    🔴🔴🔴 BAGIAN SCRIPT - JANGAN DIEDIT SAMA SEKALI! 🔴🔴🔴
+    ════════════════════════════════════════════════════════════════════════════════
+    
+    💡 PENJELASAN:
+    Ini adalah "otak" dari rhythm game.
+    
+    YANG DILAKUKAN SCRIPT INI:
+    1. Mengimport RhythmGame dari file rhythm.js
+    2. Menyembunyikan overlay saat tombol MULAI diklik
+    3. Menginisialisasi game
+    4. Memulai permainan
+    
+    ⚠️ PERINGATAN KERAS:
+    JANGAN mengubah apapun di bawah ini!
+    
+    KALAU DIUBAH:
+    - Game tidak akan berjalan
+    - Kotak tidak jatuh
+    - Skor tidak bertambah
+    ════════════════════════════════════════════════════════════════════════════════
+    -->
     <script type="module">
         import { RhythmGame } from './js/v3/mechanics/rhythm.js';
 
@@ -169,6 +460,84 @@ Pemain harus menuk tombol saat "not balok" (kotak warna) jatuh pas di garis.
             game.start();
         }
     </script>
+    <!-- SYSTEM UI TEMPLATES -->
+    <!-- Toast Container -->
+    <div class="toast-container" x-data>
+        <template x-for="toast in $store.systemUI.toasts" :key="toast.id">
+            <div class="toast" :class="{
+                     'toast-success': toast.type === 'success',
+                     'toast-error': toast.type === 'error',
+                     'toast-xp': toast.type === 'xp',
+                     'toast-info': toast.type === 'info',
+                     'show': toast.visible
+                 }" x-show="toast.visible" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-300"
+                x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-2">
+                <div class="toast-icon">
+                    <span x-show="toast.type === 'success'">✅</span>
+                    <span x-show="toast.type === 'error'">❌</span>
+                    <span x-show="toast.type === 'xp'">✨</span>
+                    <span x-show="toast.type === 'info'">ℹ️</span>
+                </div>
+                <div class="toast-message" x-text="toast.message"></div>
+            </div>
+        </template>
+    </div>
+
+    <!-- Modal Overlay -->
+    <template x-if="$store.systemUI.modal.isOpen">
+        <div class="modal-overlay" x-data
+            :class="{'modal-level-up': $store.systemUI.modal.type === 'LEVEL_UP', 'modal-achievement': $store.systemUI.modal.type === 'ACHIEVEMENT_UNLOCK'}">
+
+            <!-- Game Won Modal -->
+            <template x-if="$store.systemUI.modal.type === 'GAME_WON'">
+                <div class="modal-content">
+                    <div class="modal-icon">🎉</div>
+                    <h2 class="modal-title" x-text="$store.systemUI.modal.data.title || 'Hebat!'"></h2>
+                    <p class="modal-body"
+                        x-text="$store.systemUI.modal.data.message || 'Kamu berhasil menyelesaikan tantangan!'"></p>
+                    <p class="xp-reward" x-text="'+' + ($store.systemUI.modal.data.xp || 100) + ' XP'"></p>
+                    <div class="modal-actions">
+                        <button class="modal-btn primary"
+                            @click="$store.systemUI.modal.data.onContinue?.(); $store.systemUI.closeModal()">LANJUT
+                            ▶</button>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Level Up Modal -->
+            <template x-if="$store.systemUI.modal.type === 'LEVEL_UP'">
+                <div class="modal-content">
+                    <div class="level-badge" x-text="$store.systemUI.modal.data.level || '?'"></div>
+                    <h2 class="modal-title">🎉 SELAMAT! 🎉</h2>
+                    <p class="modal-subtitle"
+                        style="text-align:center; font-weight:bold; color:#4CAF50; margin-bottom:10px;">NAIK LEVEL!</p>
+                    <p class="modal-body">Kamu sekarang di Level <span
+                            x-text="$store.systemUI.modal.data.level"></span>!</p>
+                    <div class="modal-actions">
+                        <button class="modal-btn primary" @click="$store.systemUI.closeModal()">LANJUT ▶</button>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Achievement Modal -->
+            <template x-if="$store.systemUI.modal.type === 'ACHIEVEMENT_UNLOCK'">
+                <div class="modal-content">
+                    <div class="modal-icon badge-bounce">🔓</div>
+                    <h2 class="modal-title">LENCANA BARU!</h2>
+                    <div class="badge-icon-large" x-text="$store.systemUI.modal.data.badge?.icon || '🏆'"></div>
+                    <h3 class="badge-name" x-text="$store.systemUI.modal.data.badge?.name || 'Badge'"></h3>
+                    <p class="modal-body" x-text="$store.systemUI.modal.data.badge?.description || ''"></p>
+                    <p class="xp-reward" x-text="'+' + ($store.systemUI.modal.data.xp || 50) + ' XP 🎉'"></p>
+                    <div class="modal-actions">
+                        <button class="modal-btn primary" @click="$store.systemUI.closeModal()">KEREN! ✓</button>
+                    </div>
+                </div>
+            </template>
+
+        </div>
+    </template>
 </body>
 
 </html>

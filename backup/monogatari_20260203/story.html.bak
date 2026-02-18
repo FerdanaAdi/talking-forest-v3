@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<!--
+============================================
+📄 FILE: story.html
+🎬 FUNGSI: Halaman Cerita / Visual Novel (MONOGATARI ENGINE)
+============================================
+
+🔰 PANDUAN UNTUK TEMAN:
+
+Ini adalah halaman "BIOSKOP" untuk menampilkan cerita.
+Sekarang menggunakan MONOGATARI ENGINE (Visual Novel profesional)
+
+📂 FILE TERKAIT:
+- js/v3/monogatari/main.js = Inisialisasi engine
+- js/v3/monogatari/options.js = Konfigurasi karakter
+- js/v3/monogatari/script.js = Naskah cerita
+- css/monogatari.css = Style visual novel
+
+============================================
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 🏷️ JUDUL TAB BROWSER -->
+    <title>Talking Forest - Story Mode</title>
+
+    <!-- MONOGATARI CSS -->
+    <link rel="stylesheet" href="css/monogatari.css">
+    <link rel="stylesheet" href="css/monogatari-v3-patch.css">
+
+    <!-- CUSTOM OVERRIDE -->
+    <link rel="stylesheet" href="css/game.css">
+
+    <style>
+        /* Custom overrides for Talking Forest theme */
+        #monogatari {
+            --color-primary: #2d6a4f;
+            --color-secondary: #ffd700;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        visual-novel-game {
+            display: block;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- MONOGATARI CONTAINER -->
+    <!-- MONOGATARI CONTAINER -->
+    <div id="monogatari">
+        <visual-novel-game>
+            <!-- LOADING SCREEN -->
+            <div data-screen="loading">
+                <div>Loading...</div>
+            </div>
+
+            <!-- MAIN MENU -->
+            <div data-screen="main">
+                <div data-component="main-menu">
+                    <button data-action="start">Start Game</button>
+                    <button data-action="load">Load Game</button>
+                    <button data-action="settings">Settings</button>
+                    <button data-action="help">Help</button>
+                </div>
+            </div>
+
+            <!-- GAME SCREEN -->
+            <div data-screen="game">
+                <div data-component="text-box">
+                    <span data-ui="who"></span>
+                    <p data-ui="say"></p>
+                </div>
+                <div data-component="quick-menu">
+                    <span data-action="back"><span class="fas fa-arrow-left"></span> Back</span>
+                    <span data-action="hide"><span class="fas fa-eye"></span> Hide</span>
+                    <span data-action="save"><span class="fas fa-save"></span> Save</span>
+                    <span data-action="open-menu"><span class="fas fa-bars"></span> Menu</span>
+                </div>
+            </div>
+
+            <!-- SETTINGS SCREEN -->
+            <div data-screen="settings">
+                <button data-action="back">Back</button>
+                <h2>Settings</h2>
+                <!-- Settings content here -->
+            </div>
+
+            <!-- MESSAGE MODAL -->
+            <div data-component="message-modal">
+                <div data-ui="message-content"></div>
+                <div data-ui="message-buttons"></div>
+            </div>
+        </visual-novel-game>
+    </div>
+
+    <!-- MONOGATARI CORE ENGINE -->
+    <script type="module" src="js/v3/monogatari/monogatari.js"></script>
+
+    <!-- 🛠️ PATCH: Fix Webpack Export Issue -->
+    <script type="module" src="js/v3/monogatari/fix-core.js"></script>
+
+    <!-- PROJECT SCRIPTS -->
+    <script type="module" src="js/v3/monogatari/options.js"></script>
+    <script type="module" src="js/v3/monogatari/script.js"></script>
+    <script type="module" src="js/v3/monogatari/main.js"></script>
+
+    <!-- DEBUGGER: Asset Path Tester -->
+    <script>
+        console.log("🔍 DIAGNOSTIC: Testing Asset Paths...");
+        const testAssets = [
+            'assets/monogatari/scenes/forest.png',
+            'assets/monogatari/audio/bgm_prologue.mp3'
+        ];
+
+        testAssets.forEach(url => {
+            fetch(url, { method: 'HEAD' })
+                .then(res => {
+                    if (res.ok) console.log(`✅ Asset FOUND: ${url}`);
+                    else console.error(`❌ Asset NOT FOUND (${res.status}): ${url}`);
+                })
+                .catch(err => console.error(`❌ Asset ERROR: ${url}`, err));
+        });
+    </script>
+</body>
+
+</html>

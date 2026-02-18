@@ -1,0 +1,131 @@
+/* 
+   MONOGATARI v3 COMPATIBILITY PATCH 
+   -------------------------------------------------------
+   This file provides essential styles for Monogatari v3 elements
+   that are missing from the v2 node_modules CSS.
+*/
+
+/* Main Engine Container */
+visual-novel-game {
+    display: block;
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background-color: #000;
+    color: #fff;
+    font-family: "Segoe UI", sans-serif;
+}
+
+/* Screens (Main Menu, Game, Settings, etc.) */
+[data-screen] {
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+[data-screen].active {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Main Menu specific */
+[data-screen="main"] {
+    background-image: var(--main-menu-bg, url('../assets/ui/backgrounds/main_menu.png'));
+    background-size: cover;
+    background-position: center;
+}
+
+/* Loading Screen */
+[data-screen="loading"] {
+    background: #111;
+    color: #fff;
+    z-index: 9999;
+    display: none;
+    /* Hide by default! */
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+}
+
+[data-screen="loading"].active {
+    display: flex;
+    /* Show only when active */
+}
+
+[data-screen="loading"]::after {
+    content: "LOADING GAME DATA...";
+    color: #ffd700;
+}
+
+/* Text Box (The dialog area) */
+[data-component="text-box"] {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    min-height: 30%;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 2rem;
+    box-sizing: border-box;
+    display: none;
+    /* Hidden by default until active */
+    z-index: 20;
+}
+
+[data-component="text-box"].active {
+    display: block;
+}
+
+/* Buttons in Main Menu */
+[data-component="main-menu"] button {
+    display: block;
+    margin: 10px;
+    padding: 15px 40px;
+    font-size: 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #fff;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+[data-component="main-menu"] button:hover {
+    background: #fff;
+    color: #000;
+}
+
+/* Quick Menu (Save, Load, etc.) */
+[data-component="quick-menu"] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 1rem;
+    z-index: 50;
+    display: flex;
+    gap: 10px;
+}
+
+/* Notification / Message */
+[data-component="message-modal"] {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.9);
+    padding: 20px;
+    border: 1px solid #fff;
+    z-index: 100;
+    text-align: center;
+}
+
+[data-component="message-modal"].active {
+    display: block;
+}

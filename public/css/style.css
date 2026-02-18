@@ -1,3 +1,79 @@
+/* 
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║   📄 NAMA FILE: css/style.css                                                ║
+║   🎨 FUNGSI: Stylesheet utama untuk tampilan publik/game                    ║
+║   📍 POSISI: Dipakai oleh index.html dan halaman game lainnya              ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+════════════════════════════════════════════════════════════════════════════════
+🔰 PANDUAN UNTUK NAJU
+════════════════════════════════════════════════════════════════════════════════
+
+Halo Naju! 👋
+
+File ini mengatur TAMPILAN VISUAL untuk halaman game/publik.
+Termasuk: warna, ukuran, jarak, bayangan, dan animasi.
+
+════════════════════════════════════════════════════════════════════════════════
+📚 SIMBOL-SIMBOL
+════════════════════════════════════════════════════════════════════════════════
+
+🟢 = BOLEH EDIT (aman)
+🔴 = JANGAN EDIT (bisa rusak)
+🟡 = HATI-HATI (edit pelan-pelan)
+
+════════════════════════════════════════════════════════════════════════════════
+🎯 YANG BOLEH DIEDIT
+════════════════════════════════════════════════════════════════════════════════
+
+✅ BOLEH EDIT:
+1. WARNA - Kode yang mulai dengan # (misal: #4a6741)
+   Cara ganti: Buka htmlcolorcodes.com → pilih warna → copy kode hex
+   
+2. UKURAN FONT - Angka di font-size (misal: 1.5rem, 16px)
+
+3. JARAK - Angka di padding dan margin (misal: 20px)
+
+4. BAYANGAN - Angka di box-shadow
+
+❌ JANGAN EDIT:
+1. Nama class (yang ada titik di depan, misal: .main-header)
+2. Nama variabel (yang ada -- di depan, misal: --primary-green)
+3. Urutan kode (pindah-pindah bisa error)
+4. @import dan @keyframes
+
+════════════════════════════════════════════════════════════════════════════════
+📂 STRUKTUR FILE
+════════════════════════════════════════════════════════════════════════════════
+
+BAGIAN 1: Variabel Warna (:root)
+BAGIAN 2: Reset & Global (body, h1, dll)
+BAGIAN 3: Header (.main-header)
+BAGIAN 4: Navigasi Bawah (.bottom-nav)
+BAGIAN 5: Komponen Game (.scan-btn, .card-grid, dll)
+BAGIAN 6: Modal Popup (.modal-overlay)
+BAGIAN 7: Filter Kategori (.category-scroll)
+BAGIAN 8: Detail Modal Hijau (.modal-green-card)
+BAGIAN 9: Peta Interaktif (.map-container)
+
+════════════════════════════════════════════════════════════════════════════════
+💡 TIPS EDIT WARNA
+════════════════════════════════════════════════════════════════════════════════
+
+Warna utama ada di bagian :root (baris 4-10):
+- --bg-cream: Warna latar belakang krem
+- --card-bg: Warna kartu/box
+- --primary-green: Hijau utama (untuk tombol)
+- --accent-green: Hijau terang (untuk aksen)
+- --text-dark: Warna teks
+
+Kalau mau ganti tema warna seluruh app, edit di :root saja!
+
+════════════════════════════════════════════════════════════════════════════════
+*/
+
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700&display=swap');
 
 :root {

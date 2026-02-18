@@ -242,6 +242,80 @@ export class QuizGame {
         else this.dom.resultEmoji.innerText = "📚";
 
         this.playSound('cheer');
+
+        // ✅ INTEGRASI Save XP & Ending Check
+        setTimeout(() => {
+            this.handleQuizCompletion();
+        }, 3000); // Tunggu animasi skor selesai
+    }
+
+    handleQuizCompletion() {
+        try {
+            // 1. Hitung XP Award (Misal: 2x Skor)
+            const earnedXP = this.score * 2;
+
+            // 2. Load Progress Manager
+            let playerData = JSON.parse(localStorage.getItem('tf_player_v3')) || {
+                inventory: [], xp: 0, badges: [], level: 1
+            };
+
+            // Perlu instance ProgressManager & EndingHandler
+            // Asumsi script sudah di-load di HTML
+            if (window.ProgressManager) {
+                const pm = new window.ProgressManager({ player: playerData });
+
+                // Tambah XP
+                pm.addXP(earnedXP);
+                pm.triggerSave(); // Save XP
+
+                // Tampilkan pesan Toast
+                if (window.Alpine) {
+                    Alpine.store('systemUI').showToast(`🎓 KUIS SELESAI! +${earnedXP} XP`, 'success');
+                }
+
+                // Cek Ending
+                if (pm.isGameComplete()) {
+                    if (window.Alpine) {
+                        Alpine.store('systemUI').showModal('GAME_WON', {
+                            title: 'GRAND FINALE TERBUKA! 🌟',
+                            message: 'Kamu telah mengumpulkan semua spesies! Hutan memanggilmu...',
+                            xp: 0,
+                            onContinue: () => {
+                                window.location.href = 'cutscene.html';
+                            }
+                        });
+                    } else {
+                        // Fallback jika System UI tidak tersedia
+                        if (window.Alpine && window.Alpine.store('systemUI')) {
+                            window.Alpine.store('systemUI').showModal('CONFIRM_EXIT', {
+                                message: '🏁 SELAMAT! Semua species terkumpul! Lanjut ke Grand Finale?',
+                                onConfirm: () => {
+                                    window.location.href = 'cutscene.html';
+                                },
+                                onCancel: () => {
+                                    window.location.href = 'index.html';
+                                }
+                            });
+                        } else {
+                            if (confirm("🏁 SELAMAT! Semua species terkumpul!\nLanjut ke Grand Finale?")) {
+                                window.location.href = 'cutscene.html';
+                            } else {
+                                window.location.href = 'index.html';
+                            }
+                        }
+                    }
+                }
+                // Jika tidak tamat, user akan klik tombol "Kembali" yang ada di UI Result Card
+
+            } else {
+                console.error("ProgressManager not found!");
+                window.location.href = 'index.html';
+            }
+
+        } catch (e) {
+            console.error("Quiz Save Error:", e);
+            window.location.href = 'index.html';
+        }
     }
 
     // --- UTILS & AUDIO ---

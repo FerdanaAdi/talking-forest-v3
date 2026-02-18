@@ -1,3 +1,79 @@
+/* 
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║   📄 NAMA FILE: css/admin-cms.css                                            ║
+║   ⚙️ FUNGSI: Stylesheet untuk Panel Admin                                   ║
+║   📍 POSISI: Dipakai oleh admin.html                                        ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+════════════════════════════════════════════════════════════════════════════════
+🔰 PANDUAN UNTUK NAJU
+════════════════════════════════════════════════════════════════════════════════
+
+Halo Naju! 👋
+
+File ini mengatur TAMPILAN VISUAL untuk halaman admin.
+File ini BESAR (~1000 baris), tapi jangan khawatir!
+Yang penting kamu tahu WARNA APA YANG BISA DIGANTI.
+
+════════════════════════════════════════════════════════════════════════════════
+📚 SIMBOL-SIMBOL
+════════════════════════════════════════════════════════════════════════════════
+
+🟢 = BOLEH EDIT (aman)
+🔴 = JANGAN EDIT (bisa rusak)
+
+════════════════════════════════════════════════════════════════════════════════
+🎯 YANG PALING MUDAH DIEDIT
+════════════════════════════════════════════════════════════════════════════════
+
+✅ EDIT WARNA DI :root (sekitar baris 80-120):
+
+--primary-color: #1B4332    → Hijau tua (sidebar)
+--primary-light: #2D6A4F    → Hijau medium
+--accent-color: #40916C     → Hijau terang (aksen)
+--accent-soft: #D8F3DC      → Hijau pucat (background)
+
+--success: #2ECC71          → Hijau sukses
+--warning: #F1C40F          → Kuning peringatan
+--danger: #E74C3C           → Merah bahaya
+--info: #3498DB             → Biru info
+
+--bg-body: #F4F7FE          → Warna background
+--bg-card: #FFFFFF          → Warna kartu
+
+❌ JANGAN EDIT:
+1. Nama class (yang ada titik di depan)
+2. Layout sidebar (bisa rusak navigasi)
+3. @media queries (responsive)
+
+════════════════════════════════════════════════════════════════════════════════
+📂 STRUKTUR FILE
+════════════════════════════════════════════════════════════════════════════════
+
+🔴 BAGIAN 1: Base Reset & Typography
+🔴 BAGIAN 2: Sidebar Navigation
+🔴 BAGIAN 3: Top Bar & Search
+🟢 BAGIAN 4: Dashboard Widgets (bisa edit warna)
+🟢 BAGIAN 5: Buttons (bisa edit warna)
+🟢 BAGIAN 6: Forms & Inputs (bisa edit warna border)
+🔴 BAGIAN 7: Tables Layout
+🟢 BAGIAN 8: Badges (bisa edit warna)
+🔴 BAGIAN 9: Responsive (@media)
+
+════════════════════════════════════════════════════════════════════════════════
+💡 TIPS EDIT
+════════════════════════════════════════════════════════════════════════════════
+
+1. Gunakan Ctrl+F untuk mencari warna tertentu
+2. Warna hex format: #XXXXXX (6 karakter)
+3. Setelah edit, refresh browser (F5)
+4. Kalau rusak, Ctrl+Z untuk undo
+
+════════════════════════════════════════════════════════════════════════════════
+*/
+
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700&display=swap');
 
 :root {

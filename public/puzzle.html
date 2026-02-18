@@ -2,126 +2,489 @@
 <html lang="id">
 
 <!--
-============================================
-📄 FILE: puzzle.html
-🧩 FUNGSI: Halaman Puzzle (Placeholder)
-============================================
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║   📄 NAMA FILE: puzzle.html                                                  ║
+║   🧩 FUNGSI: Mini-Game Puzzle Drag & Drop                                   ║
+║   🌳 CHAPTER: 1 - Pohon (Tree)                                              ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
 
-🔰 PANDUAN UNTUK TEMAN:
+════════════════════════════════════════════════════════════════════════════════
+🔰 PANDUAN LENGKAP UNTUK NAJU
+════════════════════════════════════════════════════════════════════════════════
 
-Ini adalah halaman PLACEHOLDER untuk puzzle.
-Nanti akan diisi dengan:
-- Drag & Drop puzzle parts
-- Timer
-- Score system
+Halo Naju! 👋
 
-💡 YANG BISA KAMU EDIT DI FILE INI:
-1. Teks judul dan deskripsi
-2. Emoji
-3. Warna tombol
+Ini adalah halaman MINI-GAME PUZZLE untuk Chapter 1 (Pohon).
+Pemain harus menyusun bagian-bagian pohon seperti puzzle!
 
-⚠️ YANG JANGAN DIEDIT:
-- Bagian <script> di bawah (auto-save logic)
+CARA MAIN:
+1. Pemain melihat siluet pohon (bayangan)
+2. Di samping ada potongan-potongan: akar, batang, daun, dll
+3. Pemain drag (seret) potongan ke tempat yang benar
+4. Kalau semua benar, muncul popup "Puzzle Selesai!"
 
-============================================
+════════════════════════════════════════════════════════════════════════════════
+📚 PENJELASAN SIMBOL-SIMBOL
+════════════════════════════════════════════════════════════════════════════════
+
+🟢 = BOLEH KAMU EDIT (aman, tidak merusak program)
+🔴 = JANGAN DIEDIT (bisa error/rusak)
+🟡 = HATI-HATI (boleh edit tapi tanya dulu kalau ragu)
+💡 = TIPS (penjelasan tambahan)
+⚠️ = PERINGATAN (hal penting)
+
+════════════════════════════════════════════════════════════════════════════════
+🎯 DAFTAR YANG BOLEH DIEDIT
+════════════════════════════════════════════════════════════════════════════════
+
+✅ BOLEH EDIT:
+1. Judul tab browser "Puzzle - Talking Forest" (baris ~45)
+2. Emoji tombol kembali 🔙 (baris ~135)
+3. Teks "Kembali" (baris ~135)
+4. Label "Timer:" (baris ~145)
+5. Teks petunjuk di kotak pesan (baris ~160)
+6. Popup sukses: emoji ✨, judul, pesan, XP (baris ~175-190)
+7. Teks tombol "LANJUTKAN PETUALANGAN" (baris ~195)
+
+❌ JANGAN EDIT:
+1. Semua tag <script src="...">
+2. id="puzzle-container" (diisi otomatis oleh JavaScript)
+3. id="puzzle-title" (diisi nama pohon dari database)
+4. id="timer" (diisi waktu otomatis)
+5. Semua kode di dalam <script>...</script>
+
+════════════════════════════════════════════════════════════════════════════════
+📂 FILE YANG BERHUBUNGAN
+════════════════════════════════════════════════════════════════════════════════
+
+LOGIKA PUZZLE:
+• js/v3/mechanics/puzzle.js → Kode drag & drop (🔴 JANGAN EDIT!)
+
+DATA POHON:
+• assets/data/species.json → Daftar semua species (🟡 HATI-HATI)
+
+GAMBAR POTONGAN:
+• assets/images/species/ → Gambar siluet & potongan (🟢 BOLEH GANTI)
+
+SISTEM PROGRESS:
+• js/v3/progress-manager.js → Simpan XP & progress (🔴 JANGAN EDIT!)
+• js/v3/ending-handler.js → Cek apakah sudah tamat (🔴 JANGAN EDIT!)
+
+════════════════════════════════════════════════════════════════════════════════
 -->
 
 <head>
+    <!--
+    ╔══════════════════════════════════════════════════════════════════════════╗
+    ║ 🔴 BAGIAN HEAD - PENGATURAN TEKNIS                                      ║
+    ║ STATUS: JANGAN DIEDIT (kecuali judul)                                   ║
+    ╚══════════════════════════════════════════════════════════════════════════╝
+    
+    💡 PENJELASAN:
+    Bagian <head> berisi pengaturan yang tidak terlihat user.
+    Seperti "kartu identitas" halaman.
+    -->
+
+    <!-- 🔴 PENGATURAN KARAKTER - JANGAN EDIT -->
     <meta charset="UTF-8">
+
+    <!-- 🔴 PENGATURAN LAYAR HP - JANGAN EDIT -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- 🏷️ JUDUL TAB BROWSER -->
+    <!--
+    ════════════════════════════════════════════════════════════════════════════
+    🟢🟢🟢 JUDUL TAB BROWSER - BOLEH DIEDIT! 🟢🟢🟢
+    ════════════════════════════════════════════════════════════════════════════
+    
+    💡 PENJELASAN:
+    Ini adalah teks yang muncul di tab browser.
+    
+    ✏️ CARA EDIT:
+    Ganti teks di antara <title> dan </title>
+    
+    CONTOH:
+    SEBELUM: <title>Puzzle - Talking Forest</title>
+    SESUDAH: <title>Susun Pohon - Hutan Berbicara</title>
+    -->
     <title>Puzzle - Talking Forest</title>
 
+    <!--
+    ════════════════════════════════════════════════════════════════════════════
+    🔴 LIBRARY / PUSTAKA - JANGAN DIEDIT!
+    ════════════════════════════════════════════════════════════════════════════
+    
+    💡 PENJELASAN:
+    Ini seperti "paket tools" yang dibutuhkan halaman:
+    
+    1. Tailwind CSS = Mempercantik tampilan
+    2. GSAP = Animasi yang mulus (seperti di film!)
+    3. progress-manager.js = Menyimpan progress pemain
+    4. ending-handler.js = Mengecek kalau game sudah tamat
+    
+    ⚠️ PERINGATAN:
+    Kalau dihapus:
+    - Tampilan jadi berantakan
+    - Animasi tidak jalan
+    - Progress tidak tersimpan
+    - Game tidak bisa tamat
+    -->
+    <!-- 🔴 LIBRARY / PUSTAKA - JANGAN DIEDIT! -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="css/system-ui.css">
+    <script src="js/v3/components/system-ui.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- GSAP untuk Animasi Smooth (Buat Naju: Ini biar animasinya mulus kayak di film!) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bakso+Sapi&family=Nunito:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/game.css">
+    <script src="js/v3/progress-manager.js"></script>
+    <script src="js/v3/ending-handler.js"></script>
+
+    <!-- 🔴 KONFIGURASI WARNA - JANGAN EDIT -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { forest: '#2d6a4f', earth: '#603813', gold: '#ffd700', parchment: '#fdf6e3' },
+                    fontFamily: { 'bakso': ['"Bakso Sapi"', 'cursive'], 'nunito': ['"Nunito"', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+
+    <!--
+    ════════════════════════════════════════════════════════════════════════════
+    🔴 STYLE KHUSUS HALAMAN INI - JANGAN DIEDIT!
+    ════════════════════════════════════════════════════════════════════════════
+    
+    💡 PENJELASAN:
+    CSS = Kode untuk mengatur tampilan (warna, ukuran, posisi).
+    
+    YANG ADA DI SINI:
+    1. Font khusus "font-bakso"
+    2. Pengaturan untuk HP kecil (layar < 400px)
+    3. Style untuk drag & drop di layar sentuh
+    
+    ⚠️ KALAU DIUBAH:
+    - Tampilan di HP bisa berantakan
+    - Drag & drop tidak berfungsi dengan baik
+    -->
     <style>
         .font-bakso {
             font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
         }
+
+        /* 📱 MOBILE-FIRST: Pengaturan untuk HP kecil */
+        html,
+        body {
+            height: 100%;
+            height: 100dvh;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+
+        /* Pengaturan untuk layar HP kecil (di bawah 400 pixel) */
+        @media (max-width: 400px) {
+            #puzzle-container {
+                min-height: 300px !important;
+                padding: 4px !important;
+                margin-bottom: 20px;
+            }
+
+            header {
+                margin-bottom: 8px !important;
+            }
+
+            header h1 {
+                font-size: 1rem !important;
+            }
+
+            header>div:last-child {
+                padding: 4px 8px !important;
+                font-size: 0.75rem !important;
+            }
+
+            #message-box {
+                padding: 8px !important;
+                margin-top: 10px !important;
+            }
+        }
+
+        /* Style untuk potongan puzzle saat di-drag */
+        #touch-clone {
+            border: 2px solid #ffd700 !important;
+            background: rgba(0, 0, 0, 0.8) !important;
+        }
+
+        /* Zona drop lebih besar untuk jari */
+        [data-part-id] {
+            min-width: 80px !important;
+            min-height: 80px !important;
+        }
     </style>
 </head>
 
-<body
-    class="bg-gray-900 text-white flex flex-col items-center justify-center h-screen overflow-hidden relative selection:bg-yellow-500 selection:text-black">
+<!--
+╔══════════════════════════════════════════════════════════════════════════════╗
+║ 🟡 BAGIAN BODY - ISI HALAMAN YANG DILIHAT USER                             ║
+║ STATUS: HATI-HATI (ada bagian boleh dan tidak boleh diedit)                ║
+╚══════════════════════════════════════════════════════════════════════════════╝
 
-    <!-- BACKGROUND ANIMATION -->
+💡 PENJELASAN:
+Bagian <body> adalah isi halaman yang dilihat pemain.
+
+STRUKTUR HALAMAN INI:
+┌─────────────────────────────────────────┐
+│  HEADER (Tombol Kembali + Timer)        │
+├─────────────────────────────────────────┤
+│                                         │
+│  PUZZLE CONTAINER:                      │
+│  - Siluet pohon (bayangan target)       │
+│  - Potongan-potongan yang bisa diseret  │
+│  - Zona drop untuk menaruh potongan     │
+│                                         │
+├─────────────────────────────────────────┤
+│  KOTAK PESAN (Tips/Hint)                │
+└─────────────────────────────────────────┘
+
+POPUP (muncul saat menang):
+┌─────────────────────────────────────────┐
+│  ✨ Puzzle Selesai!                     │
+│  +50 XP                                 │
+│  [LANJUTKAN PETUALANGAN]                │
+└─────────────────────────────────────────┘
+-->
+
+<body x-data
+    class="bg-gray-900 text-white flex flex-col items-center justify-start min-h-screen overflow-y-auto relative selection:bg-yellow-500 selection:text-black touch-pan-y">
+
+    <!--
+    ════════════════════════════════════════════════════════════════════════════
+    🔴 BACKGROUND ANIMASI - JANGAN DIEDIT!
+    ════════════════════════════════════════════════════════════════════════════
+    
+    💡 PENJELASAN:
+    Ini adalah background gradien (warna yang bercampur) di belakang puzzle.
+    Warna: Hijau gelap → Hitam → Biru gelap
+    -->
     <div class="absolute inset-0 z-0 pointer-events-none opacity-30">
         <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-green-900 via-black to-blue-900"></div>
     </div>
 
-    <!-- UI LAYER -->
+    <!--
+    ════════════════════════════════════════════════════════════════════════════
+    🟢🔴 UI LAYER - CAMPURAN BOLEH DAN TIDAK BOLEH EDIT
+    ════════════════════════════════════════════════════════════════════════════
+    -->
     <div class="z-10 w-full max-w-[480px] flex flex-col items-center p-4">
 
-        <!-- ================================================ -->
-        <!-- ✅ ZONA EDIT 2: HEADER (Tombol Kembali & Timer)  -->
-        <!-- Boleh ganti: Emoji, teks "Kembali"               -->
-        <!-- ================================================ -->
+        <!--
+        ════════════════════════════════════════════════════════════════════════
+        🟢 HEADER - BOLEH EDIT TEKS & EMOJI!
+        ════════════════════════════════════════════════════════════════════════
+        
+        💡 PENJELASAN:
+        Header berisi 3 bagian:
+        1. Tombol Kembali (kiri)
+        2. Judul Puzzle / Nama Pohon (tengah)
+        3. Timer / Penghitung Waktu (kanan)
+        -->
         <header class="flex justify-between items-center w-full mb-8">
+
+            <!--
+            ════════════════════════════════════════════════════════════════════
+            🟢🟢🟢 TOMBOL KEMBALI - BOLEH EDIT EMOJI & TEKS! 🟢🟢🟢
+            ════════════════════════════════════════════════════════════════════
+            
+            ✏️ CARA EDIT:
+            - Ganti emoji 🔙 dengan emoji lain
+            - Ganti teks "Kembali" dengan teks lain
+            
+            CONTOH:
+            SEBELUM: <span>🔙</span> <span>Kembali</span>
+            SESUDAH: <span>⬅️</span> <span>Mundur</span>
+            SESUDAH: <span>🏠</span> <span>Markas</span>
+            
+            🔴 JANGAN UBAH:
+            - onclick="window.location.href='index.html'"
+            -->
             <button onclick="window.location.href='index.html'"
                 class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg backdrop-blur-sm transition flex items-center gap-2">
-                <!-- ✅ EDIT: Ganti emoji & teks tombol kembali -->
-                <span>🔙</span> <span class="hidden sm:inline">Kembali</span>
+
+                <!-- 🟢 EMOJI TOMBOL - BOLEH GANTI -->
+                <span>🔙</span>
+
+                <!-- 🟢 TEKS TOMBOL - BOLEH GANTI -->
+                <span class="hidden sm:inline">Kembali</span>
             </button>
 
-            <!-- ❌ JANGAN edit id="puzzle-title" (diisi otomatis) -->
+            <!--
+            ════════════════════════════════════════════════════════════════════
+            🔴 JUDUL PUZZLE - JANGAN DIEDIT!
+            ════════════════════════════════════════════════════════════════════
+            
+            💡 PENJELASAN:
+            Judul ini diisi OTOMATIS oleh program dengan nama pohon.
+            Contoh: "Pohon Mangga", "Pohon Ulin", dll.
+            
+            ⚠️ KENAPA TIDAK BOLEH EDIT:
+            Karena teksnya diambil dari database (species.json).
+            Kalau dihapus, nama pohon tidak akan muncul.
+            -->
             <h1 id="puzzle-title" class="text-3xl font-bold font-bakso text-yellow-500 drop-shadow-md">
                 Loading...
             </h1>
 
+            <!--
+            ════════════════════════════════════════════════════════════════════
+            🟢 KOTAK TIMER - BOLEH EDIT LABELNYA!
+            ════════════════════════════════════════════════════════════════════
+            
+            ✏️ BOLEH GANTI:
+            - Teks "Timer:" dengan teks lain
+            
+            CONTOH:
+            SEBELUM: Timer: <span id="timer">00:00</span>
+            SESUDAH: Waktu: <span id="timer">00:00</span>
+            SESUDAH: ⏱️ <span id="timer">00:00</span>
+            
+            🔴 JANGAN UBAH:
+            - id="timer" (angka waktu diisi otomatis)
+            -->
             <div class="bg-white/10 px-4 py-2 rounded-lg font-mono text-yellow-300">
-                <!-- ✅ EDIT: Ganti label "Timer:" jika mau -->
+                <!-- 🟢 LABEL TIMER - BOLEH GANTI -->
                 Timer: <span id="timer">00:00</span>
             </div>
         </header>
 
-        <!-- ❌ JANGAN edit id="puzzle-container" (diisi oleh puzzle.js) -->
+        <!--
+        ════════════════════════════════════════════════════════════════════════
+        🔴 PUZZLE CONTAINER - JANGAN DIEDIT SAMA SEKALI!
+        ════════════════════════════════════════════════════════════════════════
+        
+        💡 PENJELASAN:
+        Ini adalah "wadah kosong" yang akan diisi oleh program JavaScript.
+        
+        YANG AKAN MUNCUL DI SINI:
+        1. Siluet pohon (bayangan hitam berbentuk pohon)
+        2. Potongan-potongan (akar, batang, daun, buah)
+        3. Zona drop (tempat meletakkan potongan)
+        
+        ⚠️ KENAPA TIDAK BOLEH EDIT:
+        - Kalau dihapus: Puzzle tidak muncul
+        - Kalau id diubah: Program tidak tahu harus isi di mana
+        -->
         <div id="puzzle-container" class="w-full flex items-center justify-center min-h-[500px]">
             <div class="animate-pulse text-white/50">Memuat puzzle...</div>
         </div>
 
-        <!-- ================================================ -->
-        <!-- ✅ ZONA EDIT 3: HINT / PESAN BANTUAN             -->
-        <!-- Boleh ganti: Teks petunjuk                       -->
-        <!-- ================================================ -->
+        <!--
+        ════════════════════════════════════════════════════════════════════════
+        🟢 KOTAK PESAN / HINT - BOLEH EDIT TEKSNYA!
+        ════════════════════════════════════════════════════════════════════════
+        
+        💡 PENJELASAN:
+        Ini adalah kotak yang muncul untuk memberi petunjuk ke pemain.
+        
+        ✏️ CARA EDIT:
+        Ganti teks di dalam <p id="message-text">...</p>
+        
+        CONTOH:
+        SEBELUM: Drag bagian tubuh ke kotak yang sesuai!
+        SESUDAH: Seret potongan pohon ke tempat yang benar!
+        SESUDAH: Susun bagian-bagian pohon dengan benar ya!
+        
+        🔴 JANGAN UBAH:
+        - id="message-box" dan id="message-text"
+        -->
         <div id="message-box"
             class="mt-8 p-4 bg-black/50 backdrop-blur-md rounded-xl border border-white/10 max-w-lg text-center hidden">
-            <!-- ✅ EDIT: Ganti teks petunjuk di bawah ini -->
+
+            <!--
+            🟢🟢🟢 TEKS PETUNJUK - BOLEH GANTI! 🟢🟢🟢
+            -->
             <p id="message-text" class="text-gray-300">Drag bagian tubuh ke kotak yang sesuai!</p>
         </div>
 
     </div>
 
-    <!-- ================================================ -->
-    <!-- ✅ ZONA EDIT 1: MODAL SUKSES (Popup Menang)       -->
-    <!-- Boleh ganti: Emoji, judul, pesan, teks tombol     -->
-    <!-- ================================================ -->
-    <div id="success-modal"
-        class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center opacity-0 pointer-events-none transition duration-500">
-        <div class="bg-gray-800 p-8 rounded-2xl max-w-md text-center border-4 border-yellow-500 shadow-2xl transform scale-90 transition duration-300"
-            id="success-content">
-            <!-- ✅ EDIT: Ganti emoji di bawah ini -->
-            <div class="text-6xl mb-4 animate-bounce">✨</div>
-            <!-- ✅ EDIT: Ganti judul sukses -->
-            <h2 class="text-3xl font-bold text-yellow-400 mb-2">Puzzle Selesai!</h2>
-            <!-- ✅ EDIT: Ganti pesan sukses -->
-            <p class="text-gray-300 mb-6">Hebat! Kamu berhasil menyusun kembali ingatan alam ini.</p>
-            <div id="reward-info" class="mb-6 p-4 bg-white/5 rounded-lg">
-                <!-- ✅ EDIT: Ganti jumlah XP -->
-                <p class="text-yellow-300 font-bold">+50 XP</p>
-                <!-- ✅ EDIT: Ganti keterangan reward -->
-                <p class="text-sm text-gray-400">Bagian Tubuh Terkumpul</p>
-            </div>
-            <!-- ❌ JANGAN edit id="btn-continue" -->
-            <button id="btn-continue"
-                class="bg-green-600 hover:bg-green-500 text-white font-bold px-8 py-3 rounded-xl shadow-lg hover:scale-105 transition w-full">
-                <!-- ✅ EDIT: Ganti teks tombol -->
-                LANJUTKAN PETUALANGAN ➜
-            </button>
-        </div>
-    </div>
+    <!--
+    ════════════════════════════════════════════════════════════════════════════════
+    🟢 POPUP SUKSES (MENANG) - BOLEH EDIT BANYAK TEKS!
+    ════════════════════════════════════════════════════════════════════════════════
+    
+    💡 PENJELASAN:
+    Ini adalah popup yang muncul saat pemain MENANG (berhasil menyelesaikan puzzle).
+    
+    ISI POPUP:
+    1. Emoji perayaan (✨)
+    2. Judul "Puzzle Selesai!"
+    3. Pesan ucapan selamat
+    4. Kotak reward (+50 XP)
+    5. Tombol lanjut
+    
+    KAPAN MUNCUL:
+    - Saat semua potongan puzzle sudah benar posisinya
+    - Otomatis muncul oleh program
+    -->
+    <!-- 
+    🟢 LEGACY MODAL REMOVED - NOW USING SYSTEM UI (system-ui.js) 
+    -->
 
+    <!--
+    ════════════════════════════════════════════════════════════════════════════════
+    🔴🔴🔴 BAGIAN SCRIPT - JANGAN DIEDIT SAMA SEKALI! 🔴🔴🔴
+    ════════════════════════════════════════════════════════════════════════════════
+    
+    💡 PENJELASAN:
+    Ini adalah "otak" dari halaman puzzle.
+    Semua logika permainan ada di sini.
+    
+    YANG DILAKUKAN SCRIPT INI:
+    1. Membaca ID pohon dari URL (?id=mangga_kakek)
+    2. Mengambil data pohon dari species.json
+    3. Membuat puzzle dengan potongan yang sesuai
+    4. Menjalankan timer
+    5. Mengecek apakah puzzle sudah benar
+    6. Menyimpan progress ke localStorage
+    7. Memberikan XP ke pemain
+    8. Mengecek apakah game sudah tamat
+    
+    ⚠️ PERINGATAN KERAS:
+    - JANGAN mengubah apapun di bawah ini
+    - JANGAN menghapus satupun baris
+    - JANGAN memindahkan posisi script
+    
+    KALAU DIUBAH:
+    - Puzzle tidak akan berfungsi
+    - Progress tidak tersimpan
+    - XP tidak bertambah
+    - Game tidak bisa tamat
+    
+    ════════════════════════════════════════════════════════════════════════════════
+    📚 PENJELASAN TEKNIS (Untuk yang penasaran):
+    ════════════════════════════════════════════════════════════════════════════════
+    
+    ISTILAH-ISTILAH:
+    • import = Mengambil kode dari file lain
+    • async/await = Menunggu proses selesai (seperti loading)
+    • fetch = Mengambil data dari file/internet
+    • JSON = Format data (seperti tabel Excel tapi untuk komputer)
+    • localStorage = "Ingatan" browser yang tersimpan di HP/laptop
+    
+    ALUR PROGRAM:
+    1. initGame() dipanggil saat halaman dibuka
+    2. Ambil ?id= dari URL untuk tahu pohon mana yang dimainkan
+    3. Baca species.json untuk dapat data pohon
+    4. Buat puzzle dengan PuzzleDragDrop
+    5. Saat menang → handlePuzzleComplete() dipanggil
+    6. Simpan progress dengan ProgressManager
+    7. Cek apakah tamat dengan EndingHandler
+    8. Redirect ke halaman selanjutnya
+    ════════════════════════════════════════════════════════════════════════════════
+    -->
     <script type="module">
         import { PuzzleDragDrop } from './js/v3/mechanics/puzzle.js';
 
@@ -154,10 +517,10 @@ Nanti akan diisi dengan:
             }
 
             // 3. Update UI
-            document.getElementById('puzzle-title').innerText = species.name; // Use generic title or generic mechanic name? Stick to species name for immersion.
+            document.getElementById('puzzle-title').innerText = species.name;
 
             // 4. Init Puzzle based on Type
-            if (species.mechanic === 'drag_drop' || !species.mechanic) { // Default fallback
+            if (species.mechanic === 'drag_drop' || !species.mechanic) {
                 new PuzzleDragDrop('puzzle-container', species, handlePuzzleComplete);
             } else if (species.mechanic === 'rhythm') {
                 document.getElementById('puzzle-container').innerText = "Rhythm Mode coming soon!";
@@ -187,51 +550,155 @@ Nanti akan diisi dengan:
 
         function handlePuzzleComplete() {
             stopTimer();
-            // Show Success Modal
-            const modal = document.getElementById('success-modal');
-            const content = document.getElementById('success-content');
 
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            content.classList.remove('scale-90');
-            content.classList.add('scale-100');
-
-            // Save Progress (Simple LocalStorage MVP)
-            saveProgress();
-
-            document.getElementById('btn-continue').onclick = () => {
-                const urlParams = new URLSearchParams(window.location.search);
-                const speciesId = urlParams.get('id') || 'mangga_kakek';
-                // Redirect back to story or index?
-                // Flow: Scan -> Puzzle -> Story Dialogue (Success) -> Index
-                // For now, go back to story.html logic or index
-                // Let's go to index for MVP
-                window.location.href = 'index.html';
-            };
-        }
-
-        function saveProgress() {
-            // Logic similar to previous auto-save but cleaner
+            // ✅ INTEGRASI LOGIC V3 dengan System UI
             try {
+                console.log("🧩 Starting Puzzle Completion Logic...");
+
+                // 1. Ambil ID Species
                 const urlParams = new URLSearchParams(window.location.search);
                 const speciesId = urlParams.get('id') || 'mangga_kakek';
+                console.log("🌱 Species ID:", speciesId);
 
-                let player = JSON.parse(localStorage.getItem('tf_player_v3')) || { xp: 0, inventory: [] };
+                // 2. Siapkan State dari LocalStorage
+                let playerData = JSON.parse(localStorage.getItem('tf_player_v3'));
 
-                if (!player.inventory) player.inventory = [];
-
-                if (!player.inventory.includes(speciesId)) {
-                    player.inventory.push(speciesId);
-                    player.xp += 50;
-                    localStorage.setItem('tf_player_v3', JSON.stringify(player));
+                // 🛡️ Data Sanitization: Pastikan struktur data lengkap
+                if (!playerData || typeof playerData !== 'object') {
+                    playerData = {};
                 }
+                if (!Array.isArray(playerData.inventory)) playerData.inventory = [];
+                if (typeof playerData.xp !== 'number') playerData.xp = 0;
+                if (!Array.isArray(playerData.badges)) playerData.badges = [];
+                if (typeof playerData.level !== 'number') playerData.level = 1;
+
+                console.log("👤 Player Data loaded:", playerData);
+
+                // 3. Panggil Manager
+                // Pastikan ProgressManager ada
+                if (typeof ProgressManager === 'undefined') {
+                    throw new Error("ProgressManager script not loaded!");
+                }
+
+                const pm = new ProgressManager({ player: playerData });
+
+
+
+                pm.saveProgress(speciesId, 100); // +100 XP
+
+                // 4. Reset & Simpan
+                // const eh = new EndingHandler(pm); // Tidak perlu instantiate jika tidak dipakai langsung
+
+                // 5. Tampilkan Modal Sukses via System UI
+                if (window.Alpine && window.Alpine.store('systemUI')) {
+                    console.log("🖥️ Showing System UI Modal...");
+                    Alpine.store('systemUI').showModal('GAME_WON', {
+                        title: 'PUZZLE SELESAI! 🧩',
+                        message: 'Kamu berhasil menyusun potongan puzzle dengan sempurna!',
+                        xp: 100,
+                        onContinue: () => {
+                            console.log("👉 Clicked Continue. Redirecting...");
+                            // Redirect ke Quiz
+                            window.location.href = `quiz.html?id=${speciesId}`;
+                        }
+                    });
+                } else {
+                    // Fallback
+                    console.warn("⚠️ Alpine/SystemUI missing. Using fallback alert.");
+                    alert("Puzzle Selesai! +100 XP");
+                    window.location.href = `quiz.html?id=${speciesId}`;
+                }
+
             } catch (e) {
-                console.error("Save error:", e);
+                console.error("❌ Logic V3 Error:", e);
+                // ⚠️ DEVELOPMENT MODE: Munculkan alert biar tau errornya apa
+                alert("TERJADI ERROR: " + e.message + "\n\nCek Console untuk detail.");
+                // Jangan redirect dulu biar user bisa baca errornya
+                // window.location.href = 'index.html'; 
             }
         }
 
         initGame();
 
     </script>
+    <!-- SYSTEM UI TEMPLATES -->
+    <!-- Toast Container -->
+    <div class="toast-container" x-data>
+        <template x-for="toast in $store.systemUI.toasts" :key="toast.id">
+            <div class="toast" :class="{
+                     'toast-success': toast.type === 'success',
+                     'toast-error': toast.type === 'error',
+                     'toast-xp': toast.type === 'xp',
+                     'toast-info': toast.type === 'info',
+                     'show': toast.visible
+                 }" x-show="toast.visible" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-300"
+                x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-2">
+                <div class="toast-icon">
+                    <span x-show="toast.type === 'success'">✅</span>
+                    <span x-show="toast.type === 'error'">❌</span>
+                    <span x-show="toast.type === 'xp'">✨</span>
+                    <span x-show="toast.type === 'info'">ℹ️</span>
+                </div>
+                <div class="toast-message" x-text="toast.message"></div>
+            </div>
+        </template>
+    </div>
+
+    <!-- Modal Overlay -->
+    <template x-if="$store.systemUI.modal.isOpen">
+        <div class="modal-overlay" x-data
+            :class="{'modal-level-up': $store.systemUI.modal.type === 'LEVEL_UP', 'modal-achievement': $store.systemUI.modal.type === 'ACHIEVEMENT_UNLOCK'}">
+
+            <!-- Game Won Modal -->
+            <template x-if="$store.systemUI.modal.type === 'GAME_WON'">
+                <div class="modal-content">
+                    <div class="modal-icon">🎉</div>
+                    <h2 class="modal-title" x-text="$store.systemUI.modal.data.title || 'Hebat!'"></h2>
+                    <p class="modal-body"
+                        x-text="$store.systemUI.modal.data.message || 'Kamu berhasil menyelesaikan tantangan!'"></p>
+                    <p class="xp-reward" x-text="'+' + ($store.systemUI.modal.data.xp || 100) + ' XP'"></p>
+                    <div class="modal-actions">
+                        <button class="modal-btn primary"
+                            @click="$store.systemUI.modal.data.onContinue?.(); $store.systemUI.closeModal()">LANJUT
+                            ▶</button>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Level Up Modal -->
+            <template x-if="$store.systemUI.modal.type === 'LEVEL_UP'">
+                <div class="modal-content">
+                    <div class="level-badge" x-text="$store.systemUI.modal.data.level || '?'"></div>
+                    <h2 class="modal-title">🎉 SELAMAT! 🎉</h2>
+                    <p class="modal-subtitle"
+                        style="text-align:center; font-weight:bold; color:#4CAF50; margin-bottom:10px;">NAIK LEVEL!</p>
+                    <p class="modal-body">Kamu sekarang di Level <span
+                            x-text="$store.systemUI.modal.data.level"></span>!</p>
+                    <div class="modal-actions">
+                        <button class="modal-btn primary" @click="$store.systemUI.closeModal()">LANJUT ▶</button>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Achievement Modal -->
+            <template x-if="$store.systemUI.modal.type === 'ACHIEVEMENT_UNLOCK'">
+                <div class="modal-content">
+                    <div class="modal-icon badge-bounce">🔓</div>
+                    <h2 class="modal-title">LENCANA BARU!</h2>
+                    <div class="badge-icon-large" x-text="$store.systemUI.modal.data.badge?.icon || '🏆'"></div>
+                    <h3 class="badge-name" x-text="$store.systemUI.modal.data.badge?.name || 'Badge'"></h3>
+                    <p class="modal-body" x-text="$store.systemUI.modal.data.badge?.description || ''"></p>
+                    <p class="xp-reward" x-text="'+' + ($store.systemUI.modal.data.xp || 50) + ' XP 🎉'"></p>
+                    <div class="modal-actions">
+                        <button class="modal-btn primary" @click="$store.systemUI.closeModal()">KEREN! ✓</button>
+                    </div>
+                </div>
+            </template>
+
+        </div>
+    </template>
 </body>
 
 </html>

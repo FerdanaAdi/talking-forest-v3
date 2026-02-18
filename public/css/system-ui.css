@@ -1,0 +1,512 @@
+/**
+ * ============================================
+ * 📄 FILE: public/css/system-ui.css
+ * 🧠 FUNGSI: Style untuk komponen System UI (Modal, Toast, Loading, Error)
+ * ============================================
+ *
+ * 🔰 PANDUAN UNTUK NAJU:
+ *
+ * File ini mengatur tampilan visual untuk:
+ * - Modal: Popup besar di tengah layar
+ * - Toast: Notifikasi kecil di pojok bawah
+ * - Loading: Overlay layar penuh saat data dimuat
+ * - Error: Tampilan khusus saat ada masalah
+ *
+ * 💡 YANG BOLEH KAMU EDIT:
+ * ─────────────────────────────────────────────
+ * ✅ Warna-warna (--toast-success, --toast-error, dll)
+ * ✅ Ukuran font dan padding
+ * ✅ Durasi animasi (animation-duration)
+ *
+ * ⚠️ YANG JANGAN DIEDIT:
+ * ─────────────────────────────────────────────
+ * ✗ Nama class (.modal-overlay, .toast-container, dll)
+ * ✗ Struktur position: fixed
+ *
+ * ============================================
+ */
+
+/* ==========================================
+   VARIABLES
+   ========================================== */
+:root {
+    /* Toast Colors */
+    --toast-success: #10B981;
+    --toast-error: #EF4444;
+    --toast-xp: #F59E0B;
+    --toast-info: #3B82F6;
+
+    /* Modal - Nature Theme */
+    --modal-backdrop: rgba(0, 0, 0, 0.75);
+    --modal-bg: #FEFCE8;
+    /* Parchment / Cream */
+    --modal-border: #8D6E63;
+    /* Wood / Earth */
+
+    /* Animation */
+    --anim-duration: 0.3s;
+}
+
+/* ==========================================
+   MODAL OVERLAY (CENTERING)
+   ========================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--modal-backdrop);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: fadeIn var(--anim-duration) ease-out;
+}
+
+.modal-overlay.closing {
+    animation: fadeOut var(--anim-duration) ease-in forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.modal-content {
+    background: var(--modal-bg);
+    border-radius: 24px;
+    padding: 24px;
+    max-width: 380px;
+    width: 85%;
+    text-align: center;
+    border: 4px solid var(--modal-border);
+    outline: 4px solid #A1887F;
+    /* Lighter wood outline */
+    box-shadow: 0 10px 0 rgba(0, 0, 0, 0.2), 0 20px 40px rgba(0, 0, 0, 0.4);
+    animation: modalPopIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* Bouncy pop */
+    position: relative;
+    overflow: visible;
+    /* Allow decorations to stick out if needed */
+}
+
+/* Decoration for Modal Header */
+.modal-content::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40%;
+    height: 12px;
+    background: #5D4037;
+    /* Dark wood nail/holder */
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    display: block;
+}
+
+.modal-overlay.closing .modal-content {
+    animation: modalPopOut var(--anim-duration) ease-in forwards;
+}
+
+.modal-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.modal-title {
+    font-size: 24px;
+    font-weight: 800;
+    /* Extra bold for headings */
+    color: #2d6a4f;
+    /* Forest Green */
+    margin-bottom: 12px;
+    font-family: 'Bakso Sapi', cursive;
+    /* Use game font if available */
+}
+
+.modal-body {
+    color: #4b5563;
+    /* Dark Grey */
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    font-weight: 600;
+}
+
+.modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-btn {
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    font-size: 14px;
+}
+
+.modal-btn.primary {
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+    color: white;
+}
+
+.modal-btn.primary:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+}
+
+.modal-btn.secondary {
+    background: transparent;
+    color: #9CA3AF;
+    /* Gray-400 */
+    border: 2px solid #E5E7EB;
+    /* Gray-200 */
+}
+
+.modal-btn.secondary:hover {
+    background: #F3F4F6;
+    /* Gray-100 */
+    color: #4B5563;
+    /* Gray-600 */
+    border-color: #D1D5DB;
+    /* Gray-300 */
+}
+
+/* Level Up Modal Special */
+.modal-level-up .modal-content {
+    background: linear-gradient(135deg, #1a1a2e, #2d2d5a);
+    border: 2px solid #FFD700;
+}
+
+.modal-level-up .level-badge {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 40px;
+    font-weight: 700;
+    color: #1a1a2e;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes modalPopIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes modalPopOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+}
+
+/* ==========================================
+   3. LOADING OVERLAY (ALUR 14)
+   ========================================== */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(10, 10, 20, 0.95);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9997;
+    animation: fadeIn var(--anim-duration) ease-out;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-top-color: #4CAF50;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+.loading-text {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Skeleton Loading */
+.skeleton {
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0.05) 25%,
+            rgba(255, 255, 255, 0.1) 50%,
+            rgba(255, 255, 255, 0.05) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* ==========================================
+   4. ERROR STATE (ALUR 15)
+   ========================================== */
+.error-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(10, 10, 20, 0.98);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9996;
+    padding: 30px;
+    text-align: center;
+}
+
+.error-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+}
+
+.error-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.error-message {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+    max-width: 300px;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+.error-btn {
+    padding: 14px 30px;
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.error-btn:hover {
+    transform: scale(1.02);
+}
+
+/* Offline specific */
+.error-offline .error-icon {
+    color: #F59E0B;
+}
+
+/* Achievement Unlock Modal Special */
+.modal-achievement .modal-content {
+    background: linear-gradient(135deg, #0f2e1a, #1a422d);
+    border: 2px solid #4CAF50;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(76, 175, 80, 0.3);
+}
+
+.modal-achievement .modal-icon {
+    display: inline-block;
+    animation: badgeBounce 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-achievement .badge-icon-large {
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    animation: badgeBounce 0.8s 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+.modal-achievement .modal-title {
+    color: #4CAF50;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.modal-achievement .badge-name {
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.modal-achievement .modal-body {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.modal-achievement .xp-reward {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    animation: pulse 2s infinite;
+}
+
+@keyframes badgeBounce {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.3);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* ==========================================
+   TOAST NOTIFICATIONS
+   ========================================== */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.toast {
+    background: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 250px;
+    max-width: 320px;
+    pointer-events: auto;
+    border-left: 5px solid #ccc;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.3s ease;
+}
+
+.toast-success {
+    border-left-color: var(--toast-success, #10B981);
+}
+
+.toast-error {
+    border-left-color: var(--toast-error, #EF4444);
+}
+
+.toast-xp {
+    border-left-color: var(--toast-xp, #F59E0B);
+}
+
+.toast-info {
+    border-left-color: var(--toast-info, #3B82F6);
+}
+
+.toast-icon {
+    font-size: 18px;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

@@ -38,6 +38,8 @@ document.addEventListener('alpine:init', () => {
         // ==========================================
         playerAPI: PlayerAPI(),
         dialogEngine: DialogEngine(),
+        progressManager: null, // Init di init()
+        endingHandler: null,   // Init di init()
 
         // AUDIO SYSTEM (Centralized)
         sfx: {
@@ -57,7 +59,11 @@ document.addEventListener('alpine:init', () => {
             xp: 0,
             level: 1,
             saved: false,
-            hook_seen: false
+            hook_seen: false,
+            // 🎒 INVENTORY SYSTEM (New Phase 5)
+            inventory: [],        // Koleksi Species: ['mangga_kakek', 'paku_sarang']
+            badges: [],           // Badge Prestasi: ['penjaga_hutan', 'ahli_tanaman']
+            completedSpecies: []  // ID Species yang sudah tamat 100%
         },
 
         // 0 = Intro, 1 = Register, 2 = Mission
@@ -97,6 +103,13 @@ document.addEventListener('alpine:init', () => {
                 audio.preload = 'auto';
                 audio.load();
             });
+
+            // C. INIT LOGIC HELPERS (Phase 5)
+            if (window.ProgressManager) {
+                this.progressManager = new window.ProgressManager(this);
+                this.endingHandler = new window.EndingHandler(this.progressManager);
+                console.log("✅ Logic V3 Loaded (Progress & Ending)");
+            }
 
             // B. CEK ROUTING (Berdasarkan URL & LocalStorage)
             const urlParams = new URLSearchParams(window.location.search);
@@ -184,7 +197,10 @@ document.addEventListener('alpine:init', () => {
             const validation = this.playerAPI.validateName(this.player.name);
 
             if (!validation.valid) {
-                alert(validation.msg); // Tampilkan error
+                // Ganti alert dengan System UI Toast
+                if (window.Alpine && window.Alpine.store('systemUI')) {
+                    window.Alpine.store('systemUI').showToast(validation.msg, 'error');
+                }
                 return;
             }
 

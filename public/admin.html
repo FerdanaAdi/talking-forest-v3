@@ -1,6 +1,96 @@
 <!DOCTYPE html>
 <html lang="id">
 
+<!--
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║   📄 NAMA FILE: admin.html                                                   ║
+║   ⚙️ FUNGSI: Panel Admin & CMS (Content Management System)                  ║
+║   🔐 POSISI: Halaman khusus admin untuk kelola semua data                   ║
+║                                                                              ║
+║   ⚠️ AKSES: Hanya admin yang punya akun bisa masuk!                         ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+════════════════════════════════════════════════════════════════════════════════
+🔰 PANDUAN LENGKAP UNTUK NAJU
+════════════════════════════════════════════════════════════════════════════════
+
+Halo Naju! 👋
+
+Ini adalah PANEL ADMIN utama.
+Ini adalah "ruang kontrol" untuk mengelola semua data Talking Forest!
+
+MENU-MENU YANG ADA:
+📊 Dashboard  → Ringkasan statistik (pengunjung, pendapatan)
+💰 Keuangan   → Buku kas, catat pemasukan/pengeluaran
+🎫 Tiket      → Atur harga tiket dewasa/anak
+🏪 Mitra UMKM → Kelola data warung/gerai
+🗺️ Aset (GIS) → Catat inventaris/aset di lokasi
+🌿 Katalog    → Kelola data pohon/tanaman/hewan
+🩺 Update     → Update kondisi pohon
+
+════════════════════════════════════════════════════════════════════════════════
+📚 PENJELASAN SIMBOL-SIMBOL
+════════════════════════════════════════════════════════════════════════════════
+
+🟢 = BOLEH KAMU EDIT (aman, tidak merusak program)
+🔴 = JANGAN DIEDIT (bisa error/rusak)
+🟡 = HATI-HATI (boleh edit tapi tanya dulu)
+💡 = TIPS (penjelasan tambahan)
+⚠️ = PERINGATAN (hal penting)
+
+════════════════════════════════════════════════════════════════════════════════
+🎯 DAFTAR YANG BOLEH DIEDIT
+════════════════════════════════════════════════════════════════════════════════
+
+✅ BOLEH EDIT:
+1. Judul tab browser "Admin - Talking Forest"
+2. Judul-judul section (Dashboard, Keuangan, dll)
+3. Placeholder teks input
+4. Label form (Nama, Email, Kategori, dll)
+5. Teks tombol (+ Tambah, Simpan, Export, dll)
+6. Emoji menu sidebar (📊, 💰, 🎫, dll)
+7. Warna CSS (jika ada di file admin-cms.css)
+
+❌ JANGAN EDIT:
+1. Semua id="..." (login-section, dashboard-section, dll)
+2. Semua onclick="..." dan fungsi
+3. Script src untuk Chart.js dan Firebase
+4. Struktur layout sidebar dan tabs
+5. Script module type"module" src="..."
+
+════════════════════════════════════════════════════════════════════════════════
+📂 FILE YANG BERHUBUNGAN
+════════════════════════════════════════════════════════════════════════════════
+
+LOGIKA HALAMAN:
+• js/admin-logic.js → Kode utama admin (🔴 JANGAN EDIT!)
+• js/modules/admin-*.js → Modul-modul terpisah (🔴 JANGAN EDIT!)
+
+STYLING:
+• css/admin-cms.css → Style panel admin (🟢 BOLEH EDIT WARNA)
+
+DATABASE:
+• Firebase Firestore → Semua data tersimpan di cloud
+
+LIBRARY YANG DIPAKAI:
+• Chart.js → Grafik statistik (🔴 JANGAN EDIT)
+• SweetAlert2 → Popup konfirmasi (🔴 JANGAN EDIT)
+
+════════════════════════════════════════════════════════════════════════════════
+💡 CATATAN PENTING
+════════════════════════════════════════════════════════════════════════════════
+
+File ini SANGAT BESAR (~961 baris).
+Sebagian besar adalah struktur HTML untuk form dan tabel.
+Logika utama ada di js/admin-logic.js.
+
+Jika mau edit teks/label, cari dengan Ctrl+F (Find).
+
+════════════════════════════════════════════════════════════════════════════════
+-->
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

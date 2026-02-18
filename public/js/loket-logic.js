@@ -1,3 +1,86 @@
+/* 
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║   📄 NAMA FILE: js/loket-logic.js                                            ║
+║   🎫 FUNGSI: Logika sistem kasir tiket (Loket)                              ║
+║   📍 POSISI: Dipakai oleh loket.html                                        ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+════════════════════════════════════════════════════════════════════════════════
+🔰 PANDUAN UNTUK NAJU
+════════════════════════════════════════════════════════════════════════════════
+
+Halo Naju! 👋
+
+File ini mengatur sistem PENJUALAN TIKET di loket.
+Staff akan gunakan ini untuk:
+- Pilih jumlah tiket dewasa/anak
+- Proses pembayaran
+- Cetak struk/tiket
+- Lihat riwayat transaksi hari ini
+
+════════════════════════════════════════════════════════════════════════════════
+📚 SIMBOL-SIMBOL
+════════════════════════════════════════════════════════════════════════════════
+
+🟢 = BOLEH EDIT
+🔴 = JANGAN EDIT
+🟡 = HATI-HATI
+
+════════════════════════════════════════════════════════════════════════════════
+🎯 YANG BOLEH DIEDIT
+════════════════════════════════════════════════════════════════════════════════
+
+✅ BOLEH EDIT (teks saja):
+1. Pesan alert ("✅ Transaksi Berhasil!", "⚠️ WAJIB ISI NAMA", dll)
+2. Format tampilan harga (toLocaleString)
+
+❌ JANGAN EDIT:
+1. import Firebase
+2. Logika +/- quantity
+3. Fungsi proses pembayaran
+4. Logika cetak struk
+5. Query ke Firebase
+6. Event listener
+
+════════════════════════════════════════════════════════════════════════════════
+📂 STRUKTUR FILE
+════════════════════════════════════════════════════════════════════════════════
+
+BAGIAN 1: Init & Auth (~baris 1-95)
+   - Login staff
+   - Cek role user
+   - Load harga dari settings
+
+BAGIAN 2: Transaction Logic (~baris 95-140)
+   - Update quantity (+/-)
+   - Pilih metode bayar (Cash/QRIS)
+   - Update ringkasan
+
+BAGIAN 3: Process & Save (~baris 140-185)
+   - Simpan transaksi ke Firebase
+   - Generate ticket ID
+
+BAGIAN 4: Print Logic (~baris 185-220)
+   - Cetak struk
+
+BAGIAN 5: History (~baris 220-254)
+   - Tampilkan riwayat hari ini
+
+════════════════════════════════════════════════════════════════════════════════
+💡 CATATAN PENTING
+════════════════════════════════════════════════════════════════════════════════
+
+Harga tiket diambil dari Firebase (settings/prices):
+- PRICES.adult = Harga dewasa
+- PRICES.child = Harga anak
+
+Untuk edit harga, gunakan panel ADMIN, bukan edit di sini!
+
+════════════════════════════════════════════════════════════════════════════════
+*/
+
 // js/loket-logic.js
 import { db, auth, signInWithEmailAndPassword, signOut, onAuthStateChanged, collection, addDoc, query, orderBy, limit, onSnapshot, where, doc, getDoc }
     from "./firebase-config.js";

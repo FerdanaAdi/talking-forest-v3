@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<!--
+============================================
+📄 FILE: story.html
+🎬 FUNGSI: Visual Novel - Monogatari Engine
+============================================
+TEMPLATE BERSIH untuk Talking Forest V3
+Menggunakan struktur resmi Monogatari v2.x
+============================================
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talking Forest - Story Mode</title>
+
+    <!-- MONOGATARI CORE CSS -->
+    <link rel="stylesheet" href="css/monogatari.css">
+
+    <!-- CUSTOM GAME CSS -->
+    <link rel="stylesheet" href="css/game.css">
+
+    <style>
+        /* Reset & Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #monogatari {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            --color-primary: #2d6a4f;
+            --color-secondary: #ffd700;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="monogatari">
+        <visual-novel>
+            <language-selection-screen></language-selection-screen>
+            <loading-screen></loading-screen>
+            <main-screen>
+                <main-menu></main-menu>
+            </main-screen>
+            <game-screen>
+                <dialog-log></dialog-log>
+                <text-box></text-box>
+                <quick-menu></quick-menu>
+            </game-screen>
+            <gallery-screen></gallery-screen>
+            <load-screen></load-screen>
+            <save-screen></save-screen>
+            <settings-screen></settings-screen>
+            <help-screen></help-screen>
+            <credits-screen></credits-screen>
+        </visual-novel>
+    </div>
+
+    <!-- MONOGATARI CORE ENGINE -->
+    <script src="js/v3/monogatari/monogatari.js"></script>
+
+    <!-- FIX: Expose Monogatari Global for v2/v3 Compatibility -->
+    <script>
+        if (typeof Monogatari !== 'undefined') {
+            // Jika Monogatari adalah Module Namespace (punya .default)
+            if (Monogatari.default) {
+                window.monogatari = Monogatari.default;
+            } else {
+                window.monogatari = Monogatari;
+            }
+        } else if (typeof MonogatariGlobal !== 'undefined') {
+            // Fallback jika nama variabel globalnya MonogatariGlobal
+            if (MonogatariGlobal.default) {
+                window.monogatari = MonogatariGlobal.default;
+            } else {
+                window.monogatari = MonogatariGlobal;
+            }
+        }
+    </script>
+
+    <!-- GAME CONFIGURATION -->
+    <script src="js/v3/monogatari/options.js"></script>
+
+    <!-- STORY SCRIPT -->
+    <script src="js/v3/monogatari/script.js"></script>
+
+    <!-- MAIN INITIALIZATION -->
+    <script src="js/v3/monogatari/main.js"></script>
+</body>
+
+</html>

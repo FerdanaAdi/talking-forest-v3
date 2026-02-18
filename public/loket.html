@@ -1,6 +1,87 @@
 <!DOCTYPE html>
 <html lang="id">
 
+<!--
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║   📄 NAMA FILE: loket.html                                                   ║
+║   🎫 FUNGSI: Sistem Kasir Tiket (POS) untuk Staff Loket                     ║
+║   💰 POSISI: Digunakan oleh staff untuk jual tiket masuk                    ║
+║                                                                              ║
+║   ⚠️ AKSES: Staff loket yang punya akun                                     ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+════════════════════════════════════════════════════════════════════════════════
+🔰 PANDUAN LENGKAP UNTUK NAJU
+════════════════════════════════════════════════════════════════════════════════
+
+Halo Naju! 👋
+
+Ini adalah halaman KASIR TIKET untuk staff loket.
+Digunakan untuk menjual tiket masuk ke pengunjung!
+
+ALUR PENGGUNAAN:
+1. Staff login dengan email & password
+2. Input nama pengunjung
+3. Pilih jumlah tiket (dewasa/anak)
+4. Pilih metode bayar (Tunai/QRIS)
+5. Klik "PROSES BAYAR"
+6. Cetak struk
+
+════════════════════════════════════════════════════════════════════════════════
+📚 PENJELASAN SIMBOL-SIMBOL
+════════════════════════════════════════════════════════════════════════════════
+
+🟢 = BOLEH KAMU EDIT (aman, tidak merusak program)
+🔴 = JANGAN DIEDIT (bisa error/rusak)
+🟡 = HATI-HATI (boleh edit tapi tanya dulu)
+💡 = TIPS (penjelasan tambahan)
+⚠️ = PERINGATAN (hal penting)
+
+════════════════════════════════════════════════════════════════════════════════
+🎯 DAFTAR YANG BOLEH DIEDIT
+════════════════════════════════════════════════════════════════════════════════
+
+✅ BOLEH EDIT:
+1. Judul tab browser "Loket Tiket - Talking Forest"
+2. Judul halaman "🎫 Loket Tiket"
+3. Label form (Nama Perwakilan, Data Pengunjung)
+4. Teks tombol (MASUK SHIFT, PROSES BAYAR, CETAK)
+5. Placeholder input
+6. Label metode bayar (💵 Tunai, 📱 QRIS)
+7. Warna-warna di <style>
+8. Template struk di #ticket-print-area
+
+❌ JANGAN EDIT:
+1. Semua id="..." (login-modal, qty-adult, total-price, dll)
+2. Semua onclick="..." dan function
+3. Script src="js/loket-logic.js"
+4. Logika perhitungan harga
+
+════════════════════════════════════════════════════════════════════════════════
+📂 FILE YANG BERHUBUNGAN
+════════════════════════════════════════════════════════════════════════════════
+
+LOGIKA HALAMAN:
+• js/loket-logic.js → Kode kasir tiket (🔴 JANGAN EDIT!)
+
+DATABASE:
+• Firebase Firestore:
+  - Collection "tickets" → Riwayat penjualan tiket
+  - Collection "config" → Pengaturan harga tiket
+
+STYLING:
+• css/style.css → Style umum (🟡 HATI-HATI)
+• CSS inline di <style> → Style khusus loket (🟢 BOLEH EDIT WARNA)
+
+💡 CATATAN:
+Harga tiket diambil dari database (diatur di admin.html).
+Jadi angka yang ditampilkan bisa berubah otomatis.
+
+════════════════════════════════════════════════════════════════════════════════
+-->
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -261,6 +342,10 @@
         <!-- Panel Kiri: Input Tiket -->
         <div class="left-panel">
             <div style="display:flex; justify-content:space-between; align-items:center;">
+                <!-- ================================================ -->
+                <!-- ✅ ZONA EDIT: JUDUL HALAMAN                      -->
+                <!-- Boleh ganti: Teks judul                          -->
+                <!-- ================================================ -->
                 <h2>🎫 Loket Tiket</h2>
                 <div style="text-align:right;">
                     <span id="staff-name" style="font-weight:bold; color:#2c3e50;">Staff: -</span><br>
@@ -281,6 +366,10 @@
 
             <div class="ticket-card">
                 <div class="ticket-info">
+                    <!-- ================================================ -->
+                    <!-- ✅ ZONA EDIT: TAMPILAN HARGA (Display Only)      -->
+                    <!-- Boleh ganti: Teks Rp, tapi jangan ubah id="..."  -->
+                    <!-- ================================================ -->
                     <h4>Tiket Dewasa</h4>
                     <span id="price-display-adult" class="ticket-price">Rp 15.000</span>
                 </div>
@@ -394,6 +483,7 @@
             alert("System Error: " + e.message);
         });
     </script>
+    <!-- ❌ JANGAN edit script source ini -->
     <script type="module" src="js/loket-logic.js?v=3"></script>
 </body>
 

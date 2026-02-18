@@ -1,3 +1,89 @@
+/* 
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║   📄 NAMA FILE: js/warung-logic.js                                           ║
+║   🏪 FUNGSI: Logika sistem POS Warung Mitra (UMKM)                          ║
+║   📍 POSISI: Dipakai oleh warung.html                                       ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+════════════════════════════════════════════════════════════════════════════════
+🔰 PANDUAN UNTUK NAJU
+════════════════════════════════════════════════════════════════════════════════
+
+Halo Naju! 👋
+
+File ini mengatur sistem KASIR WARUNG untuk mitra UMKM.
+Fitur yang tersedia:
+- Tab KASIR: Pilih produk, keranjang, checkout
+- Tab LAPORAN: Lihat omzet hari ini/bulan
+- Tab CMS: Kelola produk (tambah/edit/hapus)
+
+════════════════════════════════════════════════════════════════════════════════
+📚 SIMBOL-SIMBOL
+════════════════════════════════════════════════════════════════════════════════
+
+🟢 = BOLEH EDIT
+🔴 = JANGAN EDIT
+🟡 = HATI-HATI
+
+════════════════════════════════════════════════════════════════════════════════
+🎯 YANG BOLEH DIEDIT
+════════════════════════════════════════════════════════════════════════════════
+
+✅ BOLEH EDIT (teks saja):
+1. Pesan alert ("✅ Lunas!", "Mentok Stok!", dll)
+2. Default kategori (Makanan, Minuman, Jasa)
+3. Emoji icon di getIcon() (🍜, 🥤, 🛠️)
+
+❌ JANGAN EDIT:
+1. import Firebase
+2. Logika login/session
+3. Logika keranjang (+/- quantity)
+4. Proses checkout
+5. Query Firebase
+6. Event listener
+
+════════════════════════════════════════════════════════════════════════════════
+📂 STRUKTUR FILE
+════════════════════════════════════════════════════════════════════════════════
+
+BAGIAN 1: Init & Login (~baris 1-70)
+   - Load daftar UMKM ke dropdown
+   - Cek session (localStorage)
+   - Login dengan password
+
+BAGIAN 2: Tab Navigation (~baris 70-85)
+   - Switch antar tab (Kasir/Laporan/CMS)
+
+BAGIAN 3: KASIR Logic (~baris 85-200)
+   - Load produk dari Firebase
+   - Render grid produk
+   - Keranjang (add/change quantity)
+   - Checkout & kurangi stok
+
+BAGIAN 4: CMS Logic (~baris 200-320)
+   - Tambah kategori custom
+   - Simpan produk baru/edit
+   - Hapus produk
+
+BAGIAN 5: REPORT Logic (~baris 320-375)
+   - Hitung omzet hari ini
+   - Hitung omzet bulan ini
+   - List 10 transaksi terakhir
+
+════════════════════════════════════════════════════════════════════════════════
+💡 CATATAN PENTING
+════════════════════════════════════════════════════════════════════════════════
+
+Session login disimpan di localStorage:
+- warung_id = ID UMKM yang sedang login
+
+Kalau mau logout, klik tombol Logout atau hapus manual localStorage.
+
+════════════════════════════════════════════════════════════════════════════════
+*/
+
 import { db, collection, getDocs, query, where, addDoc, updateDoc, doc, getDoc, orderBy, deleteDoc, setDoc } from "./firebase-config.js";
 
 // STATE

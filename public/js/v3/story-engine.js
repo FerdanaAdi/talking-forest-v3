@@ -229,9 +229,17 @@ const storyEngine = () => ({
                 break;
 
             case 'reveal':
-                // Setelah Reveal -> Masuk ke Gameplay (Puzzle)
+                // Setelah Reveal -> Masuk ke Gameplay (Berdasarkan Mechanic Type)
                 if (this.speciesData) {
-                    window.location.href = 'puzzle.html?code=' + this.speciesData.id;
+                    const mechanic = this.speciesData.mechanic || 'drag_drop';
+                    const routeMap = {
+                        'drag_drop': 'puzzle.html',
+                        'rhythm': 'rhythm.html',
+                        'summon': 'summon.html'
+                    };
+                    const page = routeMap[mechanic] || 'puzzle.html';
+                    console.log(`🔀 Routing to mechanic: ${mechanic} -> ${page}`);
+                    window.location.href = page + '?id=' + this.speciesData.id;
                 } else {
                     // Fallback jika data hilang
                     window.location.href = 'index.html';

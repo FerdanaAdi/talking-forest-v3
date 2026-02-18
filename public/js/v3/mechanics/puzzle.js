@@ -1,15 +1,28 @@
 /**
- * 🧩 MECHANIC: PUZZLE DRAG & DROP
- * --------------------------------
- * Halo Naju! 👋
- * Ini adalah kode untuk mengatur permainan puzzle menyusun pohon.
- * Bayangkan kode ini sebagai "wasit" yang mengatur aturan main.
- * 
- * Apa saja tugas "wasit" ini?
+ * ============================================
+ * 📄 FILE: public/js/v3/mechanics/puzzle.js
+ * 🧩 FUNGSI: Logika Drag & Drop Puzzle
+ * ============================================
+ *
+ * 🔰 PANDUAN UNTUK NAJU:
+ *
+ * File ini adalah "wasit" untuk game puzzle.
+ * Tugasnya:
  * 1. Menyiapkan lapangan (tampilken gambar & kotak kosong).
  * 2. Mengawasi saat pemain menggeser (drag) potongan gambar.
  * 3. Mengecek apakah potongan ditaruh di tempat yang benar (drop).
- * 4. Memberikan hadiah (fakta edukatif & animasi) kalau benar.
+ *
+ * 💡 YANG BOLEH KAMU EDIT:
+ * ─────────────────────────────────────────────
+ * ✅ Pesan debug (console.log)
+ * ✅ Logika score/xp jika ingin diubah
+ *
+ * ⚠️ YANG JANGAN DIEDIT:
+ * ─────────────────────────────────────────────
+ * ✗ Logika touch event (handleTouchStart, dll)
+ * ✗ Rumus posisi elemen
+ *
+ * ============================================
  */
 
 export class PuzzleDragDrop {
@@ -46,7 +59,7 @@ export class PuzzleDragDrop {
 
         // Tambahkan Siluet Samar (Biar gampang nebaknya)
         if (this.species.assets && this.species.assets.siluet) {
-            const siluetPath = this.species.assets.siluet.includes('/') ? this.species.assets.siluet : `assets/images/${this.species.assets.siluet}`;
+            const siluetPath = this.species.assets.siluet.includes('/') ? this.species.assets.siluet : `assets/images/species/${this.species.assets.siluet}`;
             const siluetImg = document.createElement('img');
             siluetImg.src = siluetPath;
             siluetImg.className = 'absolute inset-0 w-full h-full object-contain opacity-20 pointer-events-none';
@@ -123,9 +136,14 @@ export class PuzzleDragDrop {
             // Kalau diklik, muncul info kecil (Tooltip)
             partEl.addEventListener('click', () => this.showPreviewPopup(part));
 
-            // Event Drag
+            // Event Drag (Desktop)
             partEl.addEventListener('dragstart', this.handleDragStart.bind(this));
             partEl.addEventListener('dragend', this.handleDragEnd.bind(this));
+
+            // 📱 Event Touch (Mobile) - BARU!
+            partEl.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
+            partEl.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
+            partEl.addEventListener('touchend', this.handleTouchEnd.bind(this));
 
             itemsWrapper.appendChild(partEl); // Masukkan ke wrapper horizontal
         });
@@ -151,6 +169,125 @@ export class PuzzleDragDrop {
     // Saat selesai menggeser (lepas atau batal)
     handleDragEnd(e) {
         e.target.classList.remove('opacity-50', 'scale-90');
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 📱 TOUCH HANDLERS (Mobile Support) - BARU!
+    // ═══════════════════════════════════════════════════════════════════
+
+    // Saat jari MULAI menyentuh item
+    handleTouchStart(e) {
+        e.preventDefault(); // Cegah scroll saat drag
+        const touch = e.touches[0];
+        const target = e.currentTarget;
+
+        // Simpan data ke object sementara
+        this.touchData = {
+            id: target.dataset.id,
+            startX: touch.clientX,
+            startY: touch.clientY,
+            originalEl: target,
+            clone: null
+        };
+
+        // Efek visual: item asli jadi transparan
+        target.classList.add('opacity-50', 'scale-90');
+        this.playAudio('sfx/pickup.mp3');
+
+        // Buat "klon bayangan" yang mengikuti jari
+        const clone = target.cloneNode(true);
+        clone.id = 'touch-clone';
+        clone.style.position = 'fixed';
+        clone.style.left = `${touch.clientX - 40}px`;
+        clone.style.top = `${touch.clientY - 40}px`;
+        clone.style.width = '80px';
+        clone.style.height = '80px';
+        clone.style.zIndex = '9999';
+        clone.style.pointerEvents = 'none';
+        clone.style.opacity = '0.9';
+        clone.style.transform = 'scale(1.2)';
+        clone.style.boxShadow = '0 10px 30px rgba(0,0,0,0.5)';
+        clone.style.borderRadius = '12px';
+        document.body.appendChild(clone);
+        this.touchData.clone = clone;
+    }
+
+    // Saat jari BERGERAK (drag)
+    handleTouchMove(e) {
+        e.preventDefault();
+        if (!this.touchData || !this.touchData.clone) return;
+
+        const touch = e.touches[0];
+        const clone = this.touchData.clone;
+
+        // Pindahkan klon mengikuti jari
+        clone.style.left = `${touch.clientX - 40}px`;
+        clone.style.top = `${touch.clientY - 40}px`;
+
+        // Cek apakah jari di atas drop zone? Kasih highlight
+        const zones = document.querySelectorAll('[data-part-id]');
+        zones.forEach(zone => {
+            const rect = zone.getBoundingClientRect();
+            const isOver = (
+                touch.clientX >= rect.left &&
+                touch.clientX <= rect.right &&
+                touch.clientY >= rect.top &&
+                touch.clientY <= rect.bottom
+            );
+
+            if (isOver) {
+                zone.classList.add('border-yellow-400', 'bg-yellow-400/10');
+            } else {
+                zone.classList.remove('border-yellow-400', 'bg-yellow-400/10');
+            }
+        });
+    }
+
+    // Saat jari DIANGKAT (drop)
+    handleTouchEnd(e) {
+        if (!this.touchData) return;
+
+        const { id, originalEl, clone } = this.touchData;
+
+        // Hapus klon bayangan
+        if (clone) clone.remove();
+
+        // Kembalikan tampilan item asli
+        originalEl.classList.remove('opacity-50', 'scale-90');
+
+        // Ambil posisi terakhir jari
+        const touch = e.changedTouches[0];
+        const dropX = touch.clientX;
+        const dropY = touch.clientY;
+
+        // Cari zona yang terkena drop
+        const zones = document.querySelectorAll('[data-part-id]');
+        let targetZone = null;
+
+        zones.forEach(zone => {
+            const rect = zone.getBoundingClientRect();
+            const isHit = (
+                dropX >= rect.left &&
+                dropX <= rect.right &&
+                dropY >= rect.top &&
+                dropY <= rect.bottom
+            );
+            if (isHit) targetZone = zone;
+            zone.classList.remove('border-yellow-400', 'bg-yellow-400/10');
+        });
+
+        // Proses drop jika ada target
+        if (targetZone) {
+            const targetId = targetZone.dataset.partId;
+            if (id === targetId) {
+                this.handleSuccessDrop(targetZone, id);
+            } else {
+                this.handleWrongDrop(targetZone);
+            }
+        }
+
+        // Bersihkan data
+        this.touchData = null;
     }
 
     // Saat benda melayang di atas zona target
@@ -319,8 +456,9 @@ export class PuzzleDragDrop {
             // ⚠️ FUNGSI BARU (Update untuk Naju & User)
             // Efek Merge Sesungguhnya: Semua bagian MENYATU jadi satu gambar utuh!
 
-            const wrapper = this.container.querySelector('.grid');
-            const zoneContainer = wrapper.querySelector('div:first-child');
+            // FIX: Selector wrapper bukan .grid lagi, tapi anak pertama container
+            const wrapper = this.container.children[0];
+            const zoneContainer = wrapper.children[0]; // Zone container adalah anak pertama wrapper
 
             // A. Ambil gambar full dari data species
             const fullImagePath = this.species.assets.full.includes('/')
@@ -335,10 +473,12 @@ export class PuzzleDragDrop {
             const tl = gsap.timeline();
 
             // STEP 1: Flash Putih (Silau men!)
-            tl.to(flash, { opacity: 1, duration: 0.5, ease: "power2.in" })
-
-                // STEP 2: Ganti isi container dengan gambar full (Saat layar putih)
-                .call(() => {
+            tl.to(flash, {
+                opacity: 1,
+                duration: 0.5,
+                ease: "power2.in",
+                onComplete: () => {
+                    // STEP 2: Ganti isi container dengan gambar full (Saat layar putih)
                     zoneContainer.innerHTML = ''; // Hapus kotak-kotak puzzle
                     zoneContainer.className = 'flex items-center justify-center p-0 bg-transparent relative h-[400px] w-full'; // Reset style
 
@@ -346,46 +486,60 @@ export class PuzzleDragDrop {
                     const fullImg = document.createElement('img');
                     fullImg.src = fullImagePath;
                     fullImg.className = 'w-full h-full object-contain drop-shadow-[0_0_50px_rgba(255,215,0,0.8)] opacity-0 scale-50'; // Mulai dari kecil
-                    fullImg.id = 'final-tree';
+                    // fullImg.id = 'final-tree'; // Tidak perlu ID kalau pakai variabel
                     zoneContainer.appendChild(fullImg);
 
                     // Masukkan Partikel Glow
                     const glow = document.createElement('div');
                     glow.className = 'absolute inset-0 bg-yellow-500/20 rounded-full blur-3xl scale-0';
-                    glow.id = 'final-glow';
+                    // glow.id = 'final-glow';
                     zoneContainer.appendChild(glow);
                     // Pindahin glow ke belakang gambar
                     zoneContainer.insertBefore(glow, fullImg);
-                })
 
-                // STEP 3: Hilangkan Flash & Tampilkan Pohon Utuh (Duarr!)
-                .to(flash, { opacity: 0, duration: 1, ease: "power2.out" })
-                .to('#final-tree', {
-                    opacity: 1,
-                    scale: 1,
-                    duration: 1.5,
-                    ease: "elastic.out(1, 0.5)"
-                }, "-=0.5")
-                .to('#final-glow', {
-                    scale: 1.5,
-                    duration: 2,
-                    yoyo: true,
-                    repeat: -1
-                }, "-=1.5")
+                    // STEP 3: Timeline Baru untuk Animasi Muncul
+                    const tl2 = gsap.timeline();
+                    
+                    tl2.to(flash, { opacity: 0, duration: 1, ease: "power2.out" })
+                       .to(fullImg, {
+                           opacity: 1,
+                           scale: 1,
+                           duration: 1.5,
+                           ease: "elastic.out(1, 0.5)"
+                       }, "-=0.5") // Muncul barengan flash hilang
+                       .to(glow, {
+                           scale: 1.5,
+                           duration: 2,
+                           yoyo: true,
+                           repeat: -1
+                       }, "-=1.5");
 
-                // STEP 4: Efek "Bernafas" (Idle)
-                .to('#final-tree', {
-                    scale: 1.05,
-                    duration: 2,
-                    yoyo: true,
-                    repeat: -1,
-                    ease: "sine.inOut"
-                });
+                    // STEP 4: Efek "Bernafas" (Idle) - Terpisah
+                    gsap.to(fullImg, {
+                        scale: 1.05,
+                        duration: 2,
+                        yoyo: true,
+                        repeat: -1,
+                        ease: "sine.inOut",
+                        delay: 1.5 // Tunggu elastis selesai
+                    });
+                }
+            });
 
             // 4. Panggil callback onComplete setelah selesai pamer
             setTimeout(() => {
-                this.onComplete();
-            }, 5000); // Kasih waktu 5 detik buat kagum
+                console.log("🧩 Puzzle Done! Calling callback...");
+
+                // Panggil fungsi callback dari puzzle.html (handlePuzzleComplete)
+                if (typeof this.onComplete === 'function') {
+                    this.onComplete();
+                } else {
+                    console.error("❌ Callback onComplete tidak ditemukan!");
+                    // Fallback redirect jika callback gagal
+                    window.location.href = `quiz.html?id=${this.species.id}&source=puzzle_fallback`;
+                }
+
+            }, 4000); // Waktu animasi sebelum modal muncul
 
         }, 1000);
     }

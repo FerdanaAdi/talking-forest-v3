@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<!--
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║   📄 NAMA FILE: v3/donate.html                                               ║
+║   💚 FUNGSI: Halaman Donasi / Adopsi Pohon (Sesuai ALUR 11 Master Plan)     ║
+║   📍 POSISI: Menu "Donasi" di Bottom Nav                                    ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talking Forest V3 - Donasi</title>
+
+    <!-- 🔴 LIBRARIES -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 🟢 LOGIC SCRIPTS (Load before Alpine) -->
+    <script defer src="../js/v3/components/system-ui.js"></script>
+    <script defer src="../js/v3/pages/donate.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <!-- 🟢 FONTS & ICONS -->
+    <link href="https://fonts.googleapis.com/css2?family=Bakso+Sapi&family=Nunito:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+
+    <!-- 🔴 CSS -->
+    <link rel="stylesheet" href="../css/game.css">
+    <link rel="stylesheet" href="../css/system-ui.css">
+
+    <!-- System UI Store (Inline) -->
+    <!-- Tidak pakai external JS untuk menghindari race condition -->
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        forest: { DEFAULT: '#2E7D32', dark: '#1B5E20', light: '#4CAF50' },
+                        earth: { DEFAULT: '#5D4037', dark: '#3E2723', light: '#8D6E63' },
+                        wood: '#8D6E63',
+                        sky: '#E1F5FE',
+                    },
+                    fontFamily: {
+                        bakso: ['Bakso Sapi', 'cursive'],
+                        nunito: ['Nunito', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body class="bg-zinc-900 h-screen w-screen flex items-center justify-center overflow-hidden font-nunito"
+    x-data="donationPage()">
+
+    <!-- 🟢 MOBILE FRAME CONTAINER -->
+    <div class="w-full max-w-[480px] h-full relative shadow-2xl overflow-hidden bg-[#F1F8E9] flex flex-col">
+
+        <!-- 🟢 HEADER SECTION -->
+        <header
+            class="absolute top-0 w-full z-50 bg-forest/95 backdrop-blur shadow-lg border-b-4 border-earth text-white p-4 rounded-b-[2rem]">
+            <div class="flex items-center justify-between relative">
+                <!-- Back Button (Only visible in Payment View) -->
+                <button x-show="view === 'payment'" @click="view = 'list'"
+                    class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition">
+                    <span class="material-icons-round">arrow_back</span>
+                </button>
+                <div x-show="view === 'list'" class="w-10"></div> <!-- Spacer -->
+
+                <!-- Judul Tengah -->
+                <h1 class="text-2xl font-bakso tracking-wide drop-shadow-md text-center flex-1"
+                    x-text="view === 'list' ? '💚 ADOPSI POHON' : '💳 PEMBAYARAN'"></h1>
+
+                <div class="w-10"></div> <!-- Spacer Right -->
+            </div>
+        </header>
+
+        <!-- 🟢 MAIN CONTENT -->
+        <main class="flex-1 w-full overflow-y-auto pb-24 pt-[100px] px-4 no-scrollbar relative">
+
+            <!-- VIEW 1: LIST ADOPSI -->
+            <div x-show="view === 'list'" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 -translate-x-10" x-transition:enter-end="opacity-100 translate-x-0">
+
+
+
+                <!-- Intro Card -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-forest/10 mb-6 text-center">
+                    <h2 class="font-bold text-forest text-lg mb-1">Bantu Menanam Pohon! 🌳</h2>
+                    <p class="text-xs text-gray-500">Pilih paket donasi untuk diadopsi. Namamu akan tertulis di hutan.
+                    </p>
+                </div>
+
+                <!-- Package List -->
+                <div class="space-y-4">
+                    <template x-for="pkg in packages" :key="pkg.id">
+                        <div
+                            class="bg-white rounded-xl overflow-hidden shadow-md border-2 border-transparent hover:border-forest transition group">
+                            <!-- Image Header -->
+                            <div class="h-32 bg-gray-200 relative overflow-hidden">
+                                <img :src="pkg.image"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                                <div
+                                    class="absolute bottom-0 left-0 bg-black/50 text-white text-[10px] px-2 py-1 rounded-tr-lg">
+                                    <span x-text="pkg.desc"></span>
+                                </div>
+                            </div>
+                            <!-- Content -->
+                            <div class="p-4 flex justify-between items-center">
+                                <div>
+                                    <h3 class="font-bold text-gray-800" x-text="pkg.name">Pohon</h3>
+                                    <p class="font-bakso text-forest text-xl" x-text="formatRupiah(pkg.price)">Rp 0</p>
+                                </div>
+                                <button @click="selectPackage(pkg)"
+                                    class="bg-forest hover:bg-green-600 text-white font-bold py-2 px-6 rounded-full shadow-lg border-b-4 border-green-800 active:border-b-0 active:translate-y-1 transition text-sm">
+                                    PILIH
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+
+            </div>
+
+            <!-- VIEW 2: PEMBAYARAN (QRIS) -->
+            <div x-show="view === 'payment'" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-x-10" x-transition:enter-end="opacity-100 translate-x-0">
+
+                <!-- Summary Card -->
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-md border border-forest/10 mb-6 text-center relative overflow-hidden">
+                    <div class="absolute top-0 w-full h-2 bg-gradient-to-r from-yellow-400 to-orange-500 left-0"></div>
+
+                    <p class="text-xs text-gray-500 uppercase tracking-widest mb-1">Anda akan mengadopsi</p>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2" x-text="selectedPackage?.name"></h2>
+                    <div class="text-3xl font-bakso text-forest mb-4"
+                        x-text="formatRupiah(selectedPackage?.price || 0)"></div>
+
+                    <hr class="border-dashed border-gray-200 mb-4">
+
+                    <!-- QRIS Placeholder -->
+                    <div
+                        class="bg-gray-100 p-4 rounded-xl mb-4 border-2 border-gray-200 border-dashed flex flex-col items-center justify-center h-48">
+                        <span class="text-6xl mb-2">📱</span>
+                        <p class="text-xs text-gray-400 font-bold">[QRIS CODE AREA]</p>
+                        <p class="text-[10px] text-gray-400">Scan dengan e-wallet / m-banking</p>
+                    </div>
+
+                    <p class="text-xs text-red-500 font-bold animate-pulse">⏱️ Sisa Waktu: <span
+                            x-text="timer">15:00</span></p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="space-y-3">
+                    <button @click="confirmPayment()"
+                        class="w-full bg-forest hover:bg-green-600 text-white font-bold py-3 rounded-xl shadow-lg border-b-4 border-green-800 active:border-b-0 active:translate-y-1 transition flex items-center justify-center gap-2">
+                        <span class="material-icons-round">check_circle</span>
+                        SAYA SUDAH BAYAR
+                    </button>
+
+                    <button @click="view = 'list'"
+                        class="w-full bg-white hover:bg-gray-50 text-gray-500 font-bold py-3 rounded-xl border-2 border-gray-200 transition">
+                        BATALKAN
+                    </button>
+                </div>
+            </div>
+
+            <!-- VIEW 3: SUCCESS -->
+            <div x-show="view === 'success'" style="display: none;"
+                class="flex flex-col items-center justify-center h-full text-center">
+                <div
+                    class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center text-5xl mb-4 animate-bounce">
+                    🎉
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Terima Kasih!</h2>
+                <p class="text-gray-500 text-sm mb-6 max-w-[200px]">Donasimu telah diterima. Pohon akan segera ditanam!
+                </p>
+                <button @click="view = 'list'" class="bg-forest text-white px-6 py-2 rounded-full font-bold shadow-lg">
+                    KEMBALI KE DAFTAR
+                </button>
+            </div>
+
+        </main>
+
+        <!-- 🟢 BOTTOM NAVIGATION BAR -->
+        <nav
+            class="absolute bottom-0 w-full z-50 bg-forest/95 backdrop-blur text-white rounded-t-3xl border-t-4 border-earth shadow-[0_-10px_20px_rgba(0,0,0,0.3)] pb-4 pt-2">
+            <div class="flex justify-around items-end h-full px-2 pb-2">
+
+                <!-- 1. MARKAS -->
+                <a href="../index.html"
+                    class="flex flex-col items-center gap-1 w-1/5 opacity-70 hover:opacity-100 transition active:scale-95">
+                    <span class="text-2xl filter drop-shadow-sm">🏠</span>
+                    <span class="text-[9px] font-bold text-white/90">Markas</span>
+                </a>
+
+                <!-- 2. JELAJAH -->
+                <a href="../scan.html"
+                    class="flex flex-col items-center gap-1 w-1/5 opacity-70 hover:opacity-100 transition active:scale-95">
+                    <span class="text-2xl filter drop-shadow-sm">📸</span>
+                    <span class="text-[9px] font-bold text-white/90">Jelajah</span>
+                </a>
+
+                <!-- 3. KEBUN -->
+                <a href="garden.html"
+                    class="flex flex-col items-center gap-1 w-1/5 opacity-70 hover:opacity-100 transition active:scale-95">
+                    <span class="text-2xl filter drop-shadow-sm">🌿</span>
+                    <span class="text-[9px] font-bold text-white/90">Kebun</span>
+                </a>
+
+                <!-- 4. DONASI (ACTIVE) -->
+                <div class="flex flex-col items-center gap-1 w-1/5 opacity-100 scale-110 relative -top-3">
+                    <div
+                        class="bg-white/10 p-2 rounded-full border-2 border-yellow-300 shadow-[0_0_15px_rgba(253,224,71,0.5)] backdrop-blur-md">
+                        <span class="text-2xl filter drop-shadow-md">💚</span>
+                    </div>
+                    <span class="text-[9px] font-bold text-yellow-300">Donasi</span>
+                </div>
+
+                <!-- 5. PROFIL -->
+                <a href="profile.html"
+                    class="flex flex-col items-center gap-1 w-1/5 opacity-70 hover:opacity-100 transition active:scale-95">
+                    <span class="text-2xl filter drop-shadow-sm">👤</span>
+                    <span class="text-[9px] font-bold text-white/90">Profil</span>
+                </a>
+
+            </div>
+        </nav>
+
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         SYSTEM UI TEMPLATES (ALUR 12-15)
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- Toast Container -->
+    <div class="toast-container" x-data x-show="$store.systemUI.toasts.length > 0">
+        <template x-for="toast in $store.systemUI.toasts" :key="toast.id">
+            <div class="toast" :class="[toast.type, !toast.visible ? 'hiding' : '']" x-show="toast.visible"
+                x-transition>
+                <span class="toast-icon"
+                    x-text="toast.type === 'success' ? '✅' : toast.type === 'error' ? '❌' : toast.type === 'xp' ? '⭐' : 'ℹ️'"></span>
+                <span x-text="toast.message"></span>
+            </div>
+        </template>
+    </div>
+
+    <!-- Modal Overlay -->
+    <template x-if="$store.systemUI.modal.isOpen" x-data>
+        <div class="modal-overlay"
+            :class="{'modal-level-up': $store.systemUI.modal.type === 'LEVEL_UP', 'modal-achievement': $store.systemUI.modal.type === 'ACHIEVEMENT_UNLOCK'}">
+
+            <!-- Level Up Modal -->
+            <template x-if="$store.systemUI.modal.type === 'LEVEL_UP'">
+                <div class="modal-content">
+                    <div class="level-badge" x-text="$store.systemUI.modal.data.level || '?'"></div>
+                    <h2 class="modal-title">🎉 SELAMAT! 🎉</h2>
+                    <p class="modal-subtitle"
+                        style="text-align:center; font-weight:bold; color:#4CAF50; margin-bottom:10px;">NAIK LEVEL!</p>
+                    <p class="modal-body">Kamu sekarang di Level <span
+                            x-text="$store.systemUI.modal.data.level"></span>!</p>
+
+                    <!-- Rank & Stars -->
+                    <template x-if="$store.systemUI.modal.data.rank">
+                        <div class="level-rank"
+                            style="margin: 10px 0; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                            <p style="margin-bottom: 4px;">Rank: <strong
+                                    x-text="$store.systemUI.modal.data.rank"></strong></p>
+                            <div class="star-rating" style="color: #FFD700; letter-spacing: 2px;"
+                                x-html="'★'.repeat($store.systemUI.modal.data.stars || 0) + '☆'.repeat(5 - ($store.systemUI.modal.data.stars || 0))">
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Bonus -->
+                    <template x-if="$store.systemUI.modal.data.bonus">
+                        <div class="level-bonus" style="margin-top: 10px; font-size: 0.9em;">
+                            <p>🎁 BONUS:</p>
+                            <p style="color: #F59E0B; font-weight:bold;"
+                                x-text="'+' + ($store.systemUI.modal.data.bonus.xp || 0) + ' XP'"></p>
+                            <template x-if="$store.systemUI.modal.data.bonus.unlock">
+                                <p style="color: #4CAF50;">🔓 <span
+                                        x-text="$store.systemUI.modal.data.bonus.unlock"></span></p>
+                            </template>
+                        </div>
+                    </template>
+
+                    <div class="modal-actions">
+                        <button class="modal-btn primary" @click="$store.systemUI.closeModal()">LANJUT ▶</button>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Achievement Unlock Modal (ALUR 12.4) -->
+            <template x-if="$store.systemUI.modal.type === 'ACHIEVEMENT_UNLOCK'">
+                <div class="modal-content">
+                    <div class="modal-icon badge-bounce">🔓</div>
+                    <h2 class="modal-title">LENCANA BARU!</h2>
+                    <div class="badge-icon-large" x-text="$store.systemUI.modal.data.badge?.icon || '🏆'"></div>
+                    <h3 class="badge-name" x-text="$store.systemUI.modal.data.badge?.name || 'Badge'"></h3>
+                    <p class="modal-body" x-text="$store.systemUI.modal.data.badge?.description || ''"></p>
+                    <p class="xp-reward" x-text="'+' + ($store.systemUI.modal.data.xp || 50) + ' XP 🎉'"></p>
+                    <div class="modal-actions">
+                        <button class="modal-btn primary" @click="$store.systemUI.closeModal()">KEREN! ✓</button>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Badge Detail Modal -->
+            <template x-if="$store.systemUI.modal.type === 'BADGE_DETAIL'">
+                <div class="modal-content">
+                    <div class="modal-icon" x-text="$store.systemUI.modal.data.icon || '🏆'"></div>
+                    <h2 class="modal-title" x-text="$store.systemUI.modal.data.name || 'Badge'"></h2>
+                    <p class="modal-body" x-text="$store.systemUI.modal.data.description || ''"></p>
+                    <template x-if="$store.systemUI.modal.data.date">
+                        <p class="badge-date" style="font-size: 0.8em; color: #6B7280; margin-top: 5px;">
+                            📅 Didapat: <span x-text="$store.systemUI.modal.data.date"></span></p>
+                    </template>
+                    <div class="modal-actions">
+                        <button class="modal-btn primary" @click="$store.systemUI.closeModal()">Tutup</button>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Confirm Exit Modal -->
+            <template x-if="$store.systemUI.modal.type === 'CONFIRM_EXIT'">
+                <div class="modal-content">
+                    <div class="modal-icon">⚠️</div>
+                    <h2 class="modal-title">TUNGGU DULU!</h2>
+                    <p class="modal-body"
+                        x-text="$store.systemUI.modal.data.message || 'Kamu yakin mau keluar? Progress belum tersimpan!'">
+                    </p>
+                    <div class="modal-actions">
+                        <button class="modal-btn secondary"
+                            @click="$store.systemUI.modal.data.onConfirm?.(); $store.systemUI.closeModal()">KELUAR</button>
+                        <button class="modal-btn primary" @click="$store.systemUI.closeModal()">LANJUT ▶</button>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Edit Nickname Modal (ALUR 12.1) -->
+            <template x-if="$store.systemUI.modal.type === 'EDIT_NICKNAME'" x-data="{ 
+                newName: $store.systemUI.modal.data.currentName || '',
+                limit: 15
+            }">
+                <div class="modal-content relative pt-10 px-6 pb-6 text-left">
+                    <button @click="$store.systemUI.closeModal()"
+                        class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition">
+                        <span class="material-icons-round">close</span>
+                    </button>
+                    <div class="text-center mb-6">
+                        <h2 class="text-xl font-bold text-forest flex items-center justify-center gap-2">
+                            <span>✏️</span> EDIT NICKNAME
+                        </h2>
+                        <div class="h-1 w-32 bg-forest/20 mx-auto mt-2 rounded-full"></div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-xs font-bold text-gray-500 mb-1">Nama saat ini:</label>
+                        <div class="text-lg font-bakso text-gray-800 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200"
+                            x-text="'&quot;' + ($store.systemUI.modal.data.currentName || '-') + '&quot;'"></div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="block text-xs font-bold text-gray-500 mb-1">Nama baru:</label>
+                        <input type="text" x-model="newName" :maxlength="limit" placeholder="Ketik nama baru..."
+                            class="w-full px-4 py-3 rounded-xl bg-white border-2 border-forest/30 text-gray-800 font-bold focus:outline-none focus:border-forest transition placeholder-gray-400 shadow-inner">
+                    </div>
+                    <div class="flex justify-between text-xs font-bold text-gray-400 mb-4 px-1">
+                        <span x-show="newName.length === 0" class="text-red-400">*Wajib diisi</span>
+                        <span x-show="newName.length > 0"></span>
+                        <span x-text="newName.length + '/' + limit + ' karakter'"></span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-yellow-50 p-3 rounded-lg border border-yellow-200 mb-6">
+                        <span class="text-yellow-600">⚠️</span>
+                        <span class="text-xs text-yellow-700 font-bold">
+                            Sisa ganti: <span x-text="$store.systemUI.modal.data.remainingEdits || 2">2</span>x
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button
+                            class="modal-btn secondary !text-gray-500 hover:!bg-gray-100 flex items-center justify-center"
+                            @click="$store.systemUI.closeModal()">
+                            BATAL
+                        </button>
+                        <button class="modal-btn primary flex items-center justify-center shadow-lg shadow-green-500/30"
+                            @click="if(newName.trim().length > 0) { $store.systemUI.modal.data.onSave?.(newName); $store.systemUI.closeModal(); } else { alert('Nama tidak boleh kosong!'); }"
+                            :disabled="newName.trim().length === 0"
+                            :class="newName.trim().length === 0 ? 'opacity-50 cursor-not-allowed filter grayscale' : ''">
+                            SIMPAN
+                        </button>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </template>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" x-data>
+        <template x-for="toast in $store.systemUI.toasts" :key="toast.id">
+            <div class="toast" :class="{
+                     'toast-success': toast.type === 'success',
+                     'toast-error': toast.type === 'error',
+                     'toast-xp': toast.type === 'xp',
+                     'toast-info': toast.type === 'info',
+                     'show': toast.visible
+                 }" x-show="toast.visible" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-300"
+                x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-2">
+
+                <div class="toast-icon">
+                    <span x-show="toast.type === 'success'">✅</span>
+                    <span x-show="toast.type === 'error'">❌</span>
+                    <span x-show="toast.type === 'xp'">✨</span>
+                    <span x-show="toast.type === 'info'">ℹ️</span>
+                </div>
+                <div class="toast-message" x-text="toast.message"></div>
+            </div>
+        </template>
+    </div>
+
+    <!-- Loading Overlay -->
+    <template x-if="$store.systemUI.loading.isActive" x-data>
+        <div class="loading-overlay">
+            <div class="loading-spinner"></div>
+            <p class="loading-text" x-text="$store.systemUI.loading.message"></p>
+        </div>
+    </template>
+
+    <!-- Error Overlay -->
+    <template x-if="$store.systemUI.error.isActive" x-data>
+        <div class="error-overlay" :class="$store.systemUI.error.code === 'OFFLINE' ? 'error-offline' : ''">
+            <div class="error-icon" x-text="$store.systemUI.error.code === 'OFFLINE' ? '📡' : '😵'"></div>
+            <h2 class="error-title"
+                x-text="$store.systemUI.error.code === 'OFFLINE' ? 'Tidak Ada Koneksi' : 'Terjadi Kesalahan'"></h2>
+            <p class="error-message" x-text="$store.systemUI.error.message"></p>
+
+            <div class="error-actions" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <button class="error-btn" @click="$store.systemUI.hideError(); location.reload()">Coba Lagi 🔄</button>
+
+                <template x-if="$store.systemUI.error.code === 'OFFLINE'">
+                    <button class="error-btn secondary"
+                        style="background: transparent; border: 1px solid rgba(255,255,255,0.3);"
+                        @click="$store.systemUI.hideError()">MODE OFFLINE 📴</button>
+                </template>
+
+                <template x-if="$store.systemUI.error.code !== 'OFFLINE'">
+                    <button class="error-btn secondary"
+                        style="background: transparent; border: 1px solid rgba(255,255,255,0.3);"
+                        @click="window.location.href='index.html'">KEMBALI KE HOME</button>
+                </template>
+            </div>
+        </div>
+    </template>
+
+    <!-- 🟢 LOGIC SCRIPT (INLINE SYSTEM UI) -->
+
+</body>
+
+</html>

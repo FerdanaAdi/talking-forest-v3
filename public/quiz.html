@@ -2,43 +2,119 @@
 <html lang="id">
 
 <!--
-============================================
-📄 FILE: quiz.html
-🎓 FUNGSI: Halaman Kuis Cerdas Cermat Hutan
-============================================
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║   📄 NAMA FILE: quiz.html                                                    ║
+║   🎓 FUNGSI: Halaman Kuis Cerdas Cermat Hutan                               ║
+║   📝 TIPE: Ujian Akhir / Final Quiz                                         ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
 
-🔰 PANDUAN UNTUK NAJU:
+════════════════════════════════════════════════════════════════════════════════
+🔰 PANDUAN LENGKAP UNTUK NAJU
+════════════════════════════════════════════════════════════════════════════════
 
-Ini adalah halaman "Ujian Akhir" alias Kuis.
-Pemain harus menjawab pertanyaan dengan benar untuk dapat bintang.
+Halo Naju! 👋
 
-💡 YANG BOLEH KAMU EDIT:
-1. Judul "Cerdas Cermat"
-2. Emoji yang dipakai (misal ⏱️ ganti ⏳)
-3. Pesan-pesan penyemangat
+Ini adalah halaman KUIS atau "Ujian Akhir".
+Pemain harus menjawab pertanyaan dengan benar untuk mendapat bintang!
 
-⚠️ YANG JANGAN DIEDIT:
-- <div id="option-container"> (Tempat jawaban muncul)
-- <script> ... </script> (Kode program logika)
-- class="..." (Styling)
+CARA MAIN:
+1. Muncul pertanyaan tentang alam/hutan
+2. Ada 4 pilihan jawaban (A, B, C, D)
+3. Timer berjalan mundur (30 detik per soal)
+4. Kalau benar → Progress bar naik + XP
+5. Setelah semua soal → Muncul skor akhir
 
-============================================
+════════════════════════════════════════════════════════════════════════════════
+📚 PENJELASAN SIMBOL-SIMBOL
+════════════════════════════════════════════════════════════════════════════════
+
+🟢 = BOLEH KAMU EDIT (aman, tidak merusak program)
+🔴 = JANGAN DIEDIT (bisa error/rusak)
+🟡 = HATI-HATI (boleh edit tapi tanya dulu)
+💡 = TIPS (penjelasan tambahan)
+⚠️ = PERINGATAN (hal penting)
+
+════════════════════════════════════════════════════════════════════════════════
+🎯 DAFTAR YANG BOLEH DIEDIT
+════════════════════════════════════════════════════════════════════════════════
+
+✅ BOLEH EDIT:
+1. Judul tab browser (baris ~45)
+2. Judul game "CERDAS CERMAT 🎓" (baris ~90)
+3. Subtitle "Uji Pengetahuanmu!" (baris ~92)
+4. Emoji timer ⏱️ (baris ~98)
+5. Teks loading "Sedang mengambil soal..." (baris ~130)
+6. Popup hasil: judul, skor, pesan (baris ~160-175)
+7. Teks tombol "KEMBALI KE MARKAS 🏠" (baris ~175)
+8. Background gambar (baris ~70)
+
+❌ JANGAN EDIT:
+1. Semua tag <script src="...">
+2. id="options-container", id="question-text", dll
+3. Kode di dalam <script>...</script>
+4. Progress bar dan timer logic
+
+════════════════════════════════════════════════════════════════════════════════
+📂 FILE YANG BERHUBUNGAN
+════════════════════════════════════════════════════════════════════════════════
+
+LOGIKA KUIS:
+• js/v3/mechanics/quiz.js → Kode kuis (🔴 JANGAN EDIT!)
+
+DATA SOAL:
+• assets/data/quizzes.json → Bank soal (🟡 BOLEH TAMBAH SOAL)
+
+GAMBAR LATAR:
+• assets/images/bg/bg_school_blur.jpg → Background (🟢 BOLEH GANTI)
+
+GAMBAR PATTERN:
+• assets/images/patterns/leaves.png → Hiasan header (🟢 BOLEH GANTI)
+
+════════════════════════════════════════════════════════════════════════════════
 -->
 
 <head>
+    <!--
+    ╔══════════════════════════════════════════════════════════════════════════╗
+    ║ 🔴 BAGIAN HEAD - PENGATURAN TEKNIS                                      ║
+    ║ STATUS: JANGAN DIEDIT (kecuali judul)                                   ║
+    ╚══════════════════════════════════════════════════════════════════════════╝
+    -->
+
+    <!-- 🔴 PENGATURAN KARAKTER - JANGAN EDIT -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- ✅ EDIT: Judul Tab -->
+    <!--
+    ════════════════════════════════════════════════════════════════════════════
+    🟢🟢🟢 JUDUL TAB BROWSER - BOLEH DIEDIT! 🟢🟢🟢
+    ════════════════════════════════════════════════════════════════════════════
+    
+    CONTOH:
+    SEBELUM: <title>Talking Forest - Kuis</title>
+    SESUDAH: <title>Ujian Hutan - Cerdas Cermat</title>
+    -->
     <title>Talking Forest - Kuis</title>
 
-    <!-- LIBRARY -->
+    <!--
+    ════════════════════════════════════════════════════════════════════════════
+    🔴 LIBRARY / PUSTAKA - JANGAN DIEDIT!
+    ════════════════════════════════════════════════════════════════════════════
+    -->
+    <script src="js/v3/components/system-ui.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.13.3/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="css/system-ui.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bakso+Sapi&family=Nunito:wght@400;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="css/game.css">
+    <script src="js/v3/progress-manager.js"></script>
+    <script src="js/v3/ending-handler.js"></script>
 
+    <!-- 🔴 KONFIGURASI WARNA - JANGAN EDIT -->
     <script>
         tailwind.config = {
             theme: {
@@ -51,6 +127,51 @@ Pemain harus menjawab pertanyaan dengan benar untuk dapat bintang.
     </script>
 </head>
 
+<!--
+╔══════════════════════════════════════════════════════════════════════════════╗
+║ 🟡 BAGIAN BODY - ISI HALAMAN YANG DILIHAT USER                             ║
+║ STATUS: HATI-HATI (ada bagian boleh dan tidak boleh diedit)                ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+💡 STRUKTUR HALAMAN:
+
+┌─────────────────────────────────────────┐
+│  HEADER (Kembali + Judul + Timer)       │
+├─────────────────────────────────────────┤
+│  PROGRESS BAR (███████░░░░░░░)          │
+├─────────────────────────────────────────┤
+│                                         │
+│  ┌─────────────────────────────────┐   │
+│  │  [1] KARTU SOAL                 │   │
+│  │                                 │   │
+│  │  "Apa nama pohon terbesar      │   │
+│  │   di Kalimantan?"              │   │
+│  │                                 │   │
+│  └─────────────────────────────────┘   │
+│                                         │
+│  ┌───────────────────────────────────┐ │
+│  │ [A] Ulin                        │ │
+│  │ [B] Jati                        │ │
+│  │ [C] Meranti                     │ │
+│  │ [D] Mahoni                      │ │
+│  └───────────────────────────────────┘ │
+│                                         │
+└─────────────────────────────────────────┘
+
+POPUP HASIL (muncul di akhir):
+┌─────────────────────────────────────────┐
+│  🏆 KUIS SELESAI!                       │
+│  Skor Kamu: 85                          │
+│  [KEMBALI KE MARKAS 🏠]                 │
+└─────────────────────────────────────────┘
+-->
+
+<!-- 
+🟢 BACKGROUND - BOLEH GANTI GAMBARNYA
+Cari: bg-[url('assets/images/bg/bg_school_blur.jpg')]
+Ganti path gambar dengan gambar lain.
+-->
+
 <body
     class="bg-stone-900 h-screen w-screen flex items-center justify-center overflow-hidden font-nunito bg-[url('assets/images/bg/bg_school_blur.jpg')] bg-cover bg-center">
 
@@ -58,30 +179,78 @@ Pemain harus menjawab pertanyaan dengan benar untuk dapat bintang.
     <div
         class="w-full max-w-[480px] h-full bg-parchment relative shadow-2xl overflow-hidden flex flex-col items-center border-x-8 border-forest">
 
-        <!-- ================================================ -->
-        <!-- ✅ ZONA EDIT 1: HEADER                          -->
-        <!-- Boleh ganti: Judul Kuis, Emoji                  -->
-        <!-- ================================================ -->
+        <!--
+        ════════════════════════════════════════════════════════════════════════
+        🟢 HEADER - BOLEH EDIT TEKS & EMOJI!
+        ════════════════════════════════════════════════════════════════════════
+        
+        💡 PENJELASAN:
+        Header berisi 3 bagian:
+        1. Tombol Kembali (kiri)
+        2. Judul + Subtitle (tengah)
+        3. Timer (kanan)
+        -->
         <header
             class="w-full p-4 bg-forest text-white shadow-lg z-20 flex justify-between items-center relative overflow-hidden">
-            <!-- Hiasan Background (Pattern) -->
+
+            <!--
+            ════════════════════════════════════════════════════════════════════
+            🟢 HIASAN PATTERN - BOLEH GANTI GAMBARNYA
+            ════════════════════════════════════════════════════════════════════
+            
+            Ini gambar pola daun transparan di belakang header.
+            Cari: bg-[url('assets/images/patterns/leaves.png')]
+            -->
             <div class="absolute inset-0 opacity-10 bg-[url('assets/images/patterns/leaves.png')]"></div>
 
+            <!--
+            🟢🟢🟢 TOMBOL KEMBALI - BOLEH GANTI EMOJI! 🟢🟢🟢
+            -->
             <button onclick="window.location.href='index.html'"
                 class="relative z-10 bg-white/20 p-2 rounded-lg hover:bg-white/30 transition">
                 🔙
             </button>
 
             <div class="text-center relative z-10">
+                <!--
+                ════════════════════════════════════════════════════════════════
+                🟢🟢🟢 JUDUL KUIS - BOLEH GANTI! 🟢🟢🟢
+                ════════════════════════════════════════════════════════════════
+                
+                CONTOH:
+                SEBELUM: CERDAS CERMAT 🎓
+                SESUDAH: UJIAN ALAM 📚
+                SESUDAH: QUIZ TIME 🧠
+                -->
                 <h1 class="font-bakso text-2xl text-yellow-300 drop-shadow-md tracking-wider">
                     CERDAS CERMAT 🎓
                 </h1>
+
+                <!--
+                🟢🟢🟢 SUBTITLE - BOLEH GANTI! 🟢🟢🟢
+                
+                CONTOH:
+                SEBELUM: Uji Pengetahuanmu!
+                SESUDAH: Test Your Knowledge!
+                SESUDAH: Buktikan Ilmumu!
+                -->
                 <p class="text-xs text-white/80">Uji Pengetahuanmu!</p>
             </div>
 
-            <!-- Timer Badge -->
+            <!--
+            ════════════════════════════════════════════════════════════════════
+            🟢 BADGE TIMER - BOLEH GANTI EMOJI!
+            ════════════════════════════════════════════════════════════════════
+            
+            ✏️ BOLEH GANTI:
+            - Emoji ⏱️ dengan emoji lain (⏳, ⌛, 🕐)
+            
+            🔴 JANGAN UBAH:
+            - id="timer-display" (angka diisi otomatis)
+            -->
             <div
                 class="relative z-10 bg-white text-forest px-3 py-1 rounded-full font-bold font-mono border-2 border-yellow-400 flex items-center gap-1 shadow-md">
+                <!-- 🟢 EMOJI TIMER - BOLEH GANTI -->
                 <span>⏱️</span>
                 <span id="timer-display">30</span>
             </div>
@@ -90,39 +259,84 @@ Pemain harus menjawab pertanyaan dengan benar untuk dapat bintang.
         <!-- AREA UTAMA -->
         <main class="flex-1 w-full flex flex-col p-6 relative">
 
-            <!-- PROGRESS BAR -->
+            <!--
+            ════════════════════════════════════════════════════════════════════
+            🔴 PROGRESS BAR - JANGAN DIEDIT!
+            ════════════════════════════════════════════════════════════════════
+            
+            💡 PENJELASAN:
+            Bar kuning yang naik saat menjawab benar.
+            Width-nya diubah otomatis oleh JavaScript.
+            -->
             <div class="w-full h-4 bg-stone-300 rounded-full mb-6 overflow-hidden border-2 border-stone-400">
                 <div id="progress-bar" class="h-full bg-yellow-400 transition-all duration-500" style="width: 0%"></div>
             </div>
 
-            <!-- KARTU SOAL -->
-            <!-- ================================================ -->
-            <!-- ✅ ZONA EDIT 2: KARTU SOAL (Placeholder)        -->
-            <!-- Teks "Memuat Soal..." hanya muncul sebentar     -->
-            <!-- ================================================ -->
+            <!--
+            ════════════════════════════════════════════════════════════════════
+            🟢🔴 KARTU SOAL - CAMPURAN
+            ════════════════════════════════════════════════════════════════════
+            
+            💡 PENJELASAN:
+            Kotak putih berisi pertanyaan.
+            
+            🟢 BOLEH GANTI:
+            - Emoji loading 🤔
+            - Teks loading "Sedang mengambil soal..."
+            
+            🔴 JANGAN UBAH:
+            - id="question-number"
+            - id="question-text"
+            - id="question-image"
+            -->
             <div
                 class="bg-white rounded-3xl p-6 shadow-xl border-4 border-stone-200 mb-6 flex-1 flex flex-col items-center justify-center text-center relative">
-                <!-- Pita Hiasan -->
+
+                <!-- Pita Nomor Soal -->
                 <div
                     class="absolute -top-4 w-12 h-12 bg-red-500 rounded-full border-4 border-white shadow-md flex items-center justify-center text-white font-bakso text-xl z-10">
                     <span id="question-number">1</span>
                 </div>
 
-                <!-- Gambar Soal (Opsional) -->
+                <!-- Gambar Soal (opsional, muncul kalau ada) -->
                 <div id="question-image"
                     class="w-24 h-24 mb-4 object-contain text-6xl flex items-center justify-center hidden">
+                    <!-- 🟢 EMOJI LOADING - BOLEH GANTI -->
                     🤔
                 </div>
 
-                <!-- Teks Soal -->
+                <!--
+                🟢🟢🟢 TEKS LOADING - BOLEH GANTI! 🟢🟢🟢
+                
+                💡 Ini muncul sebentar saat soal sedang dimuat.
+                
+                CONTOH:
+                SEBELUM: Sedang mengambil soal dari buku catatan Rimba...
+                SESUDAH: Memuat pertanyaan...
+                SESUDAH: Loading question...
+                
+                🔴 JANGAN UBAH:
+                - id="question-text"
+                -->
                 <h2 id="question-text" class="text-stone-700 text-xl font-bold leading-relaxed">
                     Sedang mengambil soal dari buku catatan Rimba...
                 </h2>
             </div>
 
-            <!-- PILIHAN JAWABAN -->
+            <!--
+            ════════════════════════════════════════════════════════════════════
+            🔴 KONTAINER PILIHAN JAWABAN - JANGAN DIEDIT!
+            ════════════════════════════════════════════════════════════════════
+            
+            💡 PENJELASAN:
+            Tempat munculnya tombol A, B, C, D.
+            Isi tombol diisi otomatis oleh JavaScript dari quizzes.json.
+            
+            ⚠️ KENAPA TIDAK BOLEH EDIT:
+            JavaScript mencari kontainer ini berdasarkan id.
+            -->
             <div id="options-container" class="grid grid-cols-1 gap-3 w-full">
-                <!-- Tombol Jawaban (akan diisi JS) -->
+                <!-- Tombol Placeholder (akan diganti JS) -->
                 <button
                     class="bg-white p-4 rounded-xl border-b-4 border-stone-300 text-stone-600 font-bold hover:bg-yellow-50 hover:border-yellow-400 transition text-left flex items-center gap-3">
                     <span class="bg-stone-200 w-8 h-8 rounded flex items-center justify-center text-stone-500">A</span>
@@ -132,26 +346,71 @@ Pemain harus menjawab pertanyaan dengan benar untuk dapat bintang.
 
         </main>
 
-        <!-- HASIL AKHIR PANEL (Overlay) -->
-        <!-- ================================================ -->
-        <!-- ✅ ZONA EDIT 3: POPUP HASIL                     -->
-        <!-- Boleh ganti: Pesan menang/kalah                 -->
-        <!-- ================================================ -->
+        <!--
+        ════════════════════════════════════════════════════════════════════════════
+        🟢 POPUP HASIL AKHIR - BOLEH EDIT BANYAK TEKS!
+        ════════════════════════════════════════════════════════════════════════════
+        
+        💡 PENJELASAN:
+        Popup ini muncul setelah SEMUA soal dijawab.
+        Berisi skor akhir dan tombol kembali.
+        -->
         <div id="result-overlay"
             class="absolute inset-0 bg-black/80 z-50 flex flex-col items-center justify-center p-6 hidden backdrop-blur-sm">
+
             <div class="bg-white w-full max-w-sm rounded-[2rem] p-8 text-center border-8 border-forest shadow-2xl transform scale-0 transition-transform duration-500"
                 id="result-card">
 
+                <!--
+                🟢🟢🟢 EMOJI HASIL - BOLEH GANTI! 🟢🟢🟢
+                
+                CONTOH EMOJI LAIN:
+                ⭐ (bintang)
+                🌟 (bintang berkilau)
+                🎉 (confetti)
+                👏 (tepuk tangan)
+                
+                🔴 JANGAN UBAH:
+                - id="result-emoji"
+                -->
                 <div class="text-6xl mb-4 animate-bounce" id="result-emoji">🏆</div>
 
+                <!--
+                🟢🟢🟢 JUDUL HASIL - BOLEH GANTI! 🟢🟢🟢
+                
+                CONTOH:
+                SEBELUM: KUIS SELESAI!
+                SESUDAH: HEBAT!
+                SESUDAH: QUIZ COMPLETE!
+                -->
                 <h2 class="font-bakso text-3xl text-forest mb-2">KUIS SELESAI!</h2>
 
+                <!-- Kotak Skor -->
                 <div class="bg-yellow-100 p-4 rounded-xl mb-6 border-2 border-yellow-300">
+                    <!--
+                    🟢 LABEL SKOR - BOLEH GANTI!
+                    
+                    CONTOH:
+                    SEBELUM: Skor Kamu
+                    SESUDAH: Your Score
+                    SESUDAH: Nilaimu
+                    -->
                     <p class="text-stone-500 text-sm font-bold uppercase tracking-widest">Skor Kamu</p>
+
+                    <!-- 🔴 ANGKA SKOR - JANGAN EDIT (diisi otomatis) -->
                     <p class="text-5xl font-bakso text-orange-500 drop-shadow-sm" id="final-score">0</p>
                 </div>
 
-                <!-- ✅ EDIT: Tombol Selesai -->
+                <!--
+                ════════════════════════════════════════════════════════════════
+                🟢🟢🟢 TOMBOL KEMBALI - BOLEH GANTI TEKSNYA! 🟢🟢🟢
+                ════════════════════════════════════════════════════════════════
+                
+                CONTOH:
+                SEBELUM: KEMBALI KE MARKAS 🏠
+                SESUDAH: MAIN LAGI 🎮
+                SESUDAH: BACK TO HOME 🏡
+                -->
                 <button onclick="window.location.href='index.html'"
                     class="w-full bg-forest text-white font-bakso text-xl py-3 rounded-xl border-b-4 border-green-900 active:scale-95 transition shadow-lg hover:brightness-110">
                     KEMBALI KE MARKAS 🏠
@@ -161,13 +420,133 @@ Pemain harus menjawab pertanyaan dengan benar untuk dapat bintang.
 
     </div>
 
-    <!-- SCRIPT -->
+    <!--
+    ════════════════════════════════════════════════════════════════════════════════
+    🔴🔴🔴 BAGIAN SCRIPT - JANGAN DIEDIT SAMA SEKALI! 🔴🔴🔴
+    ════════════════════════════════════════════════════════════════════════════════
+    
+    💡 PENJELASAN:
+    Ini adalah "otak" dari kuis.
+    
+    YANG DILAKUKAN SCRIPT INI:
+    1. Mengambil soal dari quizzes.json
+    2. Menampilkan soal satu per satu
+    3. Menjalankan timer mundur (30 detik)
+    4. Mengecek jawaban benar/salah
+    5. Menghitung skor
+    6. Menampilkan hasil akhir
+    
+    ⚠️ PERINGATAN KERAS:
+    JANGAN mengubah apapun di bawah ini!
+    ════════════════════════════════════════════════════════════════════════════════
+    -->
     <script type="module">
         import { QuizGame } from './js/v3/mechanics/quiz.js';
 
         // Mulai Game
         const game = new QuizGame();
     </script>
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         SYSTEM UI COMPONENTS - Matching debug_ui.html working pattern
+         Each component has its own x-data scope for proper Alpine reactivity
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- Toast Container -->
+    <div class="toast-container" x-data>
+        <template x-for="toast in $store.systemUI.toasts" :key="toast.id">
+            <div class="toast" :class="{
+                 'toast-success': toast.type === 'success',
+                 'toast-error': toast.type === 'error',
+                 'toast-xp': toast.type === 'xp',
+                 'toast-info': toast.type === 'info',
+                 'show': toast.visible
+             }" x-show="toast.visible" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-300"
+                x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-2">
+
+                <div class="toast-icon">
+                    <span x-show="toast.type === 'success'">✅</span>
+                    <span x-show="toast.type === 'error'">❌</span>
+                    <span x-show="toast.type === 'xp'">✨</span>
+                    <span x-show="toast.type === 'info'">ℹ️</span>
+                </div>
+                <div class="toast-message" x-text="toast.message"></div>
+            </div>
+        </template>
+    </div>
+
+    <!-- Modal Overlay - x-data MUST be on a real element, NOT on template -->
+    <div x-data>
+        <template x-if="$store.systemUI.modal.isOpen">
+            <div class="modal-overlay"
+                :class="{'modal-level-up': $store.systemUI.modal.type === 'LEVEL_UP', 'modal-achievement': $store.systemUI.modal.type === 'ACHIEVEMENT_UNLOCK'}">
+
+                <!-- Game Won Modal -->
+                <template x-if="$store.systemUI.modal.type === 'GAME_WON'">
+                    <div class="modal-content">
+                        <div class="modal-icon">🎉</div>
+                        <h2 class="modal-title" x-text="$store.systemUI.modal.data.title || 'Hebat!'"></h2>
+                        <p class="modal-body"
+                            x-text="$store.systemUI.modal.data.message || 'Kamu berhasil menyelesaikan tantangan!'">
+                        </p>
+                        <p class="xp-reward" x-text="'+' + ($store.systemUI.modal.data.xp || 100) + ' XP'"></p>
+                        <div class="modal-actions">
+                            <button class="modal-btn primary"
+                                @click="$store.systemUI.modal.data.onContinue?.(); $store.systemUI.closeModal()">LANJUT
+                                ▶</button>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Level Up Modal -->
+                <template x-if="$store.systemUI.modal.type === 'LEVEL_UP'">
+                    <div class="modal-content">
+                        <div class="level-badge" x-text="$store.systemUI.modal.data.level || '?'"></div>
+                        <h2 class="modal-title">🎉 SELAMAT! 🎉</h2>
+                        <p class="modal-subtitle"
+                            style="text-align:center; font-weight:bold; color:#4CAF50; margin-bottom:10px;">NAIK LEVEL!
+                        </p>
+                        <p class="modal-body">Kamu sekarang di Level <span
+                                x-text="$store.systemUI.modal.data.level"></span>!</p>
+                        <div class="modal-actions">
+                            <button class="modal-btn primary" @click="$store.systemUI.closeModal()">LANJUT ▶</button>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Achievement Modal -->
+                <template x-if="$store.systemUI.modal.type === 'ACHIEVEMENT_UNLOCK'">
+                    <div class="modal-content">
+                        <div class="modal-icon badge-bounce">🔓</div>
+                        <h2 class="modal-title">LENCANA BARU!</h2>
+                        <div class="badge-icon-large" x-text="$store.systemUI.modal.data.badge?.icon || '🏆'"></div>
+                        <h3 class="badge-name" x-text="$store.systemUI.modal.data.badge?.name || 'Badge'"></h3>
+                        <p class="modal-body" x-text="$store.systemUI.modal.data.badge?.description || ''"></p>
+                        <p class="xp-reward" x-text="'+' + ($store.systemUI.modal.data.xp || 50) + ' XP 🎉'"></p>
+                        <div class="modal-actions">
+                            <button class="modal-btn primary" @click="$store.systemUI.closeModal()">KEREN! ✓</button>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Generic Info Modal -->
+                <template x-if="$store.systemUI.modal.type === 'INFO'">
+                    <div class="modal-content">
+                        <div class="modal-icon">ℹ️</div>
+                        <h2 class="modal-title" x-text="$store.systemUI.modal.data.title || 'Info'"></h2>
+                        <p class="modal-body" x-text="$store.systemUI.modal.data.message || ''"></p>
+                        <div class="modal-actions">
+                            <button class="modal-btn primary"
+                                @click="$store.systemUI.modal.data.onConfirm?.(); $store.systemUI.closeModal()">OK</button>
+                        </div>
+                    </div>
+                </template>
+
+            </div>
+        </template>
+    </div>
+
 </body>
 
 </html>

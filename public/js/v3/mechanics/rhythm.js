@@ -255,4 +255,58 @@ export class RhythmGame {
             }
         );
     }
+
+    finishGame() {
+        this.isPlaying = false;
+        clearInterval(this.spawnLoop);
+
+        // ✅ INTEGRASI LOGIC V3
+        try {
+            // 1. Ambil ID Species (Contoh: 'anggrek_hitam')
+            const urlParams = new URLSearchParams(window.location.search);
+            const speciesId = urlParams.get('id') || 'anggrek_hitam';
+
+            // 2. Mock State (Karena kita diluar Alpine)
+            let playerData = JSON.parse(localStorage.getItem('tf_player_v3')) || {
+                inventory: [], xp: 0, badges: [], level: 1
+            };
+            if (!playerData.inventory) playerData.inventory = [];
+
+            // 3. Simpan Progress
+            // Syarat menang: Skor minimal 500
+            if (this.score >= 500) {
+                const pm = new ProgressManager({ player: playerData });
+                pm.saveProgress(speciesId, 150); // Rhythm XP reward
+
+                // System UI Modal: GAME_WON
+                if (window.Alpine && window.Alpine.store('systemUI')) {
+                    window.Alpine.store('systemUI').showModal('GAME_WON', {
+                        title: 'LUAR BIASA! 🎉',
+                        message: `Skor: ${this.score}`,
+                        xp: 150,
+                        onContinue: () => {
+                            window.location.href = `quiz.html?id=${speciesId}&source=rhythm`;
+                        }
+                    });
+                } else {
+                    alert(`🎉 LUAR BIASA! Skor: ${this.score}\nLanjut ke Kuis Pengetahuan!`);
+                    window.location.href = `quiz.html?id=${speciesId}&source=rhythm`;
+                }
+
+            } else {
+                // Kalah - System UI Toast
+                if (window.Alpine && window.Alpine.store('systemUI')) {
+                    window.Alpine.store('systemUI').showToast(`❌ Skor kurang: ${this.score}. Butuh 500 poin!`, 'error');
+                    setTimeout(() => window.location.reload(), 2000);
+                } else {
+                    alert(`❌ SKOR KURANG: ${this.score}\nButuh 500 poin. Coba lagi ya!`);
+                    window.location.reload();
+                }
+            }
+
+        } catch (e) {
+            console.error("Logic Error:", e);
+            window.location.href = 'index.html'; // Fallback
+        }
+    }
 }

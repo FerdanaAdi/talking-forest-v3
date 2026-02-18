@@ -1,0 +1,156 @@
+/**
+ * ============================================
+ * 📄 FILE: script.js
+ * 🎬 FUNGSI: Naskah Cerita Visual Novel
+ * ============================================
+ * 
+ * ✅ YANG BISA KAMU EDIT:
+ * - Semua teks dialog
+ * - Urutan scene
+ * - Background & musik
+ * 
+ * 📝 FORMAT DIALOG:
+ * "nama_karakter Dialog yang diucapkan"
+ * 
+ * 📝 FORMAT SCENE:
+ * Monogatari.script({
+ *   'NamaScene': [
+ *     "perintah1",
+ *     "perintah2",
+ *     ...
+ *   ]
+ * });
+ */
+
+"use strict";
+
+// ================================
+// ASET DEFINITIONS
+// ================================
+Monogatari.assets('scenes', {
+    'forest': 'assets/monogatari/scenes/forest.png',
+    'forest_clearing': 'assets/monogatari/scenes/forest.png',
+    'forest_diagnosis': 'assets/monogatari/scenes/forest.png'
+});
+
+Monogatari.assets('music', {
+    'forest_ambient': 'assets/monogatari/audio/bgm_prologue.mp3'
+});
+
+Monogatari.assets('sounds', {
+    'glitch': 'assets/monogatari/audio/sfx_glitch.mp3'
+});
+
+// ================================
+// NASKAH CERITA
+// ================================
+Monogatari.script({
+
+    // SCENE: START (Entry Point)
+    'Start': [
+        // [CINEMATIC] World starts in Grayscale (Silence)
+        {
+            'Function': {
+                'Apply': function () {
+                    document.body.classList.add('grayscale-mode');
+                },
+                'Reverse': function () {
+                    document.body.classList.remove('grayscale-mode');
+                }
+            }
+        },
+
+        'show background forest with fadeIn',
+        'play music forest_ambient with loop fade 2',
+
+        // scene_1_intro
+        'show character rimba surprised at center with fadeIn',
+        'rimba Hmmm? Siapa disana?!',
+
+        'show character rimba normal',
+        'rimba Aku mencium aroma manusia asing di hutanku...',
+        'rimba Tunggu dulu... Kamu sepertinya bukan penebang liar.',
+
+        'show character rimba happy',
+        'rimba Wajahmu terlihat bingung. Apa kamu tersesat?',
+        'rimba Perkenalkan, namaku RIMBA! Aku adalah penjaga hutan Borneo ini.',
+        'rimba Siapa namamu, Petualang Muda?',
+
+        // Input Nama Player
+        {
+            'Input': {
+                'Text': '<span class="glitch-text">Siapa namamu?</span>',
+                'Validation': function (input) {
+                    return input.trim().length > 0;
+                },
+                'Save': function (input) {
+                    this.storage({
+                        player: {
+                            name: input
+                        }
+                    });
+                    return true;
+                },
+                'Warning': 'Tolong masukkan namamu ya!'
+            }
+        },
+
+        'jump Introduction'
+    ],
+
+    'Introduction': [
+        // scene_1_2_mission
+        'show character rimba happy',
+        'rimba Nama yang bagus! Senang bertemu denganmu, {{player.name}}.',
+
+        'show character rimba sad',
+        'rimba Tapi maaf... Aku tidak bisa menyambutmu dengan meriah.',
+        'rimba Hutan ini sedang sakit. Pohon-pohon kehilangan suaranya karena sihir jahat.',
+
+        'show character rimba normal',
+        'rimba Aku butuh bantuanmu untuk memulihkan mereka.',
+
+        'show character rimba happy',
+        'rimba Maukah kamu membantuku mengumpulkan "Pecahan Suara"?',
+        'rimba Ayo, ikuti aku! Kita mulai dengan pohon di depan sana.',
+
+        'jump Scene2_Hook'
+    ],
+
+    'Scene2_Hook': [
+        // scene_2_hook
+        'show background forest_clearing with fadeIn',
+
+        'show character rimba normal',
+        'rimba Sesuai petunjuk di peta, harusnya target kita ada di sekitar sini...',
+
+        'show character rimba surprised',
+        'rimba Tunggu! Hutannya berubah... Jalan setapaknya hilang tertutup ilusi!',
+
+        'show character rimba happy',
+        'rimba Jangan khawatir! Aku tahu jalan pintas untuk menembusnya.',
+        'rimba Kita harus berlari cepat sebelum jalannya tertutup selamanya. Siap?',
+        'jump Scene2_Diagnosis'
+    ],
+
+    'Scene2_Diagnosis': [
+        // scene_2_diagnosis
+        'show character rimba sad',
+        'rimba {{player.name}}, jantungku sakit melihatnya. Ini adalah {{species}}...',
+        'rimba Dulu dia sangat megah, sekarang dia hanyalah bayangan yang tersesat...',
+
+        'show character rimba happy',
+        'rimba Hanya ingatanmu yang bisa mengembalikannya. Mari kita susun kembali kepingan waktunya!',
+
+        // Redirect logic remains
+        {
+            'Function': {
+                'Apply': function () {
+                    // Logic to jump to specific mini-game
+                    // For demo purposes defaulting to ulin
+                    window.location.href = 'puzzle.html?mission=ulin_01';
+                }
+            }
+        }
+    ]
+});

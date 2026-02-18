@@ -1,0 +1,179 @@
+[
+  {
+    "id": "mangga_kakek",
+    "name": "Mangga Kakek",
+    "type": "tree",
+    "mechanic": "drag_drop",
+    "description": "Pohon mangga tertua di desa yang menyimpan banyak kenangan.",
+    "anatomy": [
+      {
+        "id": "akar",
+        "name": "Akar",
+        "image": "assets/images/parts/akar.png",
+        "fact": "Akar menyerap air dan nutrisi dari dalam tanah agar pohon bisa makan!"
+      },
+      {
+        "id": "batang",
+        "name": "Batang",
+        "image": "assets/images/parts/batang.png",
+        "fact": "Batang adalah jalan raya bagi air untuk naik ke daun."
+      },
+      {
+        "id": "daun",
+        "name": "Daun",
+        "image": "assets/images/parts/daun.png",
+        "fact": "Daun adalah dapur pohon, tempat memasak makanan menggunakan sinar matahari!"
+      }
+    ],
+    "story": {
+      "intro": "Hohoho... Siapa itu yang menggelitik akarku?",
+      "content": "Aku sudah berdiri di sini sejak kakek buyutmu masih kecil. Aku melihat desa ini tumbuh.",
+      "moral": "Hormatilah orang tua dan sejarah masa lalu."
+    },
+    "assets": {
+      "siluet": "sil_tree_mangga.png",
+      "full": "mangga_full.png",
+      "image_real": "mangga_real.jpg"
+    }
+  },
+  {
+    "id": "ulin_raksasa",
+    "name": "Ulin Raksasa",
+    "type": "tree",
+    "mechanic": "drag_drop",
+    "description": "Kayu besi yang kuat dan tak tergoyahkan.",
+    "anatomy": [
+      {
+        "id": "akar",
+        "name": "Akar Banir",
+        "image": "assets/images/parts/akar_ulin.png",
+        "fact": "Akar Banir yang besar menopang pohon raksasa agar tidak tumbang."
+      },
+      {
+        "id": "batang",
+        "name": "Batang Besi",
+        "image": "assets/images/parts/batang_ulin.png",
+        "fact": "Kayu Ulin sangat keras seperti besi dan tahan air!"
+      },
+      {
+        "id": "daun",
+        "name": "Daun Jarum",
+        "image": "assets/images/parts/daun_ulin.png",
+        "fact": "Daunnya berbentuk jarum untuk mengurangi penguapan air."
+      }
+    ],
+    "story": {
+      "intro": "Hmph... Kau yakin cukup kuat mendengarkan ceritaku?",
+      "content": "Akulah Ulin. Badai dan kapak tak bisa melukaiku. Keteguhan hati adalah kekuatanku.",
+      "moral": "Jadilah kuat dan teguh pendirian."
+    },
+    "assets": {
+      "siluet": "sil_tree_ulin.png",
+      "full": "ulin_full.png",
+      "image_real": "ulin_real.jpg"
+    }
+  },
+  {
+    "id": "enggang_gading",
+    "name": "Enggang Gading",
+    "type": "animal",
+    "mechanic": "summon",
+    "description": "Burung raja rimba yang menjaga keseimbangan hutan.",
+    "anatomy": [
+      {
+        "id": "paruh",
+        "name": "Paruh Gading",
+        "image": "assets/images/parts/paruh_enggang.png",
+        "fact": "Paruh besarnya digunakan untuk makan buah dan bersuara keras."
+      },
+      {
+        "id": "sayap",
+        "name": "Sayap Lebar",
+        "image": "assets/images/parts/sayap_enggang.png",
+        "fact": "Sayap lebarnya menimbulkan suara mendengung saat terbang."
+      },
+      {
+        "id": "ekor",
+        "name": "Ekor Panjang",
+        "image": "assets/images/parts/ekor_enggang.png",
+        "fact": "Ekor panjangnya membantu keseimbangan saat bertengger di pohon tinggi."
+      }
+    ],
+    "story": {
+      "intro": "Kaaakk! Salam, penjaga hutan kecil.",
+      "content": "Kami Enggang setia pada pasangan seumur hidup. Kami menebar benih kehidupan di hutan ini.",
+      "moral": "Kesetiaan dan tanggung jawab menjaga alam."
+    },
+    "assets": {
+      "siluet": "sil_bird_enggang.jpg",
+      "full": "enggang_full.jpg",
+      "image_real": "enggang_real.jpg"
+    }
+  },
+  {
+    "id": "kantong_semar",
+    "name": "Kantong Semar",
+    "type": "plant",
+    "mechanic": "rhythm",
+    "description": "Tanaman unik yang suka makan serangga!",
+    "anatomy": [
+      {
+        "id": "kantong",
+        "name": "Kantong Perangkap",
+        "image": "assets/images/parts/kantong.png",
+        "fact": "Kantong ini licin sekali, serangga yang masuk tidak bisa keluar!"
+      }
+    ],
+    "facts": [
+      "Cairan di dalam kantongnya mengandung enzim pencernaan untuk melarutkan serangga.",
+      "Tidak semua Kantong Semar makan daging, ada juga yang suka 'kotoran' hewan lho!",
+      "Bentuk tutupnya berfungsi agar air hujan tidak membanjiri kantong."
+    ],
+    "story": {
+      "intro": "Ssshh... Jangan berisik, nanti makananku lari.",
+      "content": "Aku bukan jahat, aku hanya butuh nutrisi tambahan dari serangga.",
+      "moral": "Setiap makhluk punya cara unik untuk bertahan hidup."
+    },
+    "assets": {
+      "siluet": "sil_plant_semar.png",
+      "full": "semar_full.png",
+      "image_real": "semar_real.jpg"
+    }
+  },
+  {
+    "id": "orangutan_borneo",
+    "name": "Orangutan",
+    "type": "animal",
+    "mechanic": "summon",
+    "description": "Penjaga hutan berbulu merah.",
+    "anatomy": [],
+    "story": {
+      "intro": "Uuk aak!",
+      "content": "Aku suka buah-buahan.",
+      "moral": "Makan buah itu sehat."
+    },
+    "assets": {
+      "siluet": "",
+      "full": "",
+      "image_real": ""
+    }
+  },
+  {
+    "id": "bekantan_hidung",
+    "name": "Bekantan",
+    "type": "animal",
+    "mechanic": "summon",
+    "description": "Monyet hidung panjang maskot Kalimantan.",
+    "anatomy": [],
+    "story": {
+      "intro": "Halo!",
+      "content": "Hidungku unik kan?",
+      "moral": "Bangga dengan diri sendiri."
+    },
+    "assets": {
+      "siluet": "",
+      "full": "",
+      "image_real": ""
+    }
+  }
+]

@@ -1,3 +1,105 @@
+/* 
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║   📄 NAMA FILE: js/admin-logic.js                                            ║
+║   🔧 FUNGSI: Logika Panel Admin (PUSAT KONTROL)                             ║
+║   📍 POSISI: Dipakai oleh admin.html                                        ║
+║   📏 UKURAN: ~1450 baris (FILE TERBESAR!)                                   ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+════════════════════════════════════════════════════════════════════════════════
+🔰 PANDUAN UNTUK NAJU
+════════════════════════════════════════════════════════════════════════════════
+
+Halo Naju! 👋
+
+⚠️ FILE INI SANGAT KOMPLEKS! ⚠️
+
+File ini adalah "OTAK" panel admin. Mengontrol hampir semua fitur:
+- Dashboard statistik
+- Manajemen Keuangan
+- Monitoring Tiket
+- Kelola UMKM
+- Kelola Aset
+- Ensiklopedi Flora
+- Update Kondisi Pohon
+- Sistem Anggaran (RAB)
+- Auto-Recap Harian
+
+════════════════════════════════════════════════════════════════════════════════
+📚 SIMBOL-SIMBOL
+════════════════════════════════════════════════════════════════════════════════
+
+🔴 = JANGAN EDIT (hampir seluruh file)
+🟡 = HATI-HATI
+
+════════════════════════════════════════════════════════════════════════════════
+🎯 YANG SANGAT TIDAK DISARANKAN DIEDIT
+════════════════════════════════════════════════════════════════════════════════
+
+❌ JANGAN EDIT FILE INI SECARA MANUAL!
+
+Alasannya:
+1. File ini punya 78 fungsi yang saling terhubung
+2. Satu kesalahan bisa merusak seluruh panel admin
+3. Logika bisnis kritis ada di sini
+
+════════════════════════════════════════════════════════════════════════════════
+📂 STRUKTUR FILE (PETA NAVIGASI)
+════════════════════════════════════════════════════════════════════════════════
+
+BAGIAN 1: AUTH & INIT (~baris 1-35)
+   - Login/logout admin
+   - Initialize modules
+
+BAGIAN 2: DASHBOARD (~baris 35-130)
+   - Chart pengunjung
+   - Chart pendapatan
+   - Statistik hari ini
+
+BAGIAN 3: KEUANGAN (~baris 130-310)
+   - showFinanceList() → Daftar transaksi
+   - simpanKeuangan() → Tambah transaksi
+   - Filter & Summary
+
+BAGIAN 4: TIKET (~baris 310-380)
+   - Monitor realtime transaksi tiket
+   - Pengaturan harga
+
+BAGIAN 5: UMKM (~baris 380-420)
+   - List, tambah, edit mitra UMKM
+
+BAGIAN 6: ASET (~baris 420-460)
+   - Kelola inventaris aset
+
+BAGIAN 7: ENSIKLOPEDI (~baris 460-560)
+   - CRUD data pohon/flora
+   - Search & pagination
+
+BAGIAN 8: UPDATE POHON (~baris 560-690)
+   - Monitoring kondisi pohon
+   - Catat perubahan
+
+BAGIAN 9: AUTO RECAP (~baris 690-765)
+   - Rekap otomatis tiket ke keuangan (jam 17:00)
+
+BAGIAN 10: BUDGETING/RAB (~baris 765-akhir)
+   - Sistem anggaran
+   - Approval flow
+
+════════════════════════════════════════════════════════════════════════════════
+💡 CATATAN PENTING
+════════════════════════════════════════════════════════════════════════════════
+
+Kalau butuh mengubah sesuatu di panel admin:
+1. JANGAN edit file ini langsung
+2. Hubungi developer atau gunakan Claude
+3. Jelaskan APA yang ingin diubah, bukan BAGAIMANA
+
+════════════════════════════════════════════════════════════════════════════════
+*/
+
 import { auth, db, signInWithEmailAndPassword, signOut, onAuthStateChanged, collection, addDoc, doc, updateDoc, setDoc, getDoc, deleteDoc, query, where, orderBy, onSnapshot, getDocs, limit }
     from "./firebase-config.js";
 

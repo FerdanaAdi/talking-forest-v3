@@ -226,16 +226,28 @@ document.addEventListener('alpine:init', () => {
         saveToInventory() {
             if (!this.speciesData) return;
             try {
-                const saved = localStorage.getItem('tf_player_v3');
-                if (saved) {
-                    const p = JSON.parse(saved);
-                    if (!p.inventory) p.inventory = [];
-                    if (!p.inventory.includes(this.speciesData.id)) {
-                        p.inventory.push(this.speciesData.id);
-                        localStorage.setItem('tf_player_v3', JSON.stringify(p));
-                        console.log("💾 Saved to inventory:", this.speciesData.id);
+                // Load existing data to init ProgressManager
+                let playerData = JSON.parse(localStorage.getItem('tf_player_v3'));
+                if (!playerData) {
+                    playerData = { inventory: [], xp: 0, badges: [], level: 1 };
+                }
+
+                // Gunakan ProgressManager agar logic XP & Level jalan!
+                // Kita buat instance sementara karena ProgressManager butuh struktur {player: ...}
+                const mockState = { player: playerData };
+
+                if (window.ProgressManager) {
+                    const pm = new window.ProgressManager(mockState);
+                    pm.saveProgress(this.speciesData.id, 50); // Scan Reward: +50 XP
+                    console.log("💾 Saved via ProgressManager:", this.speciesData.id);
+                } else {
+                    // Fallback jika ProgressManager belum load
+                    if (!playerData.inventory.includes(this.speciesData.id)) {
+                        playerData.inventory.push(this.speciesData.id);
+                        localStorage.setItem('tf_player_v3', JSON.stringify(playerData));
                     }
                 }
+
             } catch (e) { console.error("Auto-save failed", e); }
         },
 

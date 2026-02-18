@@ -1,23 +1,38 @@
 <!DOCTYPE html>
 <html lang="id">
 
+<!--
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║   📄 NAMA FILE: v3/profile.html                                              ║
+║   👤 FUNGSI: Halaman Profil Pemain (Sesuai ALUR 10 Master Plan)             ║
+║   📍 POSISI: Menampilkan info, badge, stats, dan pengaturan                 ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+-->
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Talking Forest V3 - Profil</title>
 
-    <!-- 🎨 FONTS -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Nunito:wght@400;600;700&display=swap"
-        rel="stylesheet">
-
-    <!-- 🛠️ LIBRARIES -->
+    <!-- 🔴 LIBRARIES -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
-    <!-- 🎨 CUSTOM STYLE -->
-    <link rel="stylesheet" href="css/game.css">
+    <!-- 🟢 FONTS & ICONS -->
+    <link href="https://fonts.googleapis.com/css2?family=Bakso+Sapi&family=Nunito:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+
+    <!-- 🔴 CSS -->
+    <link rel="stylesheet" href="../css/game.css">
+    <link rel="stylesheet" href="../css/system-ui.css">
+
+    <!-- System UI Component -->
+    <script src="../js/v3/components/system-ui.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -25,22 +40,570 @@
                     colors: {
                         forest: { DEFAULT: '#2E7D32', dark: '#1B5E20', light: '#4CAF50' },
                         earth: { DEFAULT: '#5D4037', dark: '#3E2723', light: '#8D6E63' },
-                        gold: { DEFAULT: '#FFD54F', dark: '#FFC107' },
-                        parchment: '#FFF8E1',
+                        wood: '#8D6E63',
+                        sky: '#E1F5FE',
                     },
                     fontFamily: {
-                        cinzel: ['Cinzel', 'serif'],
+                        bakso: ['Bakso Sapi', 'cursive'],
                         nunito: ['Nunito', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
 </head>
 
-<body>
-    <h1>Profil Player (Phase 0)</h1>
-    <p>File ini sudah siap untuk diisi.</p>
+<body class="bg-zinc-900 h-screen w-screen flex items-center justify-center overflow-hidden font-nunito"
+    x-data="profilePage()" x-init="init()">
+
+    <!-- 🟢 MOBILE FRAME CONTAINER -->
+    <div class="w-full max-w-[480px] h-full relative shadow-2xl overflow-hidden bg-[#F1F8E9] flex flex-col">
+
+        <!-- 🟢 HEADER SECTION -->
+        <header
+            class="absolute top-0 w-full z-50 bg-forest/95 backdrop-blur shadow-lg border-b-4 border-earth text-white p-4 rounded-b-[2rem]">
+            <div class="flex items-center justify-center relative">
+                <!-- Judul Tengah -->
+                <h1 class="text-2xl font-bakso tracking-wide drop-shadow-md">👤 PROFIL</h1>
+            </div>
+        </header>
+
+        <!-- 🟢 MAIN SCROLLABLE CONTENT -->
+        <main class="flex-1 w-full overflow-y-auto pb-24 pt-[100px] px-4 no-scrollbar">
+
+            <!-- 1. PROFILE CARD -->
+            <div
+                class="bg-white rounded-2xl p-6 shadow-md border-2 border-forest/10 flex flex-col items-center mb-6 relative overflow-hidden">
+                <!-- Background Decoration -->
+                <div class="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-green-100 to-transparent -z-10">
+                </div>
+
+                <!-- Avatar -->
+                <div
+                    class="w-24 h-24 rounded-full bg-yellow-100 border-4 border-white shadow-lg overflow-hidden mb-3 relative">
+                    <!-- 🟢 AVATAR IMAGE -->
+                    <img :src="'../assets/images/avatars/char_' + (player.stage || 'child') + '_' + (player.gender || 'male') + '.png'"
+                        alt="Avatar" class="w-full h-full object-cover"
+                        onerror="this.src='../assets/images/ui/placeholder-avatar.png'">
+
+                    <div
+                        class="absolute bottom-0 right-0 bg-forest text-white text-[10px] px-2 py-0.5 rounded-full border border-white">
+                        Lv.<span x-text="player.level || 1">1</span>
+                    </div>
+                </div>
+
+                <!-- Nama & Rank -->
+                <!-- Menggunakan player.name sesuai game-state.js -->
+                <h2 class="text-xl font-bold text-gray-800" x-text="player.name || player.nickname || 'Ranger Baru'">
+                    Ranger Baru</h2>
+                <div class="flex items-center gap-1 text-sm text-forest font-bold mb-2">
+                    <span x-text="getRankName(player.level)">Ranger Magang</span>
+                    <!-- Stars Logic -->
+                    <div class="flex text-yellow-400 text-xs">
+                        <template x-for="i in 5">
+                            <span x-text="i <= (Math.ceil((player.level || 1) / 2)) ? '★' : '☆'"></span>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Edit Button -->
+                <button @click="editProfile()"
+                    class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1 rounded-full border border-gray-300 transition flex items-center gap-1">
+                    <span class="material-icons-round text-sm">edit</span>
+                    Edit (2x tersisa)
+                </button>
+            </div>
+
+            <!-- 2. STATISTIK ROW -->
+            <div class="flex justify-between gap-3 mb-6">
+                <!-- XP -->
+                <div class="flex-1 bg-white rounded-xl p-3 shadow-sm border border-forest/10 text-center">
+                    <div class="text-2xl font-bakso text-forest" x-text="player.xp || 0">0</div>
+                    <div class="text-[10px] font-bold text-gray-400 uppercase">Total XP</div>
+                </div>
+                <!-- LEVEL -->
+                <div class="flex-1 bg-white rounded-xl p-3 shadow-sm border border-forest/10 text-center">
+                    <div class="text-2xl font-bakso text-blue-500" x-text="'Lv.' + (player.level || 1)">Lv.1</div>
+                    <div class="text-[10px] font-bold text-gray-400 uppercase">Level</div>
+                </div>
+                <!-- HARI -->
+                <div class="flex-1 bg-white rounded-xl p-3 shadow-sm border border-forest/10 text-center">
+                    <div class="text-2xl font-bakso text-orange-500" x-text="player.daysPlayed || 1">1</div>
+                    <div class="text-[10px] font-bold text-gray-400 uppercase">Hari</div>
+                </div>
+            </div>
+
+            <!-- 3. BADGES / LENCANA -->
+            <div class="mb-6">
+                <div class="flex justify-between items-end mb-2 px-1">
+                    <h3 class="font-bold text-gray-700 flex items-center gap-2">
+                        <span>🏆</span> LENCANA
+                    </h3>
+                    <span class="text-xs font-bold text-gray-400"
+                        x-text="(player.badges?.length || 0) + '/10'">0/10</span>
+                </div>
+
+                <div class="bg-white rounded-xl p-4 shadow-sm border border-forest/10">
+                    <div class="grid grid-cols-4 gap-2">
+                        <!-- Render Badges -->
+                        <template x-for="badge in badges" :key="badge.id">
+                            <div class="aspect-square rounded-lg flex items-center justify-center text-2xl border-2 transition-all cursor-pointer"
+                                :class="player.badges?.includes(badge.id) ? 'bg-yellow-50 border-yellow-200 shadow-sm' : 'bg-gray-100 border-gray-200 opacity-50 grayscale'"
+                                @click="showBadgeDetail(badge)">
+                                <span x-text="badge.icon">🏆</span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. PENGATURAN -->
+            <div class="mb-6">
+                <h3 class="font-bold text-gray-700 flex items-center gap-2 mb-2 px-1">
+                    <span>⚙️</span> PENGATURAN
+                </h3>
+
+                <div
+                    class="bg-white rounded-xl overflow-hidden shadow-sm border border-forest/10 divide-y divide-gray-100">
+                    <!-- Sound -->
+                    <div class="p-3 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <span class="material-icons-round text-gray-400">volume_up</span>
+                            <span class="text-sm font-bold text-gray-600">Suara / Musik</span>
+                        </div>
+                        <button @click="toggleSound()"
+                            class="w-10 h-6 rounded-full p-1 transition-colors duration-300 flex items-center"
+                            :class="settings.sound ? 'bg-forest justify-end' : 'bg-gray-300 justify-start'">
+                            <div class="w-4 h-4 bg-white rounded-full shadow-md"></div>
+                        </button>
+                    </div>
+
+                    <!-- Bahasa -->
+                    <div class="p-3 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <span class="material-icons-round text-gray-400">language</span>
+                            <span class="text-sm font-bold text-gray-600">Bahasa</span>
+                        </div>
+                        <span class="text-xs font-bold text-forest bg-green-50 px-2 py-1 rounded">Indonesia</span>
+                    </div>
+
+                    <!-- Pengaturan Lanjut (Link ke Settings Page) -->
+                    <a href="settings.html" class="p-3 flex justify-between items-center hover:bg-gray-50 transition">
+                        <div class="flex items-center gap-3">
+                            <span class="material-icons-round text-gray-400">tune</span>
+                            <span class="text-sm font-bold text-gray-600">Pengaturan Lanjut</span>
+                        </div>
+                        <span class="material-icons-round text-gray-300">chevron_right</span>
+                    </a>
+
+                    <!-- Logout -->
+                    <div class="p-3">
+                        <button @click="logout()"
+                            class="w-full py-2 rounded-lg bg-red-50 text-red-500 font-bold text-sm border border-red-100 hover:bg-red-100 transition flex items-center justify-center gap-2">
+                            <span class="material-icons-round text-sm">logout</span>
+                            KELUAR (LOGOUT)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Version -->
+            <div class="text-center text-[10px] text-gray-400 font-bold pb-4">
+                Talking Forest v3.0.0 (Alpha)
+            </div>
+
+        </main>
+
+        <!-- 🟢 BOTTOM NAVIGATION BAR -->
+        <nav
+            class="absolute bottom-0 w-full z-50 bg-forest/95 backdrop-blur text-white rounded-t-3xl border-t-4 border-earth shadow-[0_-10px_20px_rgba(0,0,0,0.3)] pb-4 pt-2">
+            <div class="flex justify-around items-end h-full px-2 pb-2">
+
+                <!-- 1. MARKAS -->
+                <a href="../index.html"
+                    class="flex flex-col items-center gap-1 w-1/5 opacity-70 hover:opacity-100 transition active:scale-95">
+                    <span class="text-2xl filter drop-shadow-sm">🏠</span>
+                    <span class="text-[9px] font-bold text-white/90">Markas</span>
+                </a>
+
+                <!-- 2. JELAJAH -->
+                <a href="../scan.html"
+                    class="flex flex-col items-center gap-1 w-1/5 opacity-70 hover:opacity-100 transition active:scale-95">
+                    <span class="text-2xl filter drop-shadow-sm">📸</span>
+                    <span class="text-[9px] font-bold text-white/90">Jelajah</span>
+                </a>
+
+                <!-- 3. KEBUN -->
+                <a href="garden.html"
+                    class="flex flex-col items-center gap-1 w-1/5 opacity-70 hover:opacity-100 transition active:scale-95">
+                    <span class="text-2xl filter drop-shadow-sm">🌿</span>
+                    <span class="text-[9px] font-bold text-white/90">Kebun</span>
+                </a>
+
+                <!-- 4. DONASI -->
+                <a href="donate.html"
+                    class="flex flex-col items-center gap-1 w-1/5 opacity-70 hover:opacity-100 transition active:scale-95">
+                    <span class="text-2xl filter drop-shadow-sm">💚</span>
+                    <span class="text-[9px] font-bold text-white/90">Donasi</span>
+                </a>
+
+                <!-- 5. PROFIL (ACTIVE) -->
+                <div class="flex flex-col items-center gap-1 w-1/5 opacity-100 scale-110 relative -top-3">
+                    <div
+                        class="bg-white/10 p-2 rounded-full border-2 border-yellow-300 shadow-[0_0_15px_rgba(253,224,71,0.5)] backdrop-blur-md">
+                        <span class="text-2xl filter drop-shadow-md">👤</span>
+                    </div>
+                    <span class="text-[9px] font-bold text-yellow-300">Profil</span>
+                </div>
+
+            </div>
+        </nav>
+
+        <!-- ═══════════════════════════════════════════════════════════════════════
+         SYSTEM UI TEMPLATES (ALUR 12-15)
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+        <!-- Toast Container -->
+        <div class="toast-container" x-data x-show="$store.systemUI.toasts.length > 0">
+            <template x-for="toast in $store.systemUI.toasts" :key="toast.id">
+                <div class="toast" :class="[toast.type, !toast.visible ? 'hiding' : '']" x-show="toast.visible"
+                    x-transition>
+                    <span class="toast-icon"
+                        x-text="toast.type === 'success' ? '✅' : toast.type === 'error' ? '❌' : toast.type === 'xp' ? '⭐' : 'ℹ️'"></span>
+                    <span x-text="toast.message"></span>
+                </div>
+            </template>
+        </div>
+
+        <!-- Modal Overlay -->
+        <template x-if="$store.systemUI.modal.isOpen" x-data>
+            <div class="modal-overlay"
+                :class="{'modal-level-up': $store.systemUI.modal.type === 'LEVEL_UP', 'modal-achievement': $store.systemUI.modal.type === 'ACHIEVEMENT_UNLOCK'}">
+
+                <!-- Level Up Modal -->
+                <template x-if="$store.systemUI.modal.type === 'LEVEL_UP'">
+                    <div class="modal-content">
+                        <div class="level-badge" x-text="$store.systemUI.modal.data.level || '?'"></div>
+                        <h2 class="modal-title">🎉 SELAMAT! 🎉</h2>
+                        <p class="modal-subtitle"
+                            style="text-align:center; font-weight:bold; color:#4CAF50; margin-bottom:10px;">NAIK LEVEL!
+                        </p>
+                        <p class="modal-body">Kamu sekarang di Level <span
+                                x-text="$store.systemUI.modal.data.level"></span>!</p>
+
+                        <!-- Rank & Stars -->
+                        <template x-if="$store.systemUI.modal.data.rank">
+                            <div class="level-rank"
+                                style="margin: 10px 0; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                                <p style="margin-bottom: 4px;">Rank: <strong
+                                        x-text="$store.systemUI.modal.data.rank"></strong></p>
+                                <div class="star-rating" style="color: #FFD700; letter-spacing: 2px;"
+                                    x-html="'★'.repeat($store.systemUI.modal.data.stars || 0) + '☆'.repeat(5 - ($store.systemUI.modal.data.stars || 0))">
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Bonus -->
+                        <template x-if="$store.systemUI.modal.data.bonus">
+                            <div class="level-bonus" style="margin-top: 10px; font-size: 0.9em;">
+                                <p>🎁 BONUS:</p>
+                                <p style="color: #F59E0B; font-weight:bold;"
+                                    x-text="'+' + ($store.systemUI.modal.data.bonus.xp || 0) + ' XP'"></p>
+                                <template x-if="$store.systemUI.modal.data.bonus.unlock">
+                                    <p style="color: #4CAF50;">🔓 <span
+                                            x-text="$store.systemUI.modal.data.bonus.unlock"></span></p>
+                                </template>
+                            </div>
+                        </template>
+
+                        <div class="modal-actions">
+                            <button class="modal-btn primary" @click="$store.systemUI.closeModal()">LANJUT ▶</button>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Achievement Unlock Modal (ALUR 12.4) -->
+                <template x-if="$store.systemUI.modal.type === 'ACHIEVEMENT_UNLOCK'">
+                    <div class="modal-content">
+                        <div class="modal-icon badge-bounce">🔓</div>
+                        <h2 class="modal-title">LENCANA BARU!</h2>
+                        <div class="badge-icon-large" x-text="$store.systemUI.modal.data.badge?.icon || '🏆'"></div>
+                        <h3 class="badge-name" x-text="$store.systemUI.modal.data.badge?.name || 'Badge'"></h3>
+                        <p class="modal-body" x-text="$store.systemUI.modal.data.badge?.description || ''"></p>
+                        <p class="xp-reward" x-text="'+' + ($store.systemUI.modal.data.xp || 50) + ' XP 🎉'"></p>
+                        <div class="modal-actions">
+                            <button class="modal-btn primary" @click="$store.systemUI.closeModal()">KEREN! ✓</button>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Badge Detail Modal -->
+                <template x-if="$store.systemUI.modal.type === 'BADGE_DETAIL'">
+                    <div class="modal-content">
+                        <div class="modal-icon" x-text="$store.systemUI.modal.data.icon || '🏆'"></div>
+                        <h2 class="modal-title" x-text="$store.systemUI.modal.data.name || 'Badge'"></h2>
+                        <p class="modal-body" x-text="$store.systemUI.modal.data.description || ''"></p>
+                        <template x-if="$store.systemUI.modal.data.date">
+                            <p class="badge-date" style="font-size: 0.8em; color: #6B7280; margin-top: 5px;">📅 Didapat:
+                                <span x-text="$store.systemUI.modal.data.date"></span>
+                            </p>
+                        </template>
+                        <div class="modal-actions">
+                            <button class="modal-btn primary" @click="$store.systemUI.closeModal()">Tutup</button>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Confirm Exit Modal -->
+                <template x-if="$store.systemUI.modal.type === 'CONFIRM_EXIT'">
+                    <div class="modal-content">
+                        <div class="modal-icon">⚠️</div>
+                        <h2 class="modal-title">TUNGGU DULU!</h2>
+                        <p class="modal-body"
+                            x-text="$store.systemUI.modal.data.message || 'Kamu yakin mau keluar? Progress belum tersimpan!'">
+                        </p>
+                        <div class="modal-actions">
+                            <button class="modal-btn secondary"
+                                @click="$store.systemUI.modal.data.onConfirm?.(); $store.systemUI.closeModal()">KELUAR</button>
+                            <button class="modal-btn primary" @click="$store.systemUI.closeModal()">LANJUT ▶</button>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Edit Nickname Modal (ALUR 12.1) -->
+                <template x-if="$store.systemUI.modal.type === 'EDIT_NICKNAME'" x-data="{ 
+                    newName: '',
+                    limit: 15
+                }">
+                    <div class="modal-content relative text-left"
+                        style="background: #FEFCE8 !important; border: 4px solid #8D6E63 !important; outline: 3px solid #A1887F !important; border-radius: 20px !important; box-shadow: 0 8px 0 rgba(0,0,0,0.15), 0 15px 30px rgba(0,0,0,0.3) !important; padding: 20px 24px 24px !important; max-width: 340px !important;">
+
+                        <!-- Close Button (X) -->
+                        <button @click="$store.systemUI.closeModal()"
+                            class="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-700 transition">
+                            <span class="material-icons-round text-lg">close</span>
+                        </button>
+
+                        <!-- Title: ✏️ EDIT NICKNAME -->
+                        <div class="mb-5">
+                            <h2 class="text-lg font-bold text-amber-900 flex items-center gap-2">
+                                <span>✏️</span> EDIT NICKNAME
+                            </h2>
+                            <div class="h-0.5 w-full bg-amber-300 mt-1 rounded"></div>
+                        </div>
+
+                        <!-- Nama saat ini: -->
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Nama saat ini:</label>
+                            <div class="text-base font-bold text-amber-800 bg-amber-50 px-3 py-2 rounded-lg border-2 border-dashed border-amber-200"
+                                x-text="'&quot;' + ($store.systemUI.modal.data.currentName || '-') + '&quot;'"></div>
+                        </div>
+
+                        <!-- Nama baru: -->
+                        <div class="mb-1">
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Nama baru:</label>
+                            <input type="text" x-model="newName" :maxlength="limit"
+                                class="w-full bg-white border-2 border-stone-300 text-stone-800 font-bold px-3 py-2 rounded-lg focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition placeholder-gray-300"
+                                placeholder="Ketik nama baru...">
+                        </div>
+
+                        <!-- Counter: 0/15 karakter -->
+                        <div class="text-xs text-gray-400 font-bold mb-4 text-right"
+                            x-text="newName.length + '/' + limit + ' karakter'"></div>
+
+                        <!-- Warning: ⚠️ Sisa ganti: 2x -->
+                        <div
+                            class="flex items-center gap-2 bg-yellow-50 px-3 py-2 rounded-lg border border-yellow-200 mb-5">
+                            <span class="text-yellow-600">⚠️</span>
+                            <span class="text-xs text-yellow-700 font-bold">
+                                Sisa ganti: <span x-text="$store.systemUI.modal.data.remainingEdits || 2">2</span>x
+                            </span>
+                        </div>
+
+                        <!-- Buttons: BATAL | SIMPAN -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <button
+                                class="px-4 py-2.5 rounded-lg border-2 border-gray-300 bg-white text-gray-600 font-bold text-sm hover:bg-gray-50 hover:border-gray-400 transition"
+                                @click="$store.systemUI.closeModal()">
+                                BATAL
+                            </button>
+                            <button class="px-4 py-2.5 rounded-lg border-2 text-white font-bold text-sm transition"
+                                style="background: #2E7D32; border-color: #1B5E20; box-shadow: 0 3px 0 #1B5E20;"
+                                @click="if(newName.trim().length > 0) { $store.systemUI.modal.data.onSave?.(newName); $store.systemUI.closeModal(); } else { alert('Nama tidak boleh kosong!'); }"
+                                :disabled="newName.trim().length === 0"
+                                :class="newName.trim().length === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:brightness-110 active:translate-y-0.5 active:shadow-none'">
+                                SIMPAN
+                            </button>
+                        </div>
+                    </div>
+                </template>
+
+            </div>
+        </template>
+
+        <!-- Loading Overlay -->
+        <template x-if="$store.systemUI.loading.isActive" x-data>
+            <div class="loading-overlay">
+                <div class="loading-spinner"></div>
+                <p class="loading-text" x-text="$store.systemUI.loading.message"></p>
+            </div>
+        </template>
+
+        <!-- Error Overlay -->
+        <template x-if="$store.systemUI.error.isActive" x-data>
+            <div class="error-overlay" :class="$store.systemUI.error.code === 'OFFLINE' ? 'error-offline' : ''">
+                <div class="error-icon" x-text="$store.systemUI.error.code === 'OFFLINE' ? '📡' : '😵'"></div>
+                <h2 class="error-title"
+                    x-text="$store.systemUI.error.code === 'OFFLINE' ? 'Tidak Ada Koneksi' : 'Terjadi Kesalahan'"></h2>
+                <p class="error-message" x-text="$store.systemUI.error.message"></p>
+
+                <div class="error-actions" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <button class="error-btn" @click="$store.systemUI.hideError(); location.reload()">Coba Lagi
+                        🔄</button>
+
+                    <template x-if="$store.systemUI.error.code === 'OFFLINE'">
+                        <button class="error-btn secondary"
+                            style="background: transparent; border: 1px solid rgba(255,255,255,0.3);"
+                            @click="$store.systemUI.hideError()">MODE OFFLINE 📴</button>
+                    </template>
+
+                    <template x-if="$store.systemUI.error.code !== 'OFFLINE'">
+                        <button class="error-btn secondary"
+                            style="background: transparent; border: 1px solid rgba(255,255,255,0.3);"
+                            @click="window.location.href='index.html'">KEMBALI KE HOME</button>
+                    </template>
+                </div>
+            </div>
+        </template>
+
+    </div>
+
+    <!-- 🟢 LOGIC SCRIPT -->
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('profilePage', () => ({
+                player: {},
+                settings: {
+                    sound: true
+                },
+                badges: [
+                    { id: 'b1', icon: '🌱', name: 'Ranger Pertama' },
+                    { id: 'b2', icon: '📷', name: 'Fotografer' },
+                    { id: 'b3', icon: '🧩', name: 'Master Puzzle' },
+                    { id: 'b4', icon: '❓', name: 'Locked' },
+                    { id: 'b5', icon: '❓', name: 'Locked' },
+                    { id: 'b6', icon: '❓', name: 'Locked' },
+                    { id: 'b7', icon: '❓', name: 'Locked' },
+                    { id: 'b8', icon: '❓', name: 'Locked' }
+                ],
+
+                init() {
+                    // Load Player Data
+                    const rawData = localStorage.getItem('tf_player_v3');
+                    if (rawData) {
+                        this.player = JSON.parse(rawData);
+                        // Fallback logic if name is missing but nickname exists (legacy)
+                        if (!this.player.name && this.player.nickname) {
+                            this.player.name = this.player.nickname;
+                        }
+                    } else {
+                        // Default mock if empty
+                        this.player = {
+                            name: 'Ranger Baru',
+                            stage: 'child',
+                            gender: 'male',
+                            level: 1,
+                            xp: 0,
+                            daysPlayed: 1,
+                            badges: ['b1']
+                        };
+                    }
+
+                    // Calculate Rank Stars based on level (Visual logic handled in HTML)
+                },
+
+                getRankName(level) {
+                    if (level >= 10) return "Ranger Sepuh";
+                    if (level >= 5) return "Ranger Senior";
+                    if (level >= 3) return "Ranger Magang";
+                    return "Ranger Baru";
+                },
+
+                editProfile() {
+                    Alpine.store('systemUI').showModal('EDIT_NICKNAME', {
+                        currentName: this.player.name,
+                        onSave: (newName) => {
+                            this.player.name = newName;
+                            // Save to LocalStorage
+                            localStorage.setItem('tf_player_v3', JSON.stringify(this.player));
+
+                            // Trigger update in GameState if needed (optional)
+                            if (window.gameState) {
+                                window.gameState.player.name = newName;
+                                window.gameState.saveGame();
+                            }
+
+                            Alpine.store('systemUI').showToast('Nama berhasil diubah!', 'success');
+                        }
+                    });
+                },
+
+                showBadgeDetail(badge) {
+                    if (!this.player.badges?.includes(badge.id)) return;
+                    alert(`🏆 Info Lencana:\n\n${badge.name}\nSelamat, kamu memilikinya!`);
+                },
+
+                toggleSound() {
+                    this.settings.sound = !this.settings.sound;
+                    // Save to localstorage if needed
+                },
+
+                logout() {
+                    if (confirm('Yakin ingin keluar?')) {
+                        // Reset or redirect
+                        window.location.href = '../index.html';
+                    }
+                }
+            }));
+        });
+    </script>
+    <!-- System UI moved to main container -->
+
+    <!-- Toast Notifications -->
+    <div class="toast-container">
+        <template x-for="toast in $store.systemUI.toasts" :key="toast.id">
+            <div class="toast" :class="{
+                     'toast-success': toast.type === 'success',
+                     'toast-error': toast.type === 'error',
+                     'toast-xp': toast.type === 'xp',
+                     'toast-info': toast.type === 'info',
+                     'show': toast.visible
+                 }" x-show="toast.visible" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-300"
+                x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-2">
+
+                <div class="toast-icon">
+                    <span x-show="toast.type === 'success'">✅</span>
+                    <span x-show="toast.type === 'error'">❌</span>
+                    <span x-show="toast.type === 'xp'">✨</span>
+                    <span x-show="toast.type === 'info'">ℹ️</span>
+                </div>
+                <div class="toast-message" x-text="toast.message"></div>
+            </div>
+        </template>
+    </div>
+
 </body>
 
 </html>

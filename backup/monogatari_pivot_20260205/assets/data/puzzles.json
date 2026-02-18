@@ -1,0 +1,62 @@
+[
+    {
+        "speciesId": "mangga_kakek",
+        "zones": [
+            {
+                "id": "zone_akar",
+                "label": "Akar",
+                "correctPartId": "akar"
+            },
+            {
+                "id": "zone_batang",
+                "label": "Batang",
+                "correctPartId": "batang"
+            },
+            {
+                "id": "zone_daun",
+                "label": "Daun",
+                "correctPartId": "daun"
+            }
+        ]
+    },
+    {
+        "speciesId": "ulin_raksasa",
+        "zones": [
+            {
+                "id": "zone_akar",
+                "label": "Akar Banir",
+                "correctPartId": "akar"
+            },
+            {
+                "id": "zone_batang",
+                "label": "Batang Ulin",
+                "correctPartId": "batang"
+            },
+            {
+                "id": "zone_daun",
+                "label": "Daun Jarum",
+                "correctPartId": "daun"
+            }
+        ]
+    },
+    {
+        "speciesId": "enggang_gading",
+        "zones": [
+            {
+                "id": "zone_kaki",
+                "label": "Kaki/Ekor",
+                "correctPartId": "ekor"
+            },
+            {
+                "id": "zone_badan",
+                "label": "Sayap",
+                "correctPartId": "sayap"
+            },
+            {
+                "id": "zone_kepala",
+                "label": "Paruh",
+                "correctPartId": "paruh"
+            }
+        ]
+    }
+]
