@@ -197,17 +197,17 @@ export class PuzzleDragDrop {
         // Buat "klon bayangan" yang mengikuti jari
         const clone = target.cloneNode(true);
         clone.id = 'touch-clone';
-        clone.style.position = 'fixed';
-        clone.style.left = `${touch.clientX - 40}px`;
-        clone.style.top = `${touch.clientY - 40}px`;
+        clone.style.left = `${touch.clientX - 50}px`; // Naikkan offset biar ga ketutup jempol
+        clone.style.top = `${touch.clientY - 120}px`;  // Naikkan lebih tinggi
         clone.style.width = '80px';
         clone.style.height = '80px';
         clone.style.zIndex = '9999';
         clone.style.pointerEvents = 'none';
-        clone.style.opacity = '0.9';
-        clone.style.transform = 'scale(1.2)';
-        clone.style.boxShadow = '0 10px 30px rgba(0,0,0,0.5)';
-        clone.style.borderRadius = '12px';
+        clone.style.opacity = '1'; // Jelas terlihat
+        clone.style.transform = 'scale(1.1)'; // Sedikit lebih besar
+        clone.style.boxShadow = '0 15px 35px rgba(0,0,0,0.6)';
+        clone.style.border = '3px solid #ffd700'; // Kuning emas
+        clone.style.borderRadius = '16px';
         document.body.appendChild(clone);
         this.touchData.clone = clone;
     }
@@ -414,34 +414,34 @@ export class PuzzleDragDrop {
         gsap.to('#preview-box', { scale: 1, duration: 0.3, ease: 'back.out(1.7)' });
     }
 
-    // 🆕 Popup Fakta Detail (Saat jawaban benar)
+    // 🆕 Popup Fakta Detail (Bottom Sheet)
     showDetailedFact(part) {
-        let toast = document.getElementById('fact-toast');
-        if (!toast) {
-            toast = document.createElement('div');
-            toast.id = 'fact-toast';
-            toast.className = 'fixed top-24 left-1/2 transform -translate-x-1/2 bg-blue-900/95 text-white px-6 py-4 rounded-xl shadow-2xl z-50 flex items-start gap-4 border border-blue-400 max-w-md w-[90%]';
-            document.body.appendChild(toast);
+        let sheet = document.getElementById('fact-sheet');
+        if (!sheet) {
+            sheet = document.createElement('div');
+            sheet.id = 'fact-sheet';
+            sheet.className = 'fixed bottom-0 left-0 w-full bg-blue-900/95 text-white p-6 rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.5)] z-50 border-t border-blue-400 transform translate-y-full transition-transform duration-500 ease-out flex flex-col items-center text-center';
+            document.body.appendChild(sheet);
         }
 
-        toast.innerHTML = `
-            <div class="text-3xl animate-bounce">💡</div>
-            <div>
-                <h4 class="font-bold text-yellow-300 text-sm uppercase mb-1">${part.name} BENAR!</h4>
-                <p class="text-sm leading-relaxed">${part.fact || "Bagian ini penting lho!"}</p>
-            </div>
+        sheet.innerHTML = `
+            <div class="w-12 h-1.5 bg-white/20 rounded-full mb-4"></div> <!-- Drag Handle -->
+            <div class="text-4xl animate-bounce mb-2">💡</div>
+            <h4 class="font-bold text-yellow-300 text-lg uppercase mb-2">${part.name} BENAR!</h4>
+            <p class="text-base leading-relaxed text-gray-100 max-w-md">${part.fact || "Bagian ini penting lho!"}</p>
+            <button onclick="document.getElementById('fact-sheet').classList.add('translate-y-full')" class="mt-6 text-sm text-blue-300 hover:text-white transition">Tutup ⌄</button>
         `;
 
-        // Animasi Masuk
-        gsap.fromTo(toast,
-            { y: -50, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" }
-        );
+        // Animasi Masuk (Slide Up)
+        requestAnimationFrame(() => {
+            sheet.classList.remove('translate-y-full');
+        });
 
-        // Hilang otomatis
-        setTimeout(() => {
-            gsap.to(toast, { y: -50, opacity: 0, duration: 0.5, onComplete: () => toast.remove() });
-        }, 5000);
+        // Hilang otomatis setelah 6 detik (biar user sempat baca)
+        if (this.factTimeout) clearTimeout(this.factTimeout);
+        this.factTimeout = setTimeout(() => {
+            sheet.classList.add('translate-y-full');
+        }, 6000);
     }
 
     // ✨ Animasi Penggabungan (Merge Animation)
@@ -499,20 +499,20 @@ export class PuzzleDragDrop {
 
                     // STEP 3: Timeline Baru untuk Animasi Muncul
                     const tl2 = gsap.timeline();
-                    
+
                     tl2.to(flash, { opacity: 0, duration: 1, ease: "power2.out" })
-                       .to(fullImg, {
-                           opacity: 1,
-                           scale: 1,
-                           duration: 1.5,
-                           ease: "elastic.out(1, 0.5)"
-                       }, "-=0.5") // Muncul barengan flash hilang
-                       .to(glow, {
-                           scale: 1.5,
-                           duration: 2,
-                           yoyo: true,
-                           repeat: -1
-                       }, "-=1.5");
+                        .to(fullImg, {
+                            opacity: 1,
+                            scale: 1,
+                            duration: 1.5,
+                            ease: "elastic.out(1, 0.5)"
+                        }, "-=0.5") // Muncul barengan flash hilang
+                        .to(glow, {
+                            scale: 1.5,
+                            duration: 2,
+                            yoyo: true,
+                            repeat: -1
+                        }, "-=1.5");
 
                     // STEP 4: Efek "Bernafas" (Idle) - Terpisah
                     gsap.to(fullImg, {
